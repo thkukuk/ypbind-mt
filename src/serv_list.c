@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000, 2001, 2002 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2000, 2001, 2002, 2003 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -89,6 +89,90 @@ static pthread_mutex_t search_lock = PTHREAD_MUTEX_INITIALIZER;
 static void do_broadcast (struct binding *list);
 static int ping_all (struct binding *list);
 
+static void
+remove_bindingfile (const char *domain)
+{
+  char path[strlen (BINDINGDIR) + strlen (domain) + 10];
+
+  sprintf (path, "%s/%s.1", BINDINGDIR, domain);
+  unlink (path);
+  sprintf (path, "%s/%s.2", BINDINGDIR, domain);
+  unlink (path);
+}
+
+#define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
+
+static void
+update_bindingfile (struct binding *entry)
+{
+  /* The calling functions must hold a lock ! */
+  unsigned short int sport = port;
+  struct iovec iov[2];
+  struct ypbind_resp ybres;
+  char path1[MAXPATHLEN + 1], path2[MAXPATHLEN + 1];
+  int fd, len;
+
+  sprintf (path1, "%s/%s.1", BINDINGDIR, entry->domain);
+  sprintf (path2, "%s/%s.2", BINDINGDIR, entry->domain);
+
+  iov[0].iov_base = (caddr_t) &sport;
+  iov[0].iov_len = sizeof (sport);
+  iov[1].iov_base = (caddr_t) &ybres;
+  iov[1].iov_len = sizeof ybres;
+
+  memset(&ybres, 0, sizeof (ybres));
+  ybres.ypbind_status = YPBIND_SUCC_VAL;
+  if (entry->active >= 0)
+    {
+      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
+	      &entry->server[entry->active].addr, sizeof (struct in_addr));
+      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
+	      &entry->server[entry->active].port, sizeof (unsigned short int));
+    }
+  else if (entry->active == -2) /* ypset was used */
+    {
+      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
+	      &entry->ypset.addr, sizeof (struct in_addr));
+      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
+	      &entry->ypset.port, sizeof (unsigned short int));
+    }
+  else
+    {
+       /* This should not happen. Remove binding files which means,
+          libc will query ypbind direct. */
+       unlink (path1);
+       unlink (path2);
+       log_msg (LOG_ERR, "INTERNAL ERROR: update_bindingfile called without valid data!");
+       return;
+    }
+
+  len = iov[0].iov_len + iov[1].iov_len;
+
+  if ((fd = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+    {
+      if (writev (fd, iov, 2) != len )
+        {
+          log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
+          unlink (path1);
+        }
+      close (fd);
+    }
+  else
+    log_msg (LOG_ERR, "open(%s): %s", path1, strerror (errno));
+
+  if ((fd = open(path2, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+    {
+      if (writev (fd, iov, 2) != len )
+        {
+          log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
+          unlink (path2);
+        }
+      close (fd);
+    }
+  else
+    log_msg (LOG_ERR, "open(%s): %s", path2, strerror (errno));
+}
+
 /* this is called from the RPC thread (ypset). */
 void
 change_binding (const char *domain, ypbind_binding *binding)
@@ -133,8 +217,13 @@ change_binding (const char *domain, ypbind_binding *binding)
 	       clntudp_create(&addr, YPPROG, YPVERS, timeout, &sock)) == NULL)
 	    {
 	      domainlist[i].active = -1;
+	      remove_bindingfile (domain);
 	    }
 	  pthread_rdwr_wunlock_np (&domainlock);
+	  pthread_rdwr_rlock_np (&domainlock);
+	  update_bindingfile(&domainlist[i]);
+	  pthread_rdwr_runlock_np (&domainlock);
+
 	  return;
 	}
     }
@@ -220,90 +309,6 @@ find_domain (const char *domain, ypbind_resp *result)
   pthread_rdwr_runlock_np (&domainlock);
 
   return;
-}
-
-static void
-remove_bindingfile (const char *domain)
-{
-  char path[strlen (BINDINGDIR) + strlen (domain) + 10];
-
-  sprintf (path, "%s/%s.1", BINDINGDIR, domain);
-  unlink (path);
-  sprintf (path, "%s/%s.2", BINDINGDIR, domain);
-  unlink (path);
-}
-
-#define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
-
-static void
-update_bindingfile (struct binding *entry)
-{
-  /* The calling functions must hold a lock ! */
-  unsigned short int sport = port;
-  struct iovec iov[2];
-  struct ypbind_resp ybres;
-  char path1[MAXPATHLEN + 1], path2[MAXPATHLEN + 1];
-  int fd, len;
-
-  sprintf (path1, "%s/%s.1", BINDINGDIR, entry->domain);
-  sprintf (path2, "%s/%s.2", BINDINGDIR, entry->domain);
-
-  iov[0].iov_base = (caddr_t) &sport;
-  iov[0].iov_len = sizeof (sport);
-  iov[1].iov_base = (caddr_t) &ybres;
-  iov[1].iov_len = sizeof ybres;
-
-  memset(&ybres, 0, sizeof (ybres));
-  ybres.ypbind_status = YPBIND_SUCC_VAL;
-  if (entry->active >= 0)
-    {
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-	      &entry->server[entry->active].addr, sizeof (struct in_addr));
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-	      &entry->server[entry->active].port, sizeof (unsigned short int));
-    }
-  else if (entry->active == -2) /* ypset was used */
-    {
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-	      &entry->ypset.addr, sizeof (struct in_addr));
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-	      &entry->ypset.port, sizeof (unsigned short int));
-    }
-  else
-    {
-       /* This should not happen. Remove binding files which means,
-          libc will query ypbind direct. */
-       unlink (path1);
-       unlink (path2);
-       log_msg (LOG_ERR, "INTERNAL ERROR: update_bindingfile called without valid data!");
-       return;
-    }
-
-  len = iov[0].iov_len + iov[1].iov_len;
-
-  if ((fd = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
-    {
-      if (writev (fd, iov, 2) != len )
-        {
-          log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
-          unlink (path1);
-        }
-      close (fd);
-    }
-  else
-    log_msg (LOG_ERR, "open(%s): %s", path1, strerror (errno));
-
-  if ((fd = open(path2, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
-    {
-      if (writev (fd, iov, 2) != len )
-        {
-          log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
-          unlink (path2);
-        }
-      close (fd);
-    }
-  else
-    log_msg (LOG_ERR, "open(%s): %s", path2, strerror (errno));
 }
 
 void
@@ -622,7 +627,7 @@ do_broadcast (struct binding *list)
      need the writer lock, since we modify the data. But in this case,
      the broadcast timeout is too long and we would block all queries.
      Since we don't change pointers and all data is always valid, we
-  only acquire */
+     only acquire the reader lock. */
   pthread_rdwr_rlock_np (&domainlock);
 
   in_use = list; /* global variable for eachresult */
