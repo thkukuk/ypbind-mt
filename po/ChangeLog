@@ -1,3 +1,8 @@
+2003-08-26  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.in.in: Upgrade to gettext-0.12.1.
+	* remove-potcdate.sin: New file, from gettext-0.12.1.
+
 2002-04-04  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.in.in: Upgrade to gettext-0.11.
