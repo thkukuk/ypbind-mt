@@ -1,5 +1,5 @@
 
-This directory contains the version 1.6 of the ypbind-mt.
+This directory contains the version 1.7 of the ypbind-mt.
 
 
 As of this release, ypbind-mt is known to run on the following
@@ -7,7 +7,8 @@ configuration:
 
    ix86-*-linux-gnu       Linux 2.x on Intel with glibc 2.x
    alpha-*-linux-gnu      Linux 2.x on Alpha with glibc 2.x
-   powerpc-*-linux-gnu	  Linux 2.x on PowerPC with glibc 2.1.2
+   powerpc-*-linux-gnu	  Linux 2.x on PowerPC with glibc 2.x
+   sparc-*-linux-gnu      Linux 2.x on SPARC with glibc 2.x
    ix86-*-linux-gnulibc1  Linux 2.x on Intel with libc5/linuxthreads 0.7
    sparc-sun-solaris2.x   Solaris 2.x with pthread library
 
@@ -19,7 +20,9 @@ ypbind-mt.  You might also consider reading the WWW pages for Linux NIS (YP)
 at http://www.suse.de/~kukuk/nis/.
 
 
-ypbind-mt is free software. See the file COPYING for copying conditions.
+ypbind-mt is free software. You can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 as published
+by the Free Software Foundation. See the file COPYING for copying conditions.
 
 
 ypbind-mt is a complete new implementation of a NIS binding daemon for

@@ -1,13 +1,12 @@
-/* Copyright (c) 1998, 1999 Thorsten Kukuk, Germany
+/* Copyright (c) 1998, 1999, 2000 Thorsten Kukuk, Germany
 
    This file is part of ypbind-mt.
 
    Author: Thorsten Kukuk <kukuk@suse.de>
 
    The ypbind-mt are free software; you can redistribute it and/or
-   modify it under the terms of the GNU General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
+   modify it under the terms of the GNU General Public License version 2
+   as published by the Free Software Foundation.
 
    ypbind-mt is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
