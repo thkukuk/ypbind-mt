@@ -1,4 +1,3 @@
-# Generated automatically from Makefile.in by configure.
 # Makefile for directory with message catalog handling in GNU NLS Utilities.
 # Copyright (C) 1995, 1996, 1997 Free Software Foundation, Inc.
 #
@@ -16,43 +15,44 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-PACKAGE = ypbind-mt
-VERSION = 1.4
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
 
 SHELL = /bin/sh
 
-srcdir = .
-top_srcdir = ..
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
 top_builddir = ..
+VPATH = @srcdir@
 
-prefix = /usr
-exec_prefix = ${prefix}
-transform = s,x,x,
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+transform = @program_transform_name@
 libdir = $(exec_prefix)/lib
 includedir = $(prefix)/include
-datadir = $(prefix)/share
+datadir = $(prefix)/@DATADIRNAME@
 localedir = $(datadir)/locale
 gnulocaledir = $(prefix)/share/locale
-gettextsrcdir = ${prefix}/share/gettext/intl
+gettextsrcdir = @datadir@/gettext/intl
 aliaspath = $(localedir):.
 subdir = intl
 
-INSTALL = /usr/bin/install -c
-INSTALL_DATA = ${INSTALL} -m 644
-MKINSTALLDIRS = ./mkinstalldirs
+INSTALL = @INSTALL@
+INSTALL_DATA = @INSTALL_DATA@
+MKINSTALLDIRS = @MKINSTALLDIRS@
 
-l = 
+l = @l@
 
 AR = ar
-CC = gcc
+CC = @CC@
 LIBTOOL = @LIBTOOL@
-RANLIB = ranlib
+RANLIB = @RANLIB@
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" -DGNULOCALEDIR=\"$(gnulocaledir)\" \
--DLOCALE_ALIAS_PATH=\"$(aliaspath)\" -DHAVE_CONFIG_H
-CPPFLAGS = 
-CFLAGS = -O6
-LDFLAGS = 
+-DLOCALE_ALIAS_PATH=\"$(aliaspath)\" @DEFS@
+CPPFLAGS = @CPPFLAGS@
+CFLAGS = @CFLAGS@
+LDFLAGS = @LDFLAGS@
 
 COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
 
@@ -62,7 +62,7 @@ SOURCES = $(COMSRCS) intl-compat.c cat-compat.c
 COMSRCS = bindtextdom.c dcgettext.c dgettext.c gettext.c \
 finddomain.c loadmsgcat.c localealias.c textdomain.c l10nflist.c \
 explodename.c
-OBJECTS =  bindtextdom.$lo dcgettext.$lo dgettext.$lo gettext.$lo \
+OBJECTS = @INTLOBJS@ bindtextdom.$lo dcgettext.$lo dgettext.$lo gettext.$lo \
 finddomain.$lo loadmsgcat.$lo localealias.$lo textdomain.$lo l10nflist.$lo \
 explodename.$lo
 CATOBJS = cat-compat.$lo ../po/cat-id-tbl.$lo
@@ -81,7 +81,7 @@ DISTFILES.gettext = libintl.glibc intlh.inst.in
 
 INCLUDES = -I.. -I. -I$(top_srcdir)/intl -I$(top_srcdir)/lib
 
-all: all-no
+all: all-@USE_INCLUDED_LIBINTL@
 
 all-yes: libintl.$la intlh.inst
 all-no:
@@ -112,7 +112,7 @@ check: all
 install: install-exec install-data
 install-exec: all
 	if test "$(PACKAGE)" = "gettext" \
-	   && test '' = '$(GETTOBJS)'; then \
+	   && test '@INTLOBJS@' = '$(GETTOBJS)'; then \
 	  if test -r $(MKINSTALLDIRS); then \
 	    $(MKINSTALLDIRS) $(libdir) $(includedir); \
 	  else \
@@ -202,12 +202,12 @@ Makefile: Makefile.in ../config.status
 # The dependency for intlh.inst is different in gettext and all other
 # packages.  Because we cannot you GNU make features we have to solve
 # the problem while rewriting Makefile.in.
-#YES#intlh.inst: intlh.inst.in ../config.status
-#YES#	cd .. \
-#YES#	&& CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= \
-#YES#	  $(SHELL) ./config.status
-.PHONY: intlh.inst
-intlh.inst:
+@GT_YES@intlh.inst: intlh.inst.in ../config.status
+@GT_YES@	cd .. \
+@GT_YES@	&& CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= \
+@GT_YES@	  $(SHELL) ./config.status
+@GT_NO@.PHONY: intlh.inst
+@GT_NO@intlh.inst:
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
