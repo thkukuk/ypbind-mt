@@ -85,7 +85,7 @@ is used, ypbind detaches itself from the controlling terminal and puts
 itself into background.
 .B ypbind
 uses
-.BB syslog (3)
+.BR syslog (3)
 for logging errors and warnings.
 At startup or when receiving signal SIGHUP,
 .B ypbind
