@@ -1,3 +1,12 @@
+2004-04-29  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.17.3
+
+2004-04-13  Mark Brown  <broonie@sirena.org.uk>
+
+	* src/ypbind_slp.c (query_slp): Improve extraction of the server
+	hostname from URLs returned by the SLP library.
+
 2004-02-14  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.17.2

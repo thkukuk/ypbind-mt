@@ -109,11 +109,23 @@ query_slp (const char *domain)
     {
       if (cb->srvurl != NULL)
 	{
-	  char *hostp = cb->srvurl + 27;
-	  char *cp = strrchr (hostp, ':');
+	  char *hostp = strstr (cb->srvurl, "://");
+	  char *cp;
+
+	  if (!hostp || strlen(hostp) < strlen("://") + 1)
+	    {
+	      free (cb->srvurl);
+	      continue;
+	    }
+	  
+	  hostp += strlen ("://");
+
+	  cp = strrchr (hostp, '/');
 	  if (cp)
 	    *cp = '\0';
-	  cp = strrchr (hostp, '/');
+
+	  /* Remove any port specification (we should use it!). */
+	  cp = strchr (hostp, ':');
 	  if (cp)
 	    *cp = '\0';
 
