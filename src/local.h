@@ -14,6 +14,7 @@ extern int  add_server (const char *__domain, const char *__host,
 extern void change_binding (const char *__domain, ypbind_binding *binding);
 
 extern void *test_bindings (void *param);
+extern int test_bindings_once (int lastcheck);
 
 extern void do_binding (void);
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-09 14:17+0100\n"
+"POT-Creation-Date: 2004-01-14 20:14+0100\n"
 "PO-Revision-Date: 2002-04-04 20:07+02:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
@@ -103,20 +103,20 @@ msgstr "clnt_create für server \"%s\" (domain \"%s\") schlug fehl"
 msgid "domain '%s' not served by '%s'"
 msgstr "Domain \"%s\" wird nicht von \"%s\" unterstützt"
 
-#: src/serv_list.c:1015
+#: src/serv_list.c:1025
 msgid "Pinging all active server."
 msgstr "Sende ein Ping zu allen aktiven Servern."
 
-#: src/serv_list.c:1017
+#: src/serv_list.c:1027
 msgid "Check new for fastest server."
 msgstr "Suche erneut den schnellsten Server."
 
-#: src/serv_list.c:1057
+#: src/serv_list.c:1067
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr "Server für Domain \"%s\" antwortet nicht."
 
-#: src/serv_list.c:1063 src/serv_list.c:1068
+#: src/serv_list.c:1073 src/serv_list.c:1078
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr "Server \"%s\" für Domain \"%s\" antwortet nicht."
@@ -156,12 +156,10 @@ msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr "Der Eintrag \"%s\" ist syntaktisch falsch, er wird ignoriert!"
 
 #: src/ypbind-mt.c:249
-#, c-format
 msgid "Bad entries found.\n"
 msgstr "Ungültige Einträge gefunden.\n"
 
 #: src/ypbind-mt.c:254
-#, c-format
 msgid "No entry found.\n"
 msgstr "Keinen Eintrag gefunden.\n"
 
@@ -329,29 +327,29 @@ msgstr ""
 msgid "svc_run returned."
 msgstr "svc_run hat sich beendet."
 
-#: src/ypbind_server.c:67 src/ypbind_server.c:110
+#: src/ypbind_server.c:67 src/ypbind_server.c:111
 #, c-format
 msgid "Domain name '%s' has embedded slash -- rejecting."
 msgstr "Domainname \"%s\" enthält einen Schrägstrich -- zurückgewiesen."
 
-#: src/ypbind_server.c:77
+#: src/ypbind_server.c:78
 msgid "Status: YPBIND_FAIL_VAL"
 msgstr "Status: YPBIND_FAIL_VAL"
 
-#: src/ypbind_server.c:79
+#: src/ypbind_server.c:80
 msgid "Status: YPBIND_SUCC_VAL"
 msgstr "Status: YPBIND_SUCC_VAL"
 
-#: src/ypbind_server.c:122
+#: src/ypbind_server.c:123
 #, c-format
 msgid "User from '%s' try's to change the binding."
 msgstr "User vom host \"%s\" versucht das Binding to ändern."
 
-#: src/ypbind_server.c:131
+#: src/ypbind_server.c:132
 msgid "Changing the binding is not allowed."
 msgstr "Das ändern des Bindings ist nicht erlaubt."
 
-#: src/ypbind_server.c:136
+#: src/ypbind_server.c:137
 msgid "SETDOM request doesn't come from reserved port."
 msgstr "Der SETDOM Request kam nicht von einem reservierten Port."
 

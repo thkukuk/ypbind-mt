@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000, 2001, 2002, 2003, 2004 Thorsten Kukuk
+/* Copyright (c) 1998-2004 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -980,8 +980,6 @@ do_binding (void)
   pthread_mutex_unlock (&search_lock);
 }
 
-int test_bindings_once(int);
-
 /* This thread will send an ping to all NIS server marked as active. If
    a server doesn't answer or tell us, that he doesn't serv this domain
    any longer, we mark it as inactive and try to find a new server */
@@ -1015,118 +1013,118 @@ test_bindings (void *param __attribute__ ((unused)))
 }
 
 int
-test_bindings_once(int lastcheck)
+test_bindings_once (int lastcheck)
 {
-      int i;
+  int i;
 
-      pthread_rdwr_rlock_np (&domainlock);
+  pthread_rdwr_rlock_np (&domainlock);
 
-      if (debug_flag)
+  if (debug_flag)
+    {
+      if (lastcheck)
+	log_msg (LOG_DEBUG, _("Pinging all active server."));
+      else
+	log_msg (LOG_DEBUG, _("Check new for fastest server."));
+    }
+
+  for (i = 0; i < max_domains; ++i)
+    {
+      char *domain = domainlist[i].domain;
+      bool_t out = TRUE;
+      enum clnt_stat status = RPC_SUCCESS;
+
+      if (domainlist[i].active != -1)
 	{
-	  if (lastcheck)
-	    log_msg (LOG_DEBUG, _("Pinging all active server."));
-	  else
-	    log_msg (LOG_DEBUG, _("Check new for fastest server."));
-	}
-
-      for (i = 0; i < max_domains; ++i)
-	{
-	  char *domain = domainlist[i].domain;
-	  bool_t out = TRUE;
-	  enum clnt_stat status = RPC_SUCCESS;
-
-	  if (domainlist[i].active != -1)
+	  /* The binding is in use, check if it is still valid and
+	     the fastest one. */
+	  if (lastcheck != 0)
 	    {
-	      /* The binding is in use, check if it is still valid and
-	         the fastest one. */
-	      if (lastcheck != 0)
-		{
-		  /* Check only if the current binding is still valid. */
-		  struct timeval time_out;
+	      /* Check only if the current binding is still valid. */
+	      struct timeval time_out;
 
-		  time_out.tv_sec = 3;
-		  time_out.tv_usec = 0;
-		  status =
-		    clnt_call(domainlist[i].client_handle,
-			      YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
-			      (caddr_t) &domain, (xdrproc_t) xdr_bool,
-			      (caddr_t) &out, time_out);
-		}
-	      /* time to search a new fastest server, but only if the current one was
-		 not set with ypset. We search in every case if the above check fails
-	         and the current data is not longer valid. */
-	      if ((lastcheck == 0 && domainlist[i].active != -2)
-		  || status != RPC_SUCCESS || out != TRUE)
+	      time_out.tv_sec = 3;
+	      time_out.tv_usec = 0;
+	      status =
+		clnt_call(domainlist[i].client_handle,
+			  YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
+			  (caddr_t) &domain, (xdrproc_t) xdr_bool,
+			  (caddr_t) &out, time_out);
+	    }
+	  /* time to search a new fastest server, but only if the current
+	     one was not set with ypset. We search in every case if the
+	     above check fails and the current data is not longer valid. */
+	  if ((lastcheck == 0 && domainlist[i].active != -2)
+	      || status != RPC_SUCCESS || out != TRUE)
+	    {
+	      /* The current binding is not valid or it is time to search
+		 for a new, fast server. */
+	      if (debug_flag && lastcheck != 0)
 		{
-		  /* The current binding is not valid or it is time to search
-		     for a new, fast server. */
-		  if (debug_flag && lastcheck != 0)
+		  /* Current active binding is not longer valid, print
+		     the old binding for debugging. */
+		  if (domainlist[i].use_broadcast)
+		    log_msg (LOG_DEBUG,
+			     _("Server for domain '%s' doesn't answer."),
+			     domain);
+		  else
 		    {
-		      /* Current active binding is not longer valid, print
-		         the old binding for debugging. */
-		      if (domainlist[i].use_broadcast)
+		      if (domainlist[i].active == -2)
 			log_msg (LOG_DEBUG,
-				 _("Server for domain '%s' doesn't answer."),
+				 _("Server '%s' for domain '%s' doesn't answer."),
+				 inet_ntoa(domainlist[i].ypset.addr),
 				 domain);
 		      else
-			{
-			  if (domainlist[i].active == -2)
-			    log_msg (LOG_DEBUG,
-				     _("Server '%s' for domain '%s' doesn't answer."),
-				     inet_ntoa(domainlist[i].ypset.addr),
-				     domain);
-			  else
-			    log_msg (LOG_DEBUG,
-				     _("Server '%s' for domain '%s' doesn't answer."),
-				     domainlist[i].server[domainlist[i].active].host,
-				     domain);
-			}
+			log_msg (LOG_DEBUG,
+				 _("Server '%s' for domain '%s' doesn't answer."),
+				 domainlist[i].server[domainlist[i].active].host,
+				 domain);
 		    }
-		  lastcheck = 0; /* If we need a new server before the TTL expires,
-				    reset it. */
-
-		  /* We have the read lock, but we need the write lock for
-		     changes :-( */
-		  pthread_rdwr_runlock_np (&domainlock);
-		  pthread_rdwr_wlock_np (&domainlock);
-		  /* We can destroy the client_handle since we are the
-		     only thread who uses it. */
-		  clnt_destroy (domainlist[i].client_handle);
-		  domainlist[i].client_handle = NULL;
-		  if (domainlist[i].active == -2)
-		    {
-		      /* We can give this free, server does not answer any
-			 longer. */
-		      domainlist[i].active = -1;
-		      if (domainlist[i].ypset.host != NULL)
-			free (domainlist[i].ypset.host);
-		      domainlist[i].ypset.host = NULL;
-		    }
-		  /* And give the write lock away, search a new host and get
-		     the read lock again */
-		  pthread_rdwr_wunlock_np (&domainlock);
-		  pthread_mutex_lock (&search_lock);
-		  if (!ping_all (&domainlist[i]) &&
-		      domainlist[i].use_broadcast)
-		    do_broadcast (&domainlist[i]);
-		  pthread_mutex_unlock (&search_lock);
-		  pthread_rdwr_rlock_np (&domainlock);
 		}
-	    }
-	  else
-	    {
-	      /* there is no binding for this domain, try to find a new
-		 server */
+	      lastcheck = 0; /* If we need a new server before the TTL expires,
+				reset it. */
+
+	      /* We have the read lock, but we need the write lock for
+		 changes :-( */
 	      pthread_rdwr_runlock_np (&domainlock);
+	      pthread_rdwr_wlock_np (&domainlock);
+	      /* We can destroy the client_handle since we are the
+		 only thread who uses it. */
+	      clnt_destroy (domainlist[i].client_handle);
+	      domainlist[i].client_handle = NULL;
+	      if (domainlist[i].active == -2)
+		{
+		  /* We can give this free, server does not answer any
+		     longer. */
+		  domainlist[i].active = -1;
+		  if (domainlist[i].ypset.host != NULL)
+		    free (domainlist[i].ypset.host);
+		  domainlist[i].ypset.host = NULL;
+		}
+	      /* And give the write lock away, search a new host and get
+		 the read lock again */
+	      pthread_rdwr_wunlock_np (&domainlock);
 	      pthread_mutex_lock (&search_lock);
-	      if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
+	      if (!ping_all (&domainlist[i]) &&
+		  domainlist[i].use_broadcast)
 		do_broadcast (&domainlist[i]);
 	      pthread_mutex_unlock (&search_lock);
 	      pthread_rdwr_rlock_np (&domainlock);
 	    }
-	} /* end for () all domains */
+	}
+      else
+	{
+	  /* there is no binding for this domain, try to find a new
+	     server */
+	  pthread_rdwr_runlock_np (&domainlock);
+	  pthread_mutex_lock (&search_lock);
+	  if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
+	    do_broadcast (&domainlist[i]);
+	  pthread_mutex_unlock (&search_lock);
+	  pthread_rdwr_rlock_np (&domainlock);
+	}
+    } /* end for () all domains */
 
-      pthread_rdwr_runlock_np (&domainlock);
+  pthread_rdwr_runlock_np (&domainlock);
 
-      return lastcheck;
+  return lastcheck;
 }
