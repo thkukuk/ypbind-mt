@@ -1614,7 +1614,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=ypbind-mt
- VERSION=1.17
+ VERSION=1.17.1
 
 
 cat >>confdefs.h <<_ACEOF
@@ -2902,8 +2902,8 @@ else
 fi
 
 
-#test -n "$GCC" && WARNFLAGS="-Wall"
-test -n "$GCC" && WARNFLAGS="-W -Wall -Wbad-function-cast -Wcast-align -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef -Werror"
+test -n "$GCC" && WARNFLAGS="-Wall"
+#test -n "$GCC" && WARNFLAGS="-W -Wall -Wbad-function-cast -Wcast-align -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef -Werror"
 
 
 echo "$as_me:$LINENO: checking for library containing strerror" >&5

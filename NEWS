@@ -4,6 +4,9 @@ Copyright (C) 1998-2004 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
+Version 1.17.1
+* Fix compilation on IA64
+
 Version 1.17
 * Add SLP support
 * Minor bug fixes

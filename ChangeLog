@@ -1,5 +1,9 @@
 2004-02-13  Thorsten Kukuk  <kukuk@suse.de>
 
+	* release version 1.17.1
+
+	* configure.in: Fix CFLAGS
+
 	* release version 1.17
 
 	* etc/ypbind.init: Rework to match latest LSB changes.
