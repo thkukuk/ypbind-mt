@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
-"POT-Creation-Date: 2002-05-27 09:30+0200\n"
+"POT-Creation-Date: 2003-06-10 14:32+0200\n"
 "PO-Revision-Date: 2002-04-04 20:07+02:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
@@ -57,7 +57,7 @@ msgstr "Unbekanter Server Fehler"
 msgid "gethostbyname: Unknown error"
 msgstr "gethostbyname: Unbekannter Fehler"
 
-#: src/serv_list.c:558 src/serv_list.c:832
+#: src/serv_list.c:558 src/serv_list.c:848
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\""
@@ -72,50 +72,50 @@ msgstr "Antwort für Domain \"%s\" von unbekantem Server \"%s\""
 msgid "Answer for domain '%s' from '%s' on illegal port."
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\" vom illegalen Port."
 
-#: src/serv_list.c:605
+#: src/serv_list.c:612
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:631
+#: src/serv_list.c:647
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:744 src/serv_list.c:876
+#: src/serv_list.c:760 src/serv_list.c:892
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr "Ping Host \"%s\", Domain \"%s\""
 
-#: src/serv_list.c:757
+#: src/serv_list.c:773
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr "Server \"%s\" antwortet nicht."
 
-#: src/serv_list.c:895
+#: src/serv_list.c:911
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr "clnt_create für server \"%s\" (domain \"%s\") schlug fehl"
 
-#: src/serv_list.c:916
+#: src/serv_list.c:932
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr "Domain \"%s\" wird nicht von \"%s\" unterstützt"
 
-#: src/serv_list.c:994
+#: src/serv_list.c:1010
 msgid "Pinging all active server."
 msgstr "Sende ein Ping zu allen aktiven Servern."
 
-#: src/serv_list.c:996
+#: src/serv_list.c:1012
 msgid "Check new for fastest server."
 msgstr "Suche erneut den schnellsten Server."
 
-#: src/serv_list.c:1036
+#: src/serv_list.c:1052
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr "Server für Domain \"%s\" antwortet nicht."
 
-#: src/serv_list.c:1042 src/serv_list.c:1047
+#: src/serv_list.c:1058 src/serv_list.c:1063
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr "Server \"%s\" für Domain \"%s\" antwortet nicht."

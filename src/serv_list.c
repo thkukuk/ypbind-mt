@@ -597,35 +597,51 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
 static void
 do_broadcast (struct binding *list)
 {
-  char *domain = list->domain;
+  char *domain;
   bool_t out;
   enum clnt_stat status;
+
+  /* Get readlock and create a local copy of the domainname.
+     Else a SIGHUP could delete the data and we will dereference
+     invalid data.  */
+  pthread_rdwr_rlock_np (&domainlock);
+  domain = strdupa (list->domain);
+  pthread_rdwr_runlock_np (&domainlock);
 
   if (debug_flag)
     log_msg (LOG_DEBUG, _("do_broadcast() for domain '%s' is called"),
 	     domain);
 
+  /* Get a writer lock for the domain list, since we modify one
+     entry.  */
   pthread_rdwr_wlock_np (&domainlock);
   list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
+  /* Get a reader lock while we do the broadcast. Normally we would
+     need the writer lock, since we modify the data. But in this case,
+     the broadcast timeout is too long and we would block all queries.
+     Since we don't change pointers and all data is always valid, we
+  only acquire */
+  pthread_rdwr_rlock_np (&domainlock);
+
   in_use = list; /* global variable for eachresult */
+
   status = clnt_broadcast (YPPROG, YPVERS, YPPROC_DOMAIN_NONACK,
 			   (xdrproc_t) ypbind_xdr_domainname, (void *)&domain,
 			   (xdrproc_t) xdr_bool, (void *)&out,
 			   (resultproc_t) eachresult);
 
+
   if (status != RPC_SUCCESS)
     {
-      remove_bindingfile(list->domain);
-      log_msg (LOG_ERR, "broadcast: %s.", clnt_sperrno(status));
+      remove_bindingfile (domain);
+      log_msg (LOG_ERR, "broadcast: %s.", clnt_sperrno (status));
     }
   else
-    {
-      pthread_rdwr_rlock_np (&domainlock);
-      update_bindingfile (list);
-      pthread_rdwr_runlock_np (&domainlock);
-    }
+    update_bindingfile (list);
+
+  pthread_rdwr_runlock_np (&domainlock);
 
   if (debug_flag)
     log_msg (LOG_DEBUG, _("leave do_broadcast() for domain '%s'"),

@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-05-27 09:30+0200\n"
+"POT-Creation-Date: 2003-06-10 14:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgstr ""
 msgid "gethostbyname: Unknown error"
 msgstr ""
 
-#: src/serv_list.c:558 src/serv_list.c:832
+#: src/serv_list.c:558 src/serv_list.c:848
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
@@ -73,50 +73,50 @@ msgstr ""
 msgid "Answer for domain '%s' from '%s' on illegal port."
 msgstr ""
 
-#: src/serv_list.c:605
+#: src/serv_list.c:612
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:631
+#: src/serv_list.c:647
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:744 src/serv_list.c:876
+#: src/serv_list.c:760 src/serv_list.c:892
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:757
+#: src/serv_list.c:773
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:895
+#: src/serv_list.c:911
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:916
+#: src/serv_list.c:932
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:994
+#: src/serv_list.c:1010
 msgid "Pinging all active server."
 msgstr ""
 
-#: src/serv_list.c:996
+#: src/serv_list.c:1012
 msgid "Check new for fastest server."
 msgstr ""
 
-#: src/serv_list.c:1036
+#: src/serv_list.c:1052
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:1042 src/serv_list.c:1047
+#: src/serv_list.c:1058 src/serv_list.c:1063
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr ""

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 1998, 1999 Thorsten Kukuk, Germany
+# Copyright (c) 1998, 1999, 2003 Thorsten Kukuk, Germany
 #
 # Author: Thorsten Kukuk <kukuk@suse.de>
 #
@@ -9,9 +9,9 @@ AUTOMAKE_OPTIONS = 1.4 gnits
 
 noinst_LIBRARIES = libcompat.a
 
-EXTRA_DIST = clnt_udp.c 
+EXTRA_DIST = clnt_udp.c
 
-CFLAGS = -D_REENTRANT=1 @WARNFLAGS@ @DEFS@ @CFLAGS@
+AM_CFLAGS = -D_REENTRANT=1 @WARNFLAGS@
 
 libcompat_a_SOURCES = dns_hosts.c res_options.h
 libcompat_a_LIBADD = @LIBOBJS@
