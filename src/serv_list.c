@@ -410,15 +410,17 @@ add_server (const char *domain, const char *host)
 	  size_t hstbuflen;
 	  char *hsttmpbuf;
 	  int herr;
+	  int error;
 #endif
 	  entry->server[active].host = strdup(host);
 #if defined (HAVE___NSS_CONFIGURE_LOOKUP)
 	  hstbuflen = 1024;
 	  hsttmpbuf = alloca (hstbuflen);
-	  while (gethostbyname_r (entry->server[active].host,
-				  &hostbuf, hsttmpbuf, hstbuflen,
-				  &hent, &herr) < 0)
-	    if (herr == NETDB_INTERNAL || errno == ERANGE)
+	  while ((error= gethostbyname_r (entry->server[active].host,
+					  &hostbuf, hsttmpbuf, hstbuflen,
+					  &hent, &herr)) != 0)
+	    if (herr == NETDB_INTERNAL || (error == -1 && errno == ERANGE)
+		|| error == ERANGE)
 	      {
 		/* Enlarge the buffer.  */
 		hstbuflen *= 2;
@@ -494,14 +496,16 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
 	  size_t hstbuflen;
 	  char *hsttmpbuf;
 	  int herr;
+	  int error;
 
 	  hstbuflen = 1024;
 	  hsttmpbuf = alloca (hstbuflen);
-	  while (gethostbyaddr_r ((char *) &addr->sin_addr.s_addr,
-				  sizeof (addr->sin_addr.s_addr), AF_INET,
-				  &hostbuf, hsttmpbuf, hstbuflen,
-				  &host, &herr) < 0)
-	    if (herr == NETDB_INTERNAL || errno == ERANGE)
+	  while ((error = gethostbyaddr_r ((char *) &addr->sin_addr.s_addr,
+					   sizeof (addr->sin_addr.s_addr),
+					   AF_INET, &hostbuf, hsttmpbuf,
+					   hstbuflen, &host, &herr)) < 0)
+	    if (herr == NETDB_INTERNAL || (error == -1 && errno == ERANGE)
+		|| error == ERANGE)
 	      {
 		/* Enlarge the buffer.  */
 		hstbuflen *= 2;

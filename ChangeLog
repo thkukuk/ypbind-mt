@@ -1,3 +1,8 @@
+1999-08-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c: gethostbyname_r/gethostbyaddr_r return code has
+	  changed in final POSIX standard.
+
 1999-06-01  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind-mt.c (main): lose controlling tty when daemonizing.
