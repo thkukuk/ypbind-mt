@@ -1,7 +1,15 @@
+2001-08-13  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (find_domain): Fix comment, get read lock back if
+	  we try a second time to find a active server.
+	  (test_bindings): Don't search for fastest server if current one
+	  is valid and set with ypset.
+	  (test_bindings): Don't invalidate old data before we have new data.
+
 2001-03-11  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.8
-	
+
 	* po/Makefile.in.in: Add DESTDIR support.
 
 	* configure.in: Don't set CFLAGS, bump version number to 1.8,
@@ -14,11 +22,11 @@
 
 	* config.sub: Update to newest version.
 	* config.guess: Likewise.
-	
+
 	* src/Makefile.am: Remove USE_PIDFILE.
 
 	* src/ypbind-mt.c: Remove USE_PIDFILE ifdefs, it is always set.
-	
+
 	* intl/Makefile.in (mostlyclean): Remove libintl.h.
 
 	* intl/libgettext.h: Change #if to #ifdef for autoconf defines.
@@ -29,7 +37,7 @@
 
 	* src/ypbind_svc.c (ypbindprog_1): domainname argument is a pointer.
 
-	* src/serv_list.c (ping_all): Remove bogus break (patch by Miquel 
+	* src/serv_list.c (ping_all): Remove bogus break (patch by Miquel
 	  von Smoorenburg).
 
 2000-09-25  Thorsten Kukuk  <kukuk@suse.de>

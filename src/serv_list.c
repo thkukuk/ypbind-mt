@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2000, 2001 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -192,7 +192,7 @@ find_domain (const char *domain, ypbind_resp *result)
 		  break;
 		}
 	      /* Look, if we could find a new server for this domain.
-		 But only, if the other thread is searching already */
+		 But only, if the other thread is not searching already */
 	      pthread_rdwr_runlock_np (&domainlock);
 	      if (pthread_mutex_trylock (&search_lock) == 0)
 		{
@@ -204,6 +204,8 @@ find_domain (const char *domain, ypbind_resp *result)
 		    ping_all (&domainlist[i]);
 		  pthread_mutex_unlock (&search_lock);
 		  ++second;
+		  /* Get the read lock again for next run. */
+		  pthread_rdwr_rlock_np (&domainlock);
 		  continue;
 		}
 	      else
@@ -220,7 +222,7 @@ find_domain (const char *domain, ypbind_resp *result)
 }
 
 static void
-close_bindingfile (const char *domain)
+remove_bindingfile (const char *domain)
 {
   char path[strlen (BINDINGDIR) + strlen (domain) + 10];
 
@@ -583,7 +585,7 @@ do_broadcast (struct binding *list)
 
   if (status != RPC_SUCCESS)
     {
-      close_bindingfile(list->domain);
+      remove_bindingfile(list->domain);
       log_msg (LOG_ERR, "broadcast: %s.", clnt_sperrno(status));
     }
   else
@@ -800,7 +802,7 @@ ping_all (struct binding *list)
   free (pings);
 
   if (!found)
-    close_bindingfile(list->domain);
+    remove_bindingfile(list->domain);
 
   return;
 }
@@ -890,7 +892,7 @@ ping_all (struct binding *list)
       ++i;
       if (i == _MAXSERVER)
         {
-          close_bindingfile(list->domain);
+          remove_bindingfile(list->domain);
           return;
         }
     }
@@ -959,8 +961,11 @@ test_bindings (void *param __attribute__ ((unused)))
 
 	  if (domainlist[i].active != -1)
 	    {
-	      if (lastcheck)
+	      /* The binding is in use, check if it is still valid and
+	         the fastest one. */
+	      if (lastcheck != 0)
 		{
+		  /* Check only if the current binding is still valid. */
 		  struct timeval time_out;
 
 		  time_out.tv_sec = 3;
@@ -971,10 +976,18 @@ test_bindings (void *param __attribute__ ((unused)))
 			      (caddr_t) &domain, (xdrproc_t) xdr_bool,
 			      (caddr_t) &out, time_out);
 		}
-	      if (lastcheck == 0 || status != RPC_SUCCESS || out != TRUE)
+	      /* time to search a new fastest server, but only if the current one was
+		 not set with ypset. We search in every case if the above check fails
+	         and the current data is not longer valid. */
+	      if ((lastcheck == 0 && domainlist[i].active != -2)
+		  || status != RPC_SUCCESS || out != TRUE)
 		{
-		  if (debug_flag && lastcheck)
+		  /* The current binding is not valid or it is time to search
+		     for a new, fast server. */
+		  if (debug_flag && lastcheck != 0)
 		    {
+		      /* Current active binding is not longer valid, print
+		         the old binding for debugging. */
 		      if (domainlist[i].use_broadcast)
 			log_msg (LOG_DEBUG,
 				 _("Server for domain '%s' doesn't answer."),
@@ -1000,16 +1013,19 @@ test_bindings (void *param __attribute__ ((unused)))
 		     changes :-( */
 		  pthread_rdwr_runlock_np (&domainlock);
 		  pthread_rdwr_wlock_np (&domainlock);
+		  /* We can destroy the client_handle since we are the
+		     only thread who uses it. */
 		  clnt_destroy (domainlist[i].client_handle);
 		  domainlist[i].client_handle = NULL;
 		  if (domainlist[i].active == -2)
 		    {
+		      /* We can give this free, server does not answer any
+			 longer. */
+		      domainlist[i].active = -1;
 		      if (domainlist[i].ypset.host != NULL)
 			free (domainlist[i].ypset.host);
 		      domainlist[i].ypset.host = NULL;
 		    }
-		  domainlist[i].active = -1;
-		  close_bindingfile (domain);
 		  /* And give the write lock away, search a new host and get
 		     the read lock again */
 		  pthread_rdwr_wunlock_np (&domainlock);
@@ -1024,6 +1040,8 @@ test_bindings (void *param __attribute__ ((unused)))
 	    }
 	  else
 	    {
+	      /* there is no binding for this domain, try to find a new
+		 server */
 	      pthread_rdwr_runlock_np (&domainlock);
 	      pthread_mutex_lock (&search_lock);
 	      if (domainlist[i].use_broadcast)
@@ -1033,7 +1051,9 @@ test_bindings (void *param __attribute__ ((unused)))
 	      pthread_mutex_unlock (&search_lock);
 	      pthread_rdwr_rlock_np (&domainlock);
 	    }
-	}
+	} /* end for () all domains */
+
       pthread_rdwr_runlock_np (&domainlock);
-    }
+
+    } /* end while() endless loop */
 }
