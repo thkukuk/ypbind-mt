@@ -17,7 +17,7 @@ dnl Checks for programs.
 AC_PROG_CC
 dnl If we're using gcc, we want warning flags
 test -n "$GCC" && WARNFLAGS="-Wall"
-dnl test -n "$GCC" && WARNFLAGS="-W -Wall -Wbad-function-cast -Wcast-align -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef"
+#test -n "$GCC" && WARNFLAGS="-W -Wall -Wbad-function-cast -Wcast-align -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef"
 AC_SUBST(WARNFLAGS)
 AC_ISC_POSIX
 AC_PROG_INSTALL

@@ -47,9 +47,9 @@ log_msg (int type, const char *fmt,...)
     {
 #ifndef HAVE_VSYSLOG
       vsnprintf (msg, 512, fmt, ap);
-      syslog (LOG_NOTICE, "%s", msg);
+      syslog (type, "%s", msg);
 #else
-      vsyslog (LOG_NOTICE, fmt, ap);
+      vsyslog (type, fmt, ap);
 #endif
     }
   

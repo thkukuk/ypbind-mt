@@ -15,10 +15,16 @@
 	* config.sub: Update to newest version.
 	* config.guess: Likewise.
 	
-	* src/Makefile.am: Remove USE_PIDFILE
+	* src/Makefile.am: Remove USE_PIDFILE.
 
 	* src/ypbind-mt.c: Remove USE_PIDFILE ifdefs, it is always set.
 	
+	* intl/Makefile.in (mostlyclean): Remove libintl.h.
+
+	* intl/libgettext.h: Change #if to #ifdef for autoconf defines.
+
+	* src/log_msg.c: Use caller supplied syslog priority
+
 2000-11-24  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind_svc.c (ypbindprog_1): domainname argument is a pointer.
