@@ -1,44 +1,184 @@
-#!/bin/sh
+#! /bin/sh
+# Copyright (c) 2001 Thorsten Kukuk <kukuk@suse.de>
 #
-# ypbind:       Starts the upbind Daemon
+# init.d/ypbind
 #
-# Version:      @(#) /etc/rc.d/init.d/ypbind.init 1.0
+#   and symbolic its link
 #
-# chkconfig: - 13 87
-# description: This is a daemon which runs on NIS/YP clients and binds them \
-#              to a NIS domain. It must be running for systems based on glibc \
-#              to work as NIS clients, but it should not be enabled on systems \
-#              which are not using NIS.
+# /usr/sbin/rcypbind
+#
+# System startup script for the ypbind daemon
+#
+### BEGIN INIT INFO
+# Provides: ypbind
+# Required-Start: $remote_fs portmap ypserv
+# Required-Stop: portmap
+# Default-Start: 3 5
+# Default-Stop: 0 1 2 6
+# Description: Start ypbind (necessary for a NIS client)
+### END INIT INFO
 
-# Source function library.
-. /etc/rc.d/init.d/functions
+# Determine the base and follow a runlevel link name.
+base=${0##*/}
+link=${base#*[SK][0-9][0-9]}
 
-# See how we were called.
+YPBIND_BIN=/usr/sbin/ypbind
+test -x $YPBIND_BIN || exit 5
+
+# Shell functions sourced from /etc/rc.status:
+#      rc_check         check and set local and overall rc status
+#      rc_status        check and set local and overall rc status
+#      rc_status -v     ditto but be verbose in local rc status
+#      rc_status -v -r  ditto and clear the local rc status
+#      rc_failed        set local and overall rc status to failed
+#      rc_reset         clear local rc status (overall remains)
+#      rc_exit          exit appropriate to overall rc status
+. /etc/rc.status
+
+# First reset status of this service
+rc_reset
+
+# Return values acc. to LSB for all commands but status:
+# 0 - success
+# 1 - misc error
+# 2 - invalid or excess args
+# 3 - unimplemented feature (e.g. reload)
+# 4 - insufficient privilege
+# 5 - program not installed
+# 6 - program not configured
+#
+# Note that starting an already running service, stopping
+# or restarting a not-running service as well as the restart
+# with force-reload (in case signalling is not supported) are
+# considered a success.
+
 case "$1" in
-  start)
-	echo -n "Binding to the NIS domain... "
-	daemon ypbind
-	echo
-	touch /var/lock/subsys/ypbind
-	;;
-  stop)
-	echo -n "Shuting down NIS services: "
-	killproc ypbind
-        # Remove binding files, if ypbind "forget" it
-	rm -f /var/yp/binding/*
-	rm -f /var/lock/subsys/ypbind
-	echo
-	;;
-  status)
-	status ypbind
-	;;
-  restart)
-	$0 stop
-	$0 start
-	;;
-  *)
-	echo "*** Usage: ypbind {start|stop|status|restart}"
-	exit 1
-esac
+    start)
+	echo -n "Starting ypbind"
+	## If the domainname is not set, skip starting of ypbind
+	## and return with "program not configured"
+        /bin/ypdomainname &> /dev/null
+        if [ $? -ne 0 -o -z "`/bin/ypdomainname`" ]; then
+	   # Tell the user this has skipped
+           rc_status -s
+           # service is not configured
+           exit 6;
+        fi
 
-exit 0
+	## If we don't have a /etc/yp.conf file, skip starting of
+        ## ypbind and return with "program not configured"
+        ## if you add the -broadcast Option later, comment this out.
+	if [ ! -f /etc/yp.conf ] ; then
+	  # Tell the user this has skipped
+          rc_status -s
+          # service is not configured
+          exit 6;
+        fi
+
+	## Start daemon with startproc(8). If this fails
+	## the echo return value is set appropriate.
+
+	# startproc should return 0, even if service is
+	# already running to match LSB spec.
+	startproc $YPBIND_BIN
+        if [ $? -eq 0 ]; then
+            notfound=1
+            for i in 1 2 3 4 5 6 7 8 9 10; do
+                ypwhich &>/dev/null && { notfound=0 ; break; };
+                echo -n " ."
+                sleep 1;
+            done
+            if [ $notfound -eq 1 ]; then
+                echo -n "  No NIS server found";
+            fi
+        else
+            rc_failed
+        fi
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    stop)
+	echo -n "Shutting down ypbind"
+	## Stop daemon with killproc(8) and if this fails
+	## set echo the echo return value.
+
+	killproc -TERM $YPBIND_BIN
+        rm -f /var/yp/binding/* /var/run/ypbind.pid
+
+	# Remember status and be verbose
+	rc_status -v
+	;;
+    try-restart)
+	## Stop the service and if this succeeds (i.e. the
+	## service was running before), start it again.
+	$0 stop  && sleep 1 && $0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    restart)
+	## Stop the service and regardless of whether it was
+	## running or not, start it again.
+	$0 stop
+	sleep 1
+	$0 start
+
+	# Remember status and be quiet
+	rc_status
+	;;
+    force-reload)
+	## Signal the daemon to reload its config. Most daemons
+	## do this on signal 1 (SIGHUP).
+	## If it does not support it, restart.
+
+	echo -n "Reload service ypbind"
+	## if it supports it:
+	killproc -HUP $YPBIND_BIN
+	rc_status -v
+	;;
+    reload)
+	## Like force-reload, but if daemon does not support
+	## signalling, do nothing (!)
+
+	# If it supports signalling:
+	echo -n "Reload service ypbind"
+	killproc -HUP $YPBIND_BIN
+	rc_status -v
+	;;
+    status)
+	echo -n "Checking for ypbind: "
+	## Check status with checkproc(8), if process is running
+	## checkproc will return with exit status 0.
+
+	# Status has a slightly different for the status command:
+	# 0 - service running
+	# 1 - service dead, but /var/run/  pid  file exists
+	# 2 - service dead, but /var/lock/ lock file exists
+	# 3 - service not running
+
+	# If checkproc would return LSB compliant ret values,
+	# things could be a little bit easier here. This will
+	# probably soon be the case ...
+	checkproc $YPBIND_BIN; rc=$?
+	if test $rc = 0; then echo "OK"
+	else echo "No process"
+		if test -e /var/run/ypbind.pid;
+		then exit 1
+		else exit 3
+		fi
+	fi
+	#rc_status
+	;;
+    probe)
+	## Optional: Probe for the necessity of a reload,
+	## give out the argument which is required for a reload.
+
+	test /etc/yp.conf -nt /var/run/ypbind.pid && echo reload
+	;;
+    *)
+	echo "Usage: $0 {start|stop|status|try-restart|restart|force-reload|reload|probe}"
+	exit 1
+	;;
+esac
+rc_exit
+

@@ -1,3 +1,31 @@
+2001-03-11  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.8
+	
+	* po/Makefile.in.in: Add DESTDIR support.
+
+	* configure.in: Don't set CFLAGS, bump version number to 1.8,
+	  remove USE_PIDFILE variable.
+
+	* ypbind-mt.spec: removed.
+
+	* etc/ypbind.init: Update to a LSB ready version, still needs
+	  SuSEs /etc/rc.status.
+
+	* config.sub: Update to newest version.
+	* config.guess: Likewise.
+	
+	* src/Makefile.am: Remove USE_PIDFILE
+
+	* src/ypbind-mt.c: Remove USE_PIDFILE ifdefs, it is always set.
+	
+2000-11-24  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_svc.c (ypbindprog_1): domainname argument is a pointer.
+
+	* src/serv_list.c (ping_all): Remove bogus break (patch by Miquel 
+	  von Smoorenburg).
+
 2000-09-25  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.7

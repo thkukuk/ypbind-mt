@@ -25,7 +25,7 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
 {
   union
     {
-      olddomainname ypbindproc_olddomain_1_arg;
+      olddomainname *ypbindproc_olddomain_1_arg;
       ypbind_oldsetdom ypbindproc_oldsetdom_1_arg;
     }
   argument;
@@ -76,10 +76,10 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
     {
       svcerr_systemerr (transp);
     }
-  if (!svc_freeargs (transp, xdr_argument, (caddr_t) & argument))
+  if (!svc_freeargs (transp, xdr_argument, (caddr_t) &argument))
     log_msg (LOG_ERR, _("unable to free arguments"));
 
-  if (!ypbindprog_1_freeresult (transp, xdr_result, (caddr_t) & result))
+  if (!ypbindprog_1_freeresult (transp, xdr_result, (caddr_t) &result))
     log_msg (LOG_ERR, _("unable to free results"));
 
   return;

@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/ypbind-mt.c)
-AM_INIT_AUTOMAKE(ypbind-mt, 1.7)
+AM_INIT_AUTOMAKE(ypbind-mt, 1.8)
 AM_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT(/usr)
 
@@ -12,7 +12,6 @@ AC_SUBST(VERSION)
 
 AC_CANONICAL_HOST
 
-test "$CFLAGS" = "" && CFLAGS="-O6"
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -61,8 +60,6 @@ AC_CHECK_FUNCS(getline getdelim vsyslog res_gethostbyname _dns_gethostbyname)
 dnl internationalization macros
 AM_GNU_GETTEXT
 
-dnl By default, use PID file locking
-USE_PIDFILE=1
 dnl By default, don't send a ping to all server at the same time
 dnl It doesn't work in the moment
 USE_BROADCAST=0
@@ -71,7 +68,20 @@ dnl glibc 2.0 needs our patched clnt_udp.c, glibc 2.1 not.
 dnl The following check is stupid, since the glibc could be ported to
 dnl other platforms in the future, but in the moment, it works.
 case "$host_os" in
-  linux-gnu)
+  linux*libc1)
+    dnl send a ping to all server at the same time:
+    USE_BROADCAST=1
+    LIBOBJS="$LIBOBJS clnt_udp.o"
+    echo "***"
+    echo "***"
+    echo "*** ypbind-mt is currently not well tested with Linux libc5."
+    echo "*** libc5 is not really threadsafe, and you need a working"
+    echo "*** pthread package for it. I'm using linuxthreads 0.7.1 for"
+    echo "*** development."
+    echo "***"
+    echo "***"
+    ;;
+  linux*)
     dnl send a ping to all server at the same time:
     USE_BROADCAST=1
     dnl Test, if we have glibc 2.0 or glibc 2.1
@@ -87,40 +97,6 @@ case "$host_os" in
 	   AC_MSG_RESULT("no")
 	   LIBOBJS="$LIBOBJS clnt_udp.o"
 	fi
-
-    dnl check for recent Linux Kernel
-	AC_MSG_CHECKING(kernel version)
-	changequote(,)dnl
-	case `uname -r 2>&1` in
-  	   0.* | 1.* | 2.0.* | 2.1.[0-9] | 2.1.[0-8]? )
-   	   kernel_is_recent="has thread/file locking bug"
-	   USE_PIDFILE=0
-           ;;
-  	*)
-    	   kernel_is_recent="ok"
-    	   ;;
-	esac
-	changequote([,])dnl
-	AC_MSG_RESULT($kernel_is_recent)
-	if test "$kernel_is_recent" != "ok"; then
-  	   AC_MSG_WARN([
-	   *** Your kernel has the thread/file locking bug.
-	   *** For Pidfile locking, you need at least Linux kernel 2.1.90.
-	   ])
-	fi
-    ;;
-  linux-gnulibc1)
-    dnl send a ping to all server at the same time:
-    USE_BROADCAST=1
-    LIBOBJS="$LIBOBJS clnt_udp.o"
-    echo "***"
-    echo "***"
-    echo "*** ypbind-mt is currently not well tested with Linux libc5."
-    echo "*** libc5 is not really threadsafe, and you need a working"
-    echo "*** pthread package for it. I'm using linuxthreads 0.7.1 for"
-    echo "*** development."
-    echo "***"
-    echo "***"
     ;;
   solaris2.6 | solaris2.5.1 | solaris2.5)
     dnl Solaris 2 works without special hacking if it has the pthread library
@@ -142,7 +118,6 @@ case "$host_os" in
 esac
 
 AC_SUBST(LIBOBJS)
-AC_SUBST(USE_PIDFILE)
 AC_SUBST(USE_BROADCAST)
 
 AC_OUTPUT([Makefile intl/Makefile lib/Makefile src/Makefile man/Makefile \

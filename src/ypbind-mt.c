@@ -56,7 +56,6 @@
 
 #define _(String) gettext (String)
 
-#if USE_PIDFILE
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
@@ -66,7 +65,6 @@
 #ifndef _YPBIND_PIDFILE
 #define _YPBIND_PIDFILE _PATH_VARRUN"ypbind.pid"
 #endif
-#endif /* USE_PIDFILE */
 
 char *domain = NULL;
 const char *configfile = "/etc/yp.conf";
@@ -75,9 +73,7 @@ int use_broadcast = 0;
 int broken_server = 0;
 int ping_interval = 20;
 int port = -1;
-#if USE_PIDFILE
 static int lock_fd;
-#endif /* USE_PIDFILe */
 
 static void
 unlink_bindingdir (void)
@@ -223,7 +219,6 @@ load_config (int do_add)
   return 0;
 }
 
-#if USE_PIDFILE
 /* Create a pidfile on startup */
 static void
 create_pidfile (void)
@@ -304,15 +299,12 @@ create_pidfile (void)
 
   return;
 }
-#endif /* USE_PIDFILE */
 
 /* Thread for handling signals */
 static void *
 sig_handler (void *v_param  __attribute__ ((unused)))
 {
-#if USE_PIDFILE
   struct flock lock;
-#endif /* USE_PIDFILE */
   sigset_t sigs_to_catch;
   int caught;
 
@@ -342,7 +334,6 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 		     caught);
 	  pmap_unset (YPBINDPROG, YPBINDVERS);
 	  pmap_unset (YPBINDPROG, YPBINDOLDVERS);
-#if USE_PIDFILE
 	  /* unlock pidfile */
 	  lock.l_type = F_UNLCK;
 	  lock.l_start = 0;
@@ -352,7 +343,6 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	    log_msg (LOG_ERR, _("cannot unlock pidfile"));
 	  close (lock_fd);
 	  unlink (_YPBIND_PIDFILE);
-#endif /* USE_PIDFILE */
 	  unlink_bindingdir ();
 	  exit (0);
 	  break;
@@ -559,9 +549,7 @@ main (int argc, char **argv)
   __nss_configure_lookup ("hosts", "files dns");
 #endif /* HAVE___NSS_CONFIGURE_LOOKUP */
 
-#if USE_PIDFILE
   create_pidfile ();
-#endif /* USE_PIDFILE */
 
   sigemptyset (&sigs_to_block);
   sigaddset (&sigs_to_block, SIGCHLD);
@@ -680,9 +668,7 @@ main (int argc, char **argv)
 
   svc_run ();
   log_msg (LOG_ERR, _("svc_run returned."));
-#if USE_PIDFILE
   unlink (_YPBIND_PIDFILE);
-#endif /* USE_PIDFILE */
   exit (1);
   /* NOTREACHED */
 }

@@ -841,8 +841,6 @@ ping_all (struct binding *list)
       timeout.tv_usec = 0;
       clnt_handlep = clntudp_create (&server_addr, YPPROG, YPVERS,
 				     timeout, &sock);
-      if (NULL != clnt_handlep)
-	break;
 
       if (clnt_handlep == NULL)
 	{
