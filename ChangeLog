@@ -4,6 +4,9 @@
 
 	* Update to gettext 0.10.40
 
+	* man/ypbind.8.in: Fix typo, reported by 
+	  Petter Reinholdtsen <petter.reinholdtsen@usit.uio.no>
+
 2001-10-27  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.9

@@ -60,7 +60,7 @@ or read the binding files. The binding files resides in the directory
 and are conventionally named
 .BR [domainname].[version] .
 The supported versions are 1 and 2.
-There could be serveral such files since it is possible for an NIS client
+There could be several such files since it is possible for an NIS client
 to be bound to more then one domain.
 .LP
 After a binding has been established,
