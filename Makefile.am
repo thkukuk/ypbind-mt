@@ -6,9 +6,11 @@
 AUTOMAKE_OPTIONS = 1.4 gnits dist-bzip2
 MAINT_CHARSET = latin1
 #
-SUBDIRS = intl lib src man po
+SUBDIRS = m4  lib src man po
 
 CLEANFILES = *~
 
-EXTRA_DIST = ChangeLog README etc/yp.conf etc/ypbind.init
+EXTRA_DIST = config.rpath  ChangeLog README etc/yp.conf etc/ypbind.init
 
+
+ACLOCAL_AMFLAGS = -I m4

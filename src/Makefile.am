@@ -10,10 +10,10 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@ -s -m 555
 
 CFLAGS = -D_REENTRANT=1 @WARNFLAGS@ @DEFS@ @CFLAGS@ \
 	 -DUSE_BROADCAST=@USE_BROADCAST@
-LDADD = ../lib/libcompat.a @INTLLIBS@
+LDADD = ../lib/libcompat.a @LIBINTL@
 
 localedir = $(datadir)/locale
-INCLUDES = -I../intl -DLOCALEDIR=\"$(localedir)\"
+INCLUDES = -DLOCALEDIR=\"$(localedir)\"
 
 CLEANFILES = *~
 

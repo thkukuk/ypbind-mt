@@ -1,3 +1,21 @@
+2002-04-04  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Add m4.
+	(SUBDIRS): Remove intl.
+	(ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): Add config.rpath.
+	* configure.in (AC_OUTPUT): Add m4/Makefile.
+	(AC_OUTPUT): Remove intl/Makefile.
+
+2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/Makefile.am: Replace INTLLIBS with LIBINTL
+	* acinclude.m4 (AM_WITH_EFENCE): Call AC_DEFINE for WITH_EFENCE
+	with all three arguments.
+
+	* configure.in: Replace LIBOBJS with AC_LIBOBJ, add all three
+	arguments to HAVE_SOCKLEN_T AC_DEFINE.
+
 2002-04-03  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/local.h: Add new prototype for add_server.

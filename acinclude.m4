@@ -10,7 +10,8 @@ AC_ARG_WITH(efence,
 [  --with-efence           use ElectricFence 2.05],
 [if test "$withval" = yes; then
   AC_MSG_RESULT(yes)
-  AC_DEFINE(WITH_EFENCE)
+  AC_DEFINE(WITH_EFENCE,1,
+            [Define if using the ElectricFence package])
   LIBS="$LIBS -lefence"
   LDFLAGS="$LDFLAGS -g"
   CFLAGS="-g"
