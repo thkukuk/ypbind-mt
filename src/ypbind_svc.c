@@ -8,7 +8,6 @@
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #include <string.h>
-#include <malloc.h>
 #include <memory.h>
 #include <syslog.h>
 #include <sys/socket.h>

@@ -39,7 +39,6 @@
 #include <string.h>
 #include <signal.h>
 #include <locale.h>
-#include <malloc.h>
 #include <libintl.h>
 #include <rpc/rpc.h>
 #if defined(HAVE_RPC_SVC_SOC_H)
