@@ -1,7 +1,5 @@
 /* Copyright (c) 1998, 1999 Thorsten Kukuk, Germany
-
    This file is part of ypbind-mt.
-
    Author: Thorsten Kukuk <kukuk@suse.de>
 
    The ypbind-mt are free software; you can redistribute it and/or
@@ -37,24 +35,29 @@
 #include "log_msg.h"
 #include "local.h"
 
+#ifndef _
 #define _(String) gettext (String)
+#endif
 
 bool_t
-ypbindproc_oldnull_1_svc (void *argp, void *result, struct svc_req *rqstp)
+ypbindproc_oldnull_1_svc (void *argp __attribute__ ((unused)), void *result,
+			  struct svc_req *rqstp __attribute__ ((unused)))
 {
   memset (result, 0, sizeof (char *));
   return TRUE;
 }
 
 bool_t
-ypbindproc_null_2_svc (void *argp, void *result, struct svc_req *rqstp)
+ypbindproc_null_2_svc (void *argp __attribute__ ((unused)), void *result,
+		       struct svc_req *rqstp __attribute__ ((unused)))
 {
   memset (result, 0, sizeof (char *));
   return TRUE;
 }
 
 static bool_t
-ypbindproc_domain (char *domain, ypbind_resp *result, struct svc_req *rqstp)
+ypbindproc_domain (char *domain, ypbind_resp *result,
+		   struct svc_req *rqstp __attribute__ ((unused)))
 {
   memset (result, 0, sizeof (ypbind_resp));
   result->ypbind_status = YPBIND_FAIL_VAL;
@@ -148,6 +151,8 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
     log_msg (LOG_DEBUG, "ypbindproc_oldsetdom_1_svc (%s)",
 	     argp->ypoldsetdom_domain);
 
+  memset (result, 0, sizeof (char *));
+
   return ypbindproc_setdom (argp->ypoldsetdom_domain,
 			    &argp->ypoldsetdom_binding,
 			    svc_getcaller (rqstp->rq_xprt));
@@ -161,13 +166,16 @@ ypbindproc_setdom_2_svc (ypbind_setdom *argp, void *result,
     log_msg (LOG_DEBUG, "ypbindproc_setdom_2_svc (%s)",
 	     argp->ypsetdom_domain);
 
+  memset (result, 0, sizeof (char *));
+
   return ypbindproc_setdom (argp->ypsetdom_domain,
 			    &argp->ypsetdom_binding,
 			    svc_getcaller (rqstp->rq_xprt));
 }
 
 int
-ypbindprog_1_freeresult (SVCXPRT *transp, xdrproc_t xdr_result, caddr_t result)
+ypbindprog_1_freeresult (SVCXPRT *transp __attribute__ ((unused)),
+			 xdrproc_t xdr_result, caddr_t result)
 {
   xdr_free (xdr_result, result);
 
@@ -175,7 +183,8 @@ ypbindprog_1_freeresult (SVCXPRT *transp, xdrproc_t xdr_result, caddr_t result)
 }
 
 int
-ypbindprog_2_freeresult (SVCXPRT *transp, xdrproc_t xdr_result, caddr_t result)
+ypbindprog_2_freeresult (SVCXPRT *transp __attribute__ ((unused)),
+			 xdrproc_t xdr_result, caddr_t result)
 {
   xdr_free (xdr_result, result);
 

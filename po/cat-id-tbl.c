@@ -34,7 +34,7 @@ const struct _msg_ent _msg_tbl[] = {
   {"parsed domain '%s' server '%s'", 25},
   {"parsed domain '%s' broadcast", 26},
   {"parsed ypserver %s", 27},
-  {"Entry \"%s\" is not valid, ignore it !", 28},
+  {"Entry \"%s\" is not valid, ignore it!", 28},
   {"No entry found.", 29},
   {"cannot create pidfile %s", 30},
   {"fcntl error: %s", 31},

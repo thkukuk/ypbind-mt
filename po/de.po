@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
-"POT-Creation-Date: 1999-06-01 21:36+0200\n"
-"PO-Revision-Date: 1998-04-01 22:26+02:00\n"
+"POT-Creation-Date: 1999-08-27 10:44+0200\n"
+"PO-Revision-Date: 1999-08-27 11:13+02:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
 "MIME-Version: 1.0\n"
@@ -40,77 +40,77 @@ msgstr "unbekannt"
 msgid "no"
 msgstr "kein "
 
-#: src/serv_list.c:443
+#: src/serv_list.c:445
 #, c-format
 msgid "Unknown host: %s"
 msgstr "Unbekannter Rechner: %s"
 
-#: src/serv_list.c:447
+#: src/serv_list.c:449
 msgid "Host name lookup failure"
 msgstr "Hostname lookup Fehler"
 
-#: src/serv_list.c:450
+#: src/serv_list.c:452
 #, c-format
 msgid "No address associated with name: %s"
 msgstr "Keine Addresse vorhanden für Rechner: %s"
 
-#: src/serv_list.c:454
+#: src/serv_list.c:456
 msgid "Unknown server error"
 msgstr "Unbekanter Server Fehler"
 
-#: src/serv_list.c:457
+#: src/serv_list.c:459
 msgid "gethostbyname: Unknown error"
 msgstr "gethostbyname: Unbekannter Fehler"
 
-#: src/serv_list.c:527 src/serv_list.c:787
+#: src/serv_list.c:531 src/serv_list.c:792
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\""
 
-#: src/serv_list.c:531
+#: src/serv_list.c:535
 #, c-format
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr "Antwort für Domain \"%s\" von unbekantem Server \"%s\""
 
-#: src/serv_list.c:537
+#: src/serv_list.c:541
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port."
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\" vom illegalen Port."
 
-#: src/serv_list.c:700 src/serv_list.c:828
+#: src/serv_list.c:704 src/serv_list.c:833
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr "Ping Host \"%s\", Domain \"%s\""
 
-#: src/serv_list.c:712
+#: src/serv_list.c:717
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr "Server \"%s\" antwortet nicht."
 
-#: src/serv_list.c:849
+#: src/serv_list.c:854
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr "clnt_create für server \"%s\" (domain \"%s\") schlug fehl"
 
-#: src/serv_list.c:870
+#: src/serv_list.c:875
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr "Domain \"%s\" wird nicht von \"%s\" unterstützt"
 
-#: src/serv_list.c:949
+#: src/serv_list.c:954
 msgid "Pinging all active server."
 msgstr "Sende ein Ping zu allen aktiven Servern."
 
-#: src/serv_list.c:951
+#: src/serv_list.c:956
 msgid "Check new for fastest server."
-msgstr ""
+msgstr "Suche erneut den schnellsten Server."
 
-#: src/serv_list.c:979
+#: src/serv_list.c:985
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr "Server für Domain \"%s\" antwortet nicht."
 
-#: src/serv_list.c:985 src/serv_list.c:990
+#: src/serv_list.c:991 src/serv_list.c:996
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr "Server \"%s\" für Domain \"%s\" antwortet nicht."
@@ -138,7 +138,7 @@ msgstr ""
 #: src/ypbind-mt.c:211
 #, c-format
 msgid "Entry \"%s\" is not valid, ignore it !"
-msgstr ""
+msgstr "Der Eintrag \"%s\" ist syntaktisch falsch, er wird ignoriert!"
 
 #: src/ypbind-mt.c:221
 msgid "No entry found."
@@ -150,9 +150,9 @@ msgid "cannot create pidfile %s"
 msgstr "Kann Pidfile %s nicht erzeugen."
 
 #: src/ypbind-mt.c:270
-#, fuzzy, c-format
+#, c-format
 msgid "fcntl error: %s"
-msgstr "fcntl Fehler"
+msgstr "fcntl Fehler: %s"
 
 #: src/ypbind-mt.c:282
 #, c-format
@@ -190,13 +190,10 @@ msgid "Usage:\n"
 msgstr "Aufruf:\n"
 
 #: src/ypbind-mt.c:386
-#, fuzzy
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n"
 "\t  [-no-ping] [-broken-server] [-debug]\n"
-msgstr ""
-"        ypbind [-broadcast | -ypset | -ypsetme] [-p Port] [-f configfile] "
-"[-no_ping] [-broken_server] [-debug]\n"
+msgstr "        ypbind [-broadcast | -ypset | -ypsetme] [-p Port] [-f configfile] [-no-ping] [-broken-server] [-debug]\n"
 
 #: src/ypbind-mt.c:387
 msgid "\typbind -c [-f configfile]\n"
@@ -209,7 +206,7 @@ msgstr ""
 #: src/ypbind-mt.c:457
 #, c-format
 msgid "Config file %s is ok.\n"
-msgstr ""
+msgstr "Konfigurationsdatei %s ist in Ordnung.\n"
 
 #: src/ypbind-mt.c:465
 msgid "domainname not set - aborting.\n"
@@ -220,14 +217,14 @@ msgid "ypbind must be run as root\n"
 msgstr "ypbind muß als root gestartet werden.\n"
 
 #: src/ypbind-mt.c:479 src/ypbind-mt.c:488
-#, fuzzy, c-format
+#, c-format
 msgid "Could not create %s: %s\n"
-msgstr "Kann %s nicht erzeugen: %s"
+msgstr "Kann %s nicht erzeugen: %s\n"
 
 #: src/ypbind-mt.c:495
-#, fuzzy, c-format
+#, c-format
 msgid "Could not change to directory %s: %s\n"
-msgstr "Kann %s nicht erzeugen: %s"
+msgstr "Fehler beim Wechseln in das Verzeichnis %s: %s\n"
 
 #: src/ypbind-mt.c:504
 msgid "No NIS server and no -broadcast option specified.\n"
@@ -294,31 +291,31 @@ msgstr ""
 
 #: src/ypbind-mt.c:684
 msgid "svc_run returned."
-msgstr ""
+msgstr "svc_run hat sich beendet."
 
-#: src/ypbind_server.c:65 src/ypbind_server.c:108
+#: src/ypbind_server.c:68 src/ypbind_server.c:111
 #, c-format
 msgid "Domain name '%s' has embedded slash -- rejecting."
 msgstr "Domainname \"%s\" enthält einen Schrägstrich -- zurückgewiesen."
 
-#: src/ypbind_server.c:75
+#: src/ypbind_server.c:78
 msgid "Status: YPBIND_FAIL_VAL"
 msgstr "Status: YPBIND_FAIL_VAL"
 
-#: src/ypbind_server.c:77
+#: src/ypbind_server.c:80
 msgid "Status: YPBIND_SUCC_VAL"
 msgstr "Status: YPBIND_SUCC_VAL"
 
-#: src/ypbind_server.c:120
+#: src/ypbind_server.c:123
 #, c-format
 msgid "User from '%s' try's to change the binding."
 msgstr "User vom host \"%s\" versucht das Binding to ändern."
 
-#: src/ypbind_server.c:129
+#: src/ypbind_server.c:132
 msgid "Changing the binding is not allowed."
 msgstr "Das ändern des Bindings ist nicht erlaubt."
 
-#: src/ypbind_server.c:134
+#: src/ypbind_server.c:137
 msgid "SETDOM request doesn't come from reserved port."
 msgstr "Der SETDOM Request kam nicht von einem reservierten Port."
 

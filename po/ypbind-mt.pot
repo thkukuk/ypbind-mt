@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-06-01 21:36+0200\n"
+"POT-Creation-Date: 1999-08-27 11:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,77 +40,77 @@ msgstr ""
 msgid "no"
 msgstr ""
 
-#: src/serv_list.c:443
+#: src/serv_list.c:445
 #, c-format
 msgid "Unknown host: %s"
 msgstr ""
 
-#: src/serv_list.c:447
+#: src/serv_list.c:449
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/serv_list.c:450
+#: src/serv_list.c:452
 #, c-format
 msgid "No address associated with name: %s"
 msgstr ""
 
-#: src/serv_list.c:454
+#: src/serv_list.c:456
 msgid "Unknown server error"
 msgstr ""
 
-#: src/serv_list.c:457
+#: src/serv_list.c:459
 msgid "gethostbyname: Unknown error"
 msgstr ""
 
-#: src/serv_list.c:527 src/serv_list.c:787
+#: src/serv_list.c:531 src/serv_list.c:792
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
 
-#: src/serv_list.c:531
+#: src/serv_list.c:535
 #, c-format
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr ""
 
-#: src/serv_list.c:537
+#: src/serv_list.c:541
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port."
 msgstr ""
 
-#: src/serv_list.c:700 src/serv_list.c:828
+#: src/serv_list.c:704 src/serv_list.c:833
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:712
+#: src/serv_list.c:717
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:849
+#: src/serv_list.c:854
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:870
+#: src/serv_list.c:875
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:949
+#: src/serv_list.c:954
 msgid "Pinging all active server."
 msgstr ""
 
-#: src/serv_list.c:951
+#: src/serv_list.c:956
 msgid "Check new for fastest server."
 msgstr ""
 
-#: src/serv_list.c:979
+#: src/serv_list.c:985
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:985 src/serv_list.c:990
+#: src/serv_list.c:991 src/serv_list.c:996
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr ""
@@ -137,7 +137,7 @@ msgstr ""
 
 #: src/ypbind-mt.c:211
 #, c-format
-msgid "Entry \"%s\" is not valid, ignore it !"
+msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr ""
 
 #: src/ypbind-mt.c:221
@@ -291,29 +291,29 @@ msgstr ""
 msgid "svc_run returned."
 msgstr ""
 
-#: src/ypbind_server.c:65 src/ypbind_server.c:108
+#: src/ypbind_server.c:68 src/ypbind_server.c:111
 #, c-format
 msgid "Domain name '%s' has embedded slash -- rejecting."
 msgstr ""
 
-#: src/ypbind_server.c:75
+#: src/ypbind_server.c:78
 msgid "Status: YPBIND_FAIL_VAL"
 msgstr ""
 
-#: src/ypbind_server.c:77
+#: src/ypbind_server.c:80
 msgid "Status: YPBIND_SUCC_VAL"
 msgstr ""
 
-#: src/ypbind_server.c:120
+#: src/ypbind_server.c:123
 #, c-format
 msgid "User from '%s' try's to change the binding."
 msgstr ""
 
-#: src/ypbind_server.c:129
+#: src/ypbind_server.c:132
 msgid "Changing the binding is not allowed."
 msgstr ""
 
-#: src/ypbind_server.c:134
+#: src/ypbind_server.c:137
 msgid "SETDOM request doesn't come from reserved port."
 msgstr ""
 

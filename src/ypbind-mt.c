@@ -208,7 +208,7 @@ load_config (int do_add)
 	      continue;
 	    }
 	}
-      log_msg (LOG_ERR, _("Entry \"%s\" is not valid, ignore it !"), cp);
+      log_msg (LOG_ERR, _("Entry \"%s\" is not valid, ignore it!"), cp);
     }
   fclose (fp);
 
@@ -310,7 +310,7 @@ create_pidfile (void)
 
 /* Thread for handling signals */
 static void *
-sig_handler (void *v_param)
+sig_handler (void *v_param  __attribute__ ((unused)))
 {
 #if USE_PIDFILE
   struct flock lock;

@@ -7,6 +7,7 @@ Please send bug reports, questions and suggestions to
 
 
 Version 1.6
+* Use glibc 2.1.2 interface for reentrant functions
 * Fix naming of options
 * Give away controlling tty
 

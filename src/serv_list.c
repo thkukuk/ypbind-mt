@@ -88,8 +88,8 @@ static int max_domains = 0;
 static pthread_rdwr_t domainlock = PTHREAD_RDWR_INITIALIZER;
 static pthread_mutex_t search_lock = PTHREAD_MUTEX_INITIALIZER;
 
-static void do_broadcast (struct binding *bind);
-static void ping_all (struct binding *bind);
+static void do_broadcast (struct binding *list);
+static void ping_all (struct binding *list);
 
 void
 change_binding (const char *domain, ypbind_binding *binding)
@@ -568,17 +568,17 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
 }
 
 static void
-do_broadcast (struct binding *bind)
+do_broadcast (struct binding *list)
 {
-  char *domain = bind->domain;
+  char *domain = list->domain;
   bool_t out;
   enum clnt_stat status;
 
   pthread_rdwr_wlock_np (&domainlock);
-  bind->active = -1;
+  list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
-  in_use = bind; /* global variable for eachresult */
+  in_use = list; /* global variable for eachresult */
   status = clnt_broadcast (YPPROG, YPVERS, YPPROC_DOMAIN_NONACK,
 			   (xdrproc_t) ypbind_xdr_domainname, (void *)&domain,
 			   (xdrproc_t) xdr_bool, (void *)&out,
@@ -586,13 +586,13 @@ do_broadcast (struct binding *bind)
 
   if (status != RPC_SUCCESS)
     {
-      close_bindingfile(bind->domain);
+      close_bindingfile(list->domain);
       log_msg (LOG_ERR, "broadcast: %s.", clnt_sperrno(status));
     }
   else
     {
       pthread_rdwr_rlock_np (&domainlock);
-      update_bindingfile (bind);
+      update_bindingfile (list);
       pthread_rdwr_runlock_np (&domainlock);
     }
 }
@@ -611,7 +611,7 @@ static u_short
 __pmap_getport (struct sockaddr_in *address, u_long program, u_long version,
 		u_int protocol)
 {
-  u_short port = 0;
+  u_short rport = 0;
   int sock = -1;
   register CLIENT *client;
   struct pmap parms;
@@ -629,12 +629,12 @@ __pmap_getport (struct sockaddr_in *address, u_long program, u_long version,
       parms.pm_port = 0;  /* not needed or used */
       if (CLNT_CALL(client, PMAPPROC_GETPORT, (xdrproc_t) xdr_pmap,
 		    (caddr_t) &parms, (xdrproc_t) xdr_u_short,
-		    (caddr_t) &port, tottimeout) != RPC_SUCCESS)
+		    (caddr_t) &rport, tottimeout) != RPC_SUCCESS)
 	{
 	  rpc_createerr.cf_stat = RPC_PMAPFAILURE;
 	  clnt_geterr(client, &rpc_createerr.cf_error);
 	}
-      else if (port == 0)
+      else if (rport == 0)
 	{
 	  rpc_createerr.cf_stat = RPC_PROGNOTREGISTERED;
 	}
@@ -643,7 +643,7 @@ __pmap_getport (struct sockaddr_in *address, u_long program, u_long version,
   if (sock != -1)
     close(sock);
   address->sin_port = 0;
-  return port;
+  return rport;
 }
 
 
@@ -674,23 +674,23 @@ struct findserv_req
 };
 
 static void
-ping_all (struct binding *bind)
+ping_all (struct binding *list)
 {
   const struct timeval TIMEOUT50 = {5, 0};
   const struct timeval TIMEOUT00 = {0, 0};
   CLIENT *clnt;
   struct findserv_req **pings;
-  struct sockaddr_in sin, *any = NULL;
+  struct sockaddr_in s_in, *any = NULL;
   int found = -1;
   u_int32_t xid_seed, xid_lookup;
   int sock, dontblock = 1;
   bool_t clnt_res;
   u_long i, pings_count = 0;
   struct cu_data *cu;
-  char *domain = bind->domain;
+  char *domain = list->domain;
 
   pthread_rdwr_wlock_np (&domainlock);
-  bind->active = -1;
+  list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
   pings = malloc (sizeof (struct findserv_req *) * _MAXSERVER);
@@ -698,28 +698,29 @@ ping_all (struct binding *bind)
     return;
   xid_seed = (u_int32_t) (time (NULL) ^ getpid ());
 
-  for (i = 0; bind->server[i].host; ++i)
+  for (i = 0; list->server[i].host; ++i)
     {
       if (debug_flag)
 	log_msg (LOG_DEBUG, _("ping host '%s', domain '%s'"),
-		 bind->server[i].host, bind->domain);
+		 list->server[i].host, list->domain);
 
-      memset (&sin, 0, sizeof (struct sockaddr_in));
-      memcpy (&sin.sin_addr, &(bind->server[i].addr), sizeof (struct in_addr));
-      sin.sin_family = bind->server[i].family;
-      sin.sin_port =
-	htons (__pmap_getport (&sin, YPPROG, YPVERS, IPPROTO_UDP));
-      bind->server[i].port = sin.sin_port;
-      if (sin.sin_port == 0)
+      memset (&s_in, 0, sizeof (struct sockaddr_in));
+      memcpy (&s_in.sin_addr, &(list->server[i].addr),
+	      sizeof (struct in_addr));
+      s_in.sin_family = list->server[i].family;
+      s_in.sin_port =
+	htons (__pmap_getport (&s_in, YPPROG, YPVERS, IPPROTO_UDP));
+      list->server[i].port = s_in.sin_port;
+      if (s_in.sin_port == 0)
 	{
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG, _("host '%s' doesn't answer."),
-		     bind->server[i].host);
+		     list->server[i].host);
 	  continue;
 	}
 
       pings[pings_count] = calloc (1, sizeof (struct findserv_req));
-      memcpy (&pings[pings_count]->sin, &sin, sizeof(struct sockaddr_in));
+      memcpy (&pings[pings_count]->sin, &s_in, sizeof(struct sockaddr_in));
       any = &pings[pings_count]->sin;
       pings[pings_count]->xid = xid_seed;
       pings[pings_count]->server_nr = i;
@@ -774,22 +775,22 @@ ping_all (struct binding *bind)
       if (pings[i]->xid == xid_lookup)
         {
 	  pthread_rdwr_wlock_np (&domainlock);
-          bind->active = pings[i]->server_nr;
+          list->active = pings[i]->server_nr;
 
 	  sock = RPC_ANYSOCK;
-	  bind->client_handle =
+	  list->client_handle =
 	    clntudp_create (&(pings[i]->sin),
 			    YPPROG, YPVERS, TIMEOUT50, &sock);
 	  /* XXX Missing NULL check here. But should not
 	     happen, we have got an answer from the server. */
 	  pthread_rdwr_wunlock_np (&domainlock);
 	  pthread_rdwr_rlock_np (&domainlock);
-	  update_bindingfile (bind);
+	  update_bindingfile (list);
 	  pthread_rdwr_runlock_np (&domainlock);
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG,
 		     _("Answer for domain '%s' from server '%s'"),
-		     domain, bind->server[bind->active].host);
+		     domain, list->server[list->active].host);
           found = 1;
         }
     }
@@ -802,7 +803,7 @@ ping_all (struct binding *bind)
   free (pings);
 
   if (!found)
-    close_bindingfile(bind->domain);
+    close_bindingfile(list->domain);
 
   return;
 }
@@ -810,9 +811,9 @@ ping_all (struct binding *bind)
 #else /* Don't send a ping to all server at the same time */
 
 static void
-ping_all (struct binding *bind)
+ping_all (struct binding *list)
 {
-  char *domain = bind->domain;
+  char *domain = list->domain;
   struct sockaddr_in server_addr;
   int sock;
   bool_t out;
@@ -822,22 +823,22 @@ ping_all (struct binding *bind)
   int i = 0;
 
   pthread_rdwr_wlock_np (&domainlock);
-  bind->active = -1;
+  list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
-  while (bind->server[i].host != NULL)
+  while (list->server[i].host != NULL)
     {
 
       if (debug_flag)
         log_msg (LOG_DEBUG, _("ping host '%s', domain '%s'"),
-                 bind->server[i].host, bind->domain);
+                 list->server[i].host, list->domain);
 
 
       memset((char *)&server_addr, 0, sizeof server_addr);
-      server_addr.sin_family = bind->server[i].family;
+      server_addr.sin_family = list->server[i].family;
       server_addr.sin_port = htons(0);
       sock = RPC_ANYSOCK;
-      memcpy (&server_addr.sin_addr, &bind->server[i].addr,
+      memcpy (&server_addr.sin_addr, &list->server[i].addr,
 	      sizeof (struct in_addr));
       timeout.tv_sec = 1;
       timeout.tv_usec = 0;
@@ -851,7 +852,7 @@ ping_all (struct binding *bind)
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG,
 		     _("clnt_create for server '%s' (domain '%s') failed"),
-		     bind->server[i], domain);
+		     list->server[i], domain);
 	  ++i;
 	  continue;
 	}
@@ -864,7 +865,7 @@ ping_all (struct binding *bind)
       if (RPC_SUCCESS != status)
         {
           log_msg (LOG_ERR, "%s", clnt_sperror(clnt_handlep,
-					       bind->server[i].host));
+					       list->server[i].host));
           clnt_destroy(clnt_handlep);
 	  ++i;
 	  continue;
@@ -872,21 +873,21 @@ ping_all (struct binding *bind)
       else if (out != TRUE)
         {
           log_msg (LOG_ERR, _("domain '%s' not served by '%s'"),
-                   domain, bind->server[i].host);
+                   domain, list->server[i].host);
           clnt_destroy(clnt_handlep);
 	  ++i;
 	  continue;
         }
       else
         {
-	  memcpy (&(bind->server[i].port), &server_addr.sin_port,
+	  memcpy (&(list->server[i].port), &server_addr.sin_port,
 		  sizeof (unsigned short int));
-          bind->client_handle = clnt_handlep;
+          list->client_handle = clnt_handlep;
           pthread_rdwr_wlock_np (&domainlock);
-          bind->active = i;
+          list->active = i;
           pthread_rdwr_wunlock_np (&domainlock);
           pthread_rdwr_rlock_np (&domainlock);
-          update_bindingfile (bind);
+          update_bindingfile (list);
           pthread_rdwr_runlock_np (&domainlock);
           return;
         }
@@ -894,7 +895,7 @@ ping_all (struct binding *bind)
       ++i;
       if (i == _MAXSERVER)
         {
-          close_bindingfile(bind->domain);
+          close_bindingfile(list->domain);
           return;
         }
     }
@@ -922,7 +923,7 @@ do_binding (void)
    a server doesn't answer or tell us, that he doesn't serv this domain
    any longer, we mark it as inactive and try to find a new server */
 void *
-test_bindings (void *param)
+test_bindings (void *param __attribute__ ((unused)))
 {
   static int success = 0;
   int i, lastcheck = 0;
@@ -958,21 +959,22 @@ test_bindings (void *param)
       for (i = 0; i < max_domains; ++i)
 	{
 	  char *domain = domainlist[i].domain;
-	  bool_t out;
-	  enum clnt_stat status;
-	  struct timeval timeout;
+	  bool_t out = TRUE;
+	  enum clnt_stat status = RPC_SUCCESS;
 
 	  if (domainlist[i].active != -1)
 	    {
 	      if (lastcheck)
 		{
-		  timeout.tv_sec = 3;
-		  timeout.tv_usec = 0;
+		  struct timeval time_out;
+
+		  time_out.tv_sec = 3;
+		  time_out.tv_usec = 0;
 		  status =
 		    clnt_call(domainlist[i].client_handle,
 			      YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
 			      (caddr_t) &domain, (xdrproc_t) xdr_bool,
-			      (caddr_t) &out, timeout);
+			      (caddr_t) &out, time_out);
 		}
 	      if (lastcheck == 0 || status != RPC_SUCCESS || out != TRUE)
 		{

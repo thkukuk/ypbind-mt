@@ -1,3 +1,12 @@
+1999-08-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_server.c: Mark unused parameters as unused.
+
+	* src/ypbind-mt.c (sig_handler): Mark parameter as unused.
+
+	* src/serv_list.c: Fix uninitialized variable, fix compiler
+	  warnings.
+
 1999-08-04  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/serv_list.c: gethostbyname_r/gethostbyaddr_r return code has
