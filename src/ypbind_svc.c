@@ -25,7 +25,7 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
 {
   union
     {
-      olddomainname *ypbindproc_olddomain_1_arg;
+      domainname ypbindproc_olddomain_1_arg;
       ypbind_oldsetdom ypbindproc_oldsetdom_1_arg;
     }
   argument;
@@ -48,7 +48,7 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
       break;
 
     case YPBINDPROC_OLDDOMAIN:
-      xdr_argument = (xdrproc_t) ypbind_xdr_olddomainname;
+      xdr_argument = (xdrproc_t) ypbind_xdr_domainname;
       xdr_result = (xdrproc_t) ypbind_xdr_resp;
       local = (bool_t (*)(char *, void *, struct svc_req *))
 	ypbindproc_olddomain_1_svc;

@@ -10,14 +10,6 @@ ypbind_xdr_domainname (XDR *xdrs, domainname *objp)
 }
 
 bool_t
-ypbind_xdr_olddomainname (XDR *xdrs, olddomainname *objp)
-{
-  if (!xdr_string (xdrs, &objp, YPMAXDOMAIN))
-    return FALSE;
-  return TRUE;
-}
-
-bool_t
 ypbind_xdr_resptype (XDR *xdrs, ypbind_resptype *objp)
 {
   if (!xdr_enum (xdrs, (enum_t *) objp))

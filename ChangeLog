@@ -1,3 +1,19 @@
+2001-10-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.9
+
+	* src/ypbind_xdr.c (ypbind_xdr_olddomainname): Removed.
+
+	* src/ypbind.h: Get ride of olddomainname type.
+
+	* src/ypbind_server.c (ypbindproc_olddomain_1_svc): Change
+	  arguments to avoid RPC string pointer problems.
+
+	* src/ypbind_svc.c (ypbindprog_1): Use type domainname
+	  instead of olddomainname.
+
+	* configure.in: Remove quotes from AC_MSG_RESULT arguments
+
 2001-10-10  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind-mt.c: sig_handler now creates the pidfile, main

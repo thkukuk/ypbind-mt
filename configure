@@ -1252,7 +1252,7 @@ fi
 
 # Define the identity of the package.
 PACKAGE=ypbind-mt
-VERSION=1.8.99
+VERSION=1.9
 
 cat >>confdefs.h <<EOF
 #define PACKAGE "$PACKAGE"
@@ -2963,15 +2963,15 @@ SOCKLEN_T=no
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 if test x"$SOCKLEN_T" = x"yes"; then
-   echo "$as_me:2966: result: \"yes\"" >&5
-echo "${ECHO_T}\"yes\"" >&6
+   echo "$as_me:2966: result: yes" >&5
+echo "${ECHO_T}yes" >&6
    cat >>confdefs.h <<\EOF
 #define HAVE_SOCKLEN_T 1
 EOF
 
 else
-   echo "$as_me:2973: result: \"no\"" >&5
-echo "${ECHO_T}\"no\"" >&6
+   echo "$as_me:2973: result: no" >&5
+echo "${ECHO_T}no" >&6
 fi
 
 ac_ext=c
@@ -5263,11 +5263,11 @@ CLNTUDPSRC=no
 fi
 rm -f conftest.$ac_objext conftest.$ac_ext
 	if test x"$CLNTUDPSRC" = x"yes"; then
-	   echo "$as_me:5266: result: \"yes\"" >&5
-echo "${ECHO_T}\"yes\"" >&6
+	   echo "$as_me:5266: result: yes" >&5
+echo "${ECHO_T}yes" >&6
 	else
-	   echo "$as_me:5269: result: \"no\"" >&5
-echo "${ECHO_T}\"no\"" >&6
+	   echo "$as_me:5269: result: no" >&5
+echo "${ECHO_T}no" >&6
 	   LIBOBJS="$LIBOBJS clnt_udp.o"
 	fi
     ;;

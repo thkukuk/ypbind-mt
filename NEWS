@@ -5,10 +5,11 @@ Copyright (C) 1998, 1999, 2001 Thorsten Kukuk
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
 
-Version 1.8.99
+Version 1.9
 * Fix problems with locking
 * Fix problems with domain bounding errors
 * Create pid file with pid of signal handler thread
+* Fix protocol V1 domainname handling
 
 Version 1.8
 * Makefile fixes

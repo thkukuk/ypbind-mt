@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000 Thorsten Kukuk, Germany
+/* Copyright (c) 1998, 1999, 2000, 2001 Thorsten Kukuk, Germany
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -82,13 +82,13 @@ ypbindproc_domain (char *domain, ypbind_resp *result,
 }
 
 bool_t
-ypbindproc_olddomain_1_svc (olddomainname *argp, ypbind_resp *result,
+ypbindproc_olddomain_1_svc (domainname *argp, ypbind_resp *result,
 			    struct svc_req *rqstp)
 {
   if (debug_flag)
-    log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s)", argp);
+    log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s)", *argp);
 
-  return ypbindproc_domain (argp, result, rqstp);
+  return ypbindproc_domain (*argp, result, rqstp);
 }
 
 bool_t
