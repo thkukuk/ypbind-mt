@@ -462,7 +462,9 @@ add_server (const char *domain, const char *host)
 	  if (hent->h_addr_list[0] == NULL)
 	    return;
 	  entry->server[active].family = hent->h_addrtype;
-	  /* XXX host could have multiple interfaces */
+	  /* XXX host could have multiple interfaces. We should
+	     try to use the interface on the local network.
+	     If there is none, use the first one. */
 	  memcpy (&entry->server[active].addr, hent->h_addr_list[0],
 		  hent->h_length);
 	}
@@ -774,7 +776,8 @@ ping_all (struct binding *bind)
 	  bind->client_handle =
 	    clntudp_create (&(pings[i]->sin),
 			    YPPROG, YPVERS, TIMEOUT50, &sock);
-	  /* XXX Missing NULL check here */
+	  /* XXX Missing NULL check here. But should not
+	     happen, we have got an answer from the server. */
 	  pthread_rdwr_wunlock_np (&domainlock);
 	  pthread_rdwr_rlock_np (&domainlock);
 	  update_bindingfile (bind);
@@ -918,7 +921,7 @@ void *
 test_bindings (void *param)
 {
   static int success = 0;
-  int i;
+  int i, lastcheck = 0;
 
   do_binding ();
 
@@ -929,10 +932,24 @@ test_bindings (void *param)
     {
       sleep (ping_interval);
 
+      /* Check, if ping_interval was changed through a SIGHUP.
+	 Not possible in the moment, but maybe in the future. */
+      if (ping_interval < 1)
+	pthread_exit (&success);
+
+      lastcheck += ping_interval;
+      if (lastcheck >= 900) /* 900 = 15min. */
+	lastcheck = 0;
+
       pthread_rdwr_rlock_np (&domainlock);
 
       if (debug_flag)
-	log_msg (LOG_DEBUG, _("Pinging all active server."));
+	{
+	  if (lastcheck)
+	    log_msg (LOG_DEBUG, _("Pinging all active server."));
+	  else
+	    log_msg (LOG_DEBUG, _("Check new for fastest server."));
+	}
 
       for (i = 0; i < max_domains; ++i)
 	{
@@ -943,16 +960,19 @@ test_bindings (void *param)
 
 	  if (domainlist[i].active != -1)
 	    {
-	      timeout.tv_sec = 3;
-	      timeout.tv_usec = 0;
-	      status =
-		clnt_call(domainlist[i].client_handle,
-			  YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
-			  (caddr_t) &domain, (xdrproc_t) xdr_bool, (caddr_t) &out,
-			  timeout);
-	      if (status != RPC_SUCCESS || out != TRUE)
+	      if (lastcheck)
 		{
-		  if (debug_flag)
+		  timeout.tv_sec = 3;
+		  timeout.tv_usec = 0;
+		  status =
+		    clnt_call(domainlist[i].client_handle,
+			      YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
+			      (caddr_t) &domain, (xdrproc_t) xdr_bool,
+			      (caddr_t) &out, timeout);
+		}
+	      if (lastcheck == 0 || status != RPC_SUCCESS || out != TRUE)
+		{
+		  if (debug_flag && lastcheck)
 		    {
 		      if (domainlist[i].use_broadcast)
 			log_msg (LOG_DEBUG,
@@ -972,6 +992,8 @@ test_bindings (void *param)
 				     domain);
 			}
 		    }
+		  lastcheck = 0; /* If we need a new server before the TTL expires,
+				    reset it. */
 
 		  /* We have the read lock, but we need the write lock for
 		     changes :-( */

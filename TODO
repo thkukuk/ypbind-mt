@@ -1,7 +1,6 @@
 Things to do (in no particular order):
 
-	* Check all 5-15 min. if the current ypserv is really the
-	  fastest.
+	* Make time for fastest server check an option (15min. in the moment)
 
 	* A ypserv host could have multiple interfaces
 
