@@ -16,7 +16,7 @@ as NIS clients. This version uses pthreads for better responses.
 
 This implementation is only for NIS _clients_. You must already have
 a NIS server running somewhere. You can find one for linux on
-http://www.suse.de/~kukuk/linux/nis.html. Please read the
+http://www.suse.de/~kukuk/nis/index.html. Please read the
 NIS-HOWTO, too.
 
 %prep

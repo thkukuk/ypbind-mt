@@ -1,3 +1,7 @@
+1999-10-05  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.6
+
 1999-08-27  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind_server.c: Mark unused parameters as unused.
