@@ -72,6 +72,7 @@ int ypset = SET_NO;
 int use_broadcast = 0;
 int broken_server = 0;
 int ping_interval = 20;
+int local_only = 0;
 int port = -1;
 static int lock_fd;
 static int pid_is_written = 0;
@@ -416,7 +417,7 @@ static void
 usage (void)
 {
   fputs (_("Usage:\n"), stderr);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-debug]\n"), stderr);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local_only] [-debug]\n"), stderr);
   fputs (_("\typbind -c [-f configfile]\n"), stderr);
   fputs (_("\typbind --version\n"), stderr);
   exit (1);
@@ -461,6 +462,9 @@ main (int argc, char **argv)
 	ping_interval = 0;
       else if (strcmp ("-broadcast", argv[i]) == 0)
 	use_broadcast = 1;
+      else if (strcmp ("-local_only", argv[i]) == 0 ||
+	       strcmp ("-local-only", argv[i]) == 0)
+	local_only = 1;
       else if (strcmp ("-f", argv[i]) == 0)
 	{
 	  if (i+1 == argc || argv[i+1][0] == '-')
@@ -631,7 +635,7 @@ main (int argc, char **argv)
   pmap_unset (YPBINDPROG, YPBINDOLDVERS);
   pmap_unset (YPBINDPROG, YPBINDVERS);
 
-  if (port >= 0)
+  if (port >= 0 || local_only)
     {
       sock = socket (AF_INET, SOCK_DGRAM, 0);
       if (sock < 0)
@@ -642,8 +646,13 @@ main (int argc, char **argv)
 
       memset ((char *) &socket_address, 0, sizeof (socket_address));
       socket_address.sin_family = AF_INET;
-      socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-      socket_address.sin_port = htons (port);
+      if (local_only)
+	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+      else
+	{
+	  socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
+	  socket_address.sin_port = htons (port);
+	}
 
       result = bind (sock, (struct sockaddr *) &socket_address,
 		     sizeof (socket_address));
@@ -679,7 +688,7 @@ main (int argc, char **argv)
       exit (1);
     }
 
-  if (port >= 0)
+  if (port >= 0 || local_only)
     {
       sock = socket (AF_INET, SOCK_STREAM, 0);
       if (sock < 0)
@@ -690,8 +699,13 @@ main (int argc, char **argv)
 
       memset (&socket_address, 0, sizeof (socket_address));
       socket_address.sin_family = AF_INET;
-      socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-      socket_address.sin_port = htons (port);
+      if (local_only)
+	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+      else
+	{
+	  socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
+	  socket_address.sin_port = htons (port);
+	}
 
       result = bind (sock, (struct sockaddr *) &socket_address,
 		     sizeof (socket_address));

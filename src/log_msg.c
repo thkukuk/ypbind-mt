@@ -1,4 +1,4 @@
-/* Copyright (c) 2000 Thorsten Kukuk
+/* Copyright (c) 2000, 2002 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -19,6 +19,8 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
+#define _GNU_SOURCE
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -52,6 +54,6 @@ log_msg (int type, const char *fmt,...)
       vsyslog (type, fmt, ap);
 #endif
     }
-  
+
   va_end (ap);
 }

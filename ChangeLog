@@ -1,5 +1,7 @@
 2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
 
+	* src/log_msg.c: define _GNU_SOURCE to get all glibc prototypes.
+
 	* src/serv_list.c (add_server): Print to stderr if we make
 	a syntax check only.
 
@@ -7,6 +9,8 @@
 
 	* src/ypbind-mt.c: Rework syntax check for yp.conf
 	(main): Call add_server with argument to check syntax only.
+	(main): Add -local_only option (bind only to loopback address).
+	Based on patch from Eskil Heyn Olsen <eskil@neoteris.com>.
 
 	* man/yp.conf.5.in: Remove libc5 hints.
 
