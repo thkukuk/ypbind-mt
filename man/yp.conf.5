@@ -1,0 +1,67 @@
+.\" -*- nroff -*-
+.\" Copyright 1998 Thorsten Kukuk <kukuk@uni-paderborn.de>
+.\"
+.\" This file is part of ypbind-mt.
+.\"
+.\" Author: Thorsten Kukuk <kukuk@vt.uni-paderborn.de>
+.\"
+.\" ypbind-mt is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of the
+.\" License, or (at your option) any later version.
+.\"
+.\" ypbind-mt is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+.\" General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with ypbind-mt; see the file COPYING.  If not,
+.\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+.\" Boston, MA 02111-1307, USA.
+.\"
+.TH yp.conf 5 "April 1998" "ypbind-mt Version 1.4"
+.SH NAME
+/etc/yp.conf - NIS binding configuration file
+.SH DESCRIPTION
+The file
+.B /etc/yp.conf
+is read from
+.BR ypbind (8)
+at startup or when receiving signal SIGHUP, and from
+Linux libc5 with NYS support compiled in.
+The entries are used for the initial binding.
+Valid entries are
+
+.B domain
+.I nisdomain
+.B server
+.I hostname
+.RS
+Use server
+.I hostname
+for the domain
+.IR nisdomain .
+You could have more then one entry of this type for a single domain.
+.RE
+
+.B domain
+.I nisdomain
+.B broadcast
+.RS
+Use broadcast on the local net for domain
+.IR nisdomain .
+.RE
+
+.B ypserver
+.I hostname
+.RS
+Use server
+.I server
+for the local domain.
+.RE
+.SH "SEE ALSO"
+.BR ypbind (8)
+.SH AUTHOR
+.B ypbind-mt
+was written by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>.

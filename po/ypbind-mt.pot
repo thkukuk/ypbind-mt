@@ -1,0 +1,321 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 1999-02-28 16:41+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+
+#: src/serv_list.c:347
+msgid "Not enough memory !"
+msgstr ""
+
+#: src/serv_list.c:371
+msgid "internal error: add_server called with NULL domain."
+msgstr ""
+
+#: src/serv_list.c:385
+#, c-format
+msgid "add_server() domain: %s, broadcast, slot: 0"
+msgstr ""
+
+#: src/serv_list.c:401
+#, c-format
+msgid "add_server() domain: %s, host: %s, %sbroadcast, slot: %d"
+msgstr ""
+
+#: src/serv_list.c:402
+msgid "unknown"
+msgstr ""
+
+#: src/serv_list.c:403
+msgid "no"
+msgstr ""
+
+#: src/serv_list.c:443
+#, c-format
+msgid "Unknown host: %s"
+msgstr ""
+
+#: src/serv_list.c:447
+msgid "Host name lookup failure"
+msgstr ""
+
+#: src/serv_list.c:450
+#, c-format
+msgid "No address associated with name: %s"
+msgstr ""
+
+#: src/serv_list.c:454
+msgid "Unknown server error"
+msgstr ""
+
+#: src/serv_list.c:457
+msgid "gethostbyname: Unknown error"
+msgstr ""
+
+#: src/serv_list.c:525 src/serv_list.c:784
+#, c-format
+msgid "Answer for domain '%s' from server '%s'"
+msgstr ""
+
+#: src/serv_list.c:529
+#, c-format
+msgid "Answer for domain '%s' from unknown server '%s'"
+msgstr ""
+
+#: src/serv_list.c:535
+#, c-format
+msgid "Answer for domain '%s' from '%s' on illegal port."
+msgstr ""
+
+#: src/serv_list.c:698 src/serv_list.c:825
+#, c-format
+msgid "ping host '%s', domain '%s'"
+msgstr ""
+
+#: src/serv_list.c:710
+#, c-format
+msgid "host '%s' doesn't answer."
+msgstr ""
+
+#: src/serv_list.c:846
+#, c-format
+msgid "clnt_create for server '%s' (domain '%s') failed"
+msgstr ""
+
+#: src/serv_list.c:867
+#, c-format
+msgid "domain '%s' not served by '%s'"
+msgstr ""
+
+#: src/serv_list.c:935
+msgid "Pinging all active server."
+msgstr ""
+
+#: src/serv_list.c:959
+#, c-format
+msgid "Server for domain '%s' doesn't answer."
+msgstr ""
+
+#: src/serv_list.c:965 src/serv_list.c:970
+#, c-format
+msgid "Server '%s' for domain '%s' doesn't answer."
+msgstr ""
+
+#: src/ypbind-mt.c:160
+#, c-format
+msgid "Trying entry: %s"
+msgstr ""
+
+#: src/ypbind-mt.c:174
+#, c-format
+msgid "parsed domain '%s' server '%s'"
+msgstr ""
+
+#: src/ypbind-mt.c:185
+#, c-format
+msgid "parsed domain '%s' broadcast"
+msgstr ""
+
+#: src/ypbind-mt.c:202
+#, c-format
+msgid "parsed ypserver %s"
+msgstr ""
+
+#: src/ypbind-mt.c:209
+#, c-format
+msgid "Entry \"%s\" is not valid, ignore it !"
+msgstr ""
+
+#: src/ypbind-mt.c:219
+msgid "No entry found."
+msgstr ""
+
+#: src/ypbind-mt.c:240
+#, c-format
+msgid "cannot create pidfile %s"
+msgstr ""
+
+#: src/ypbind-mt.c:265
+msgid "fcntl error"
+msgstr ""
+
+#: src/ypbind-mt.c:274
+#, c-format
+msgid "ypbind-mt already running (pid %d) - exiting"
+msgstr ""
+
+#: src/ypbind-mt.c:285
+msgid "cannot lock pidfile"
+msgstr ""
+
+#: src/ypbind-mt.c:327
+msgid "SIGCHLD arrived, what should I do ?"
+msgstr ""
+
+#: src/ypbind-mt.c:335
+#, c-format
+msgid "Signal (%d) for quitting program arrived."
+msgstr ""
+
+#: src/ypbind-mt.c:346
+msgid "cannot unlock pidfile"
+msgstr ""
+
+#: src/ypbind-mt.c:356
+msgid "SIGHUP arrived, reloading config file."
+msgstr ""
+
+#: src/ypbind-mt.c:368
+#, c-format
+msgid "Unknown signal: %d"
+msgstr ""
+
+#: src/ypbind-mt.c:377
+msgid "Usage:\n"
+msgstr ""
+
+#: src/ypbind-mt.c:378
+msgid ""
+"\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n"
+"\t  [-no_ping] [-broken_server] [-debug]\n"
+msgstr ""
+
+#: src/ypbind-mt.c:379
+msgid "\typbind -c [-f configfile]\n"
+msgstr ""
+
+#: src/ypbind-mt.c:380
+msgid "\typbind --version\n"
+msgstr ""
+
+#: src/ypbind-mt.c:447
+#, c-format
+msgid "Config file %s is ok.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:455
+msgid "domainname not set - aborting.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:461
+msgid "ypbind must be run as root\n"
+msgstr ""
+
+#: src/ypbind-mt.c:469 src/ypbind-mt.c:478
+#, c-format
+msgid "Could not create %s: %s\n"
+msgstr ""
+
+#: src/ypbind-mt.c:485
+#, c-format
+msgid "Could not change to directory %s: %s\n"
+msgstr ""
+
+#: src/ypbind-mt.c:494
+msgid "No NIS server and no -broadcast option specified.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:496
+#, c-format
+msgid "Add a NIS server to the %s configuration file,\n"
+msgstr ""
+
+#: src/ypbind-mt.c:498
+msgid "or start ypbind with the -broadcast option.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:543
+msgid "Could not block signals."
+msgstr ""
+
+#: src/ypbind-mt.c:557
+#, c-format
+msgid "Cannot create UDP: %s"
+msgstr ""
+
+#: src/ypbind-mt.c:570
+#, c-format
+msgid "Cannot bind UDP: %s"
+msgstr ""
+
+#: src/ypbind-mt.c:580
+msgid "Cannot create udp service."
+msgstr ""
+
+#: src/ypbind-mt.c:588
+msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
+msgstr ""
+
+#: src/ypbind-mt.c:596
+msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
+msgstr ""
+
+#: src/ypbind-mt.c:605
+#, c-format
+msgid "Cannot create TCP: %s"
+msgstr ""
+
+#: src/ypbind-mt.c:618
+#, c-format
+msgid "Cannot bind TCP: %s"
+msgstr ""
+
+#: src/ypbind-mt.c:628
+msgid "Cannot create tcp service.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:635
+msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
+msgstr ""
+
+#: src/ypbind-mt.c:643
+msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
+msgstr ""
+
+#: src/ypbind-mt.c:650
+msgid "svc_run returned."
+msgstr ""
+
+#: src/ypbind_server.c:65 src/ypbind_server.c:108
+#, c-format
+msgid "Domain name '%s' has embedded slash -- rejecting."
+msgstr ""
+
+#: src/ypbind_server.c:75
+msgid "Status: YPBIND_FAIL_VAL"
+msgstr ""
+
+#: src/ypbind_server.c:77
+msgid "Status: YPBIND_SUCC_VAL"
+msgstr ""
+
+#: src/ypbind_server.c:120
+#, c-format
+msgid "User from '%s' try's to change the binding."
+msgstr ""
+
+#: src/ypbind_server.c:129
+msgid "Changing the binding is not allowed."
+msgstr ""
+
+#: src/ypbind_server.c:134
+msgid "SETDOM request doesn't come from reserved port."
+msgstr ""
+
+#: src/ypbind_svc.c:81 src/ypbind_svc.c:146
+msgid "unable to free arguments"
+msgstr ""
+
+#: src/ypbind_svc.c:84 src/ypbind_svc.c:149
+msgid "unable to free results"
+msgstr ""

@@ -1,0 +1,40 @@
+ypbind-mt NEWS -- history of user-visible changes.
+
+Copyright (C) 1998 Thorsten Kukuk
+
+Please send bug reports, questions and suggestions to
+<kukuk@vt.uni-paderborn.de>.
+
+
+Version 1.4
+* Add fixes for 64bit machines
+* Fix compiler warnings
+
+Version 1.3
+* Add -c option for checking config file for syntax errors
+* Bug fixes
+
+Version 1.2
+* Save current host list if ypset is used. Now we use the old
+  configuration if the ypset host goes down
+* If ypproc_domain is called, search a new server if domain is unbound
+* Fix a lot of bugs
+
+Version 1.1
+* With Linux Kernel 2.1.90 or later, use file locking for the pid file
+* Port it to Solaris 2.6/2.5.1/2.5
+* Port it to Linux with libc5
+
+Version 1.0
+* First public release
+* Fix some more bugs
+* Send ping to all server and use this one which answered at first
+
+Version 0.91
+* Second beta release
+* ypset now works
+* Fix a lot of bugs
+
+Version 0.90
+* First beta release
+

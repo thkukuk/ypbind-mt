@@ -1,0 +1,41 @@
+
+This directory contains the version 1.3 of the ypbind-mt.
+
+
+As of this release, ypbind-mt is known to run on the following
+configuration:
+
+   ix86-*-linux-gnu       Linux 2.x on Intel with glibc 2.x
+   alpha-*-linux-gnu      Linux 2.x on Alpha with glibc 2.x
+   ix86-*-linux-gnulibc1  Linux 2.x on Intel with libc5/linuxthreads 0.7
+   sparc-sun-solaris2.x   Solaris 2.x with pthread library
+
+If you have a configuration which works and isn't listed here, please
+send me a note.
+
+
+See the file INSTALL to find out how to configure, build, install, and port
+ypbind-mt.  You might also consider reading the WWW pages for Linux NIS (YP)
+at http://www-vt.uni-paderborn.de/~kukuk/linux/.
+
+
+ypbind-mt is free software. See the file COPYING for copying conditions.
+
+
+ypbind-mt is a complete new implementation of a NIS binding daemon for
+Linux. It has the following features:
+
+	* Supports ypbind protocol V1 and V2.
+
+	* Uses threads for better response.
+
+	* Supports multiple domain bindings.
+
+	* Supports /var/yp/binding/* file for Linux libc 4/5 and glibc 2.x.
+
+	* Supports a list of known secure NIS server (/etc/yp.conf)
+
+	* Binds to the server which answered as first
+
+
+Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1. July 1998

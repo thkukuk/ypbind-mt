@@ -1,0 +1,141 @@
+1999-02-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (find_domain): Print messages only,
+	  if debug flag is set.
+
+1998-11-11  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* releaes version 1.4
+
+	* lib/clnt_udp.c: Include string.h, add prototype for
+	  _rpc_dtablesize.
+	* src/ypbind-mt.c: Use size_t for buflen, fix compiler warnings.
+	Based on patches from Loic Prylli <Loic.Prylli@ens-lyon.fr>
+
+	* src/ypbind_server.c: Fix compiler warnings.
+
+1998-10-09  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* src/ypbind-mt.c (load_config): Check for more valid separators.
+
+1998-07-01  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.3
+
+	* man/ypbind.8.in: Add description of -c parameter.
+
+	* src/ypbind-mt.c (load_config): Add error message.
+	(main): Better check for binding dir, add check option for yp.conf.
+
+1998-06-07  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* etc/ypbind.init: Remove binding dir entries after killing ypbind.
+
+1998-05-24  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Add efence support, fix for gettext 0.10.35,
+	  Fix check for broken kernel versions (2.1.1xx isn't broken).
+
+	* acinclude.m4: New, macros for efence.
+
+1998-04-28  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* src/serv_list.c (add_server): Check if h_addr_list[0] is != NULL.
+	  Reportet by Arnim Frithjof Brestrich <brest@rumms.uni-mannheim.de>.
+
+1998-04-20  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Add dmalloc support.
+
+	* acconfig.h: Add WITH_DMALLOC.
+
+	* man/yp.conf.5.in: Fix Typo.
+
+	* ypbind-mt.spec: Install yp.conf.5.
+
+1998-04-19  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.2
+
+	* src/serv_list.c (find_domain): If doamin is unbound, try to
+	find a new server.
+
+1998-04-18  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Create man/sedscript.
+
+1998-04-17  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* man/ypbind.8.in: Fix some more comments.
+
+	* man/yp.conf.5.in: New.
+
+	* src/serv_list.c: Save current status if ypset is used.
+
+1998-04-02  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* src/serv_list.c: Fix typos.
+
+1998-04-01  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: check for socklen_t in <sys/socket.h>.
+
+	* acconfig.h: Add #undef HAVE_SOCKLEN_T.
+
+	* lib/clnt_udp.c: Define socklen_t if not defined, fix multi-cast
+	  replay.
+
+	* man/ypbind.8.in: Fix some comments.
+
+	* src/serv_list.c: Code cleanup, use less memory.
+
+1998-03-30  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.1
+
+	* src/serv_list.c: Add support for _dns_gethostbyname.
+
+	* configure.in: Check for res_gethostbyname and _dns_gethostbyname.
+
+	* lib/dummy.c: Remove.
+
+	* lib/dns_hosts.c: New, from ypserv 1.3.0.
+	* lib/res_options.h: New, from ypserv 1.3.0.
+
+	* man/ypbind.8.in: Fix some stuff.
+
+1998-03-27  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Set USE_BROADCAST under Linux
+
+	* src/Makefile.am Set USE_BROADCAST from configure script
+
+	* src/serv_list.c (ping_all): Add a second version, which don't
+	  try to send a ping to all server at the same time.
+
+1998-03-26  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Check for Linux Kernel with thread/file locking bug
+
+	* src/Makefile.am: Set USE_PIDFILE from configure script
+
+1998-03-07  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.0
+
+	* src/serv_list.c: Replace ping_all, new version sends a ping
+	to all server and uses this one which answers first.
+
+1998-02-28  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 0.91 as second beta release
+
+	* man/ypbind.8.man: Update -ypset option.
+
+	* src/ypbind_server.c: Add support for ypset.
+	* src/serv_list.c: Fix locking bugs, add setdom support.
+	* src/ypbind-mt.c: Fix some bugs.
+
+1998-02-27  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 0.90 as first beta release

@@ -1,0 +1,222 @@
+This file contains any messages produced by compilers while
+running configure, to aid debugging if configure makes a mistake.
+
+configure:564: checking for a BSD compatible install
+configure:617: checking whether build environment is sane
+configure:674: checking whether make sets ${MAKE}
+configure:720: checking for working aclocal
+configure:733: checking for working autoconf
+configure:746: checking for working automake
+configure:759: checking for working autoheader
+configure:772: checking for working makeinfo
+configure:802: checking host system type
+configure:828: checking for gcc
+configure:905: checking whether the C compiler (gcc -O6 ) works
+configure:919: gcc -o conftest -O6   conftest.c  1>&5
+configure:939: checking whether the C compiler (gcc -O6 ) is a cross-compiler
+configure:944: checking whether we are using GNU C
+configure:953: gcc -E conftest.c
+configure:968: checking whether gcc accepts -g
+configure:998: checking for POSIXized ISC
+configure:1029: checking for a BSD compatible install
+configure:1079: checking whether make sets ${MAKE}
+configure:1108: checking for ranlib
+configure:1136: checking if malloc debugging is wanted
+configure:1157: checking if malloc debugging with efence is wanted
+configure:1180: checking for yp_get_default_domain in -lnsl
+configure:1199: gcc -o conftest -O6   conftest.c -lnsl   1>&5
+configure:1227: checking for bind in -lsocket
+configure:1246: gcc -o conftest -O6   conftest.c -lsocket  -lnsl  1>&5
+/usr/i486-linux/bin/ld: cannot open -lsocket: No such file or directory
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1235 "configure"
+#include "confdefs.h"
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char bind();
+
+int main() {
+bind()
+; return 0; }
+configure:1274: checking for pthread_create in -lpthread
+configure:1293: gcc -o conftest -O6   conftest.c -lpthread  -lnsl  1>&5
+configure:1324: checking for __nss_configure_lookup
+configure:1352: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:1427: checking for working const
+configure:1481: gcc -c -O6  conftest.c 1>&5
+configure:1503: checking wether <sys/socket.h> defiens socklen_t
+configure:1512: gcc -c -O6  conftest.c 1>&5
+configure:1533: checking how to run the C preprocessor
+configure:1554: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1597: checking for paths.h
+configure:1607: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1597: checking for sys/filio.h
+configure:1607: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1603: sys/filio.h: No such file or directory
+configure: failed program was:
+#line 1602 "configure"
+#include "confdefs.h"
+#include <sys/filio.h>
+configure:1597: checking for rpc/svc_soc.h
+configure:1607: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1603: rpc/svc_soc.h: No such file or directory
+configure: failed program was:
+#line 1602 "configure"
+#include "confdefs.h"
+#include <rpc/svc_soc.h>
+configure:1597: checking for rpc/clnt_soc.h
+configure:1607: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1603: rpc/clnt_soc.h: No such file or directory
+configure: failed program was:
+#line 1602 "configure"
+#include "confdefs.h"
+#include <rpc/clnt_soc.h>
+configure:1597: checking for nss.h
+configure:1607: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1637: checking for getline
+configure:1665: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:1637: checking for getdelim
+configure:1665: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:1637: checking for res_gethostbyname
+configure:1665: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+/tmp/ccm1jmb9.o: In function `main':
+/tmp/ccm1jmb9.o(.text+0x4): undefined reference to `res_gethostbyname'
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1642 "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char res_gethostbyname(); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char res_gethostbyname();
+
+int main() {
+
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub_res_gethostbyname) || defined (__stub___res_gethostbyname)
+choke me
+#else
+res_gethostbyname();
+#endif
+
+; return 0; }
+configure:1637: checking for _dns_gethostbyname
+configure:1665: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+/tmp/ccxspHIU.o: In function `main':
+/tmp/ccxspHIU.o(.text+0x4): undefined reference to `_dns_gethostbyname'
+collect2: ld returned 1 exit status
+configure: failed program was:
+#line 1642 "configure"
+#include "confdefs.h"
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char _dns_gethostbyname(); below.  */
+#include <assert.h>
+/* Override any gcc2 internal prototype to avoid an error.  */
+/* We use char because int might match the return type of a gcc2
+    builtin and then its argument prototype would still apply.  */
+char _dns_gethostbyname();
+
+int main() {
+
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined (__stub__dns_gethostbyname) || defined (__stub____dns_gethostbyname)
+choke me
+#else
+_dns_gethostbyname();
+#endif
+
+; return 0; }
+configure:1691: checking for ANSI C header files
+configure:1704: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:1771: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:1795: checking for inline
+configure:1809: gcc -c -O6  conftest.c 1>&5
+configure:1835: checking for off_t
+configure:1868: checking for size_t
+configure:1903: checking for working alloca.h
+configure:1915: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:1936: checking for alloca
+configure:1964: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2133: checking for unistd.h
+configure:2143: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2172: checking for getpagesize
+configure:2200: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2225: checking for working mmap
+configure:2373: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2401: checking for argz.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2401: checking for limits.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2401: checking for locale.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2401: checking for nl_types.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2401: checking for malloc.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2401: checking for string.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2401: checking for unistd.h
+configure:2401: checking for sys/param.h
+configure:2411: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2441: checking for getcwd
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for munmap
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for putenv
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for setenv
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for setlocale
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for strchr
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for strcasecmp
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for strdup
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for __argz_count
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for __argz_stringify
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2441: checking for __argz_next
+configure:2469: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2498: checking for stpcpy
+configure:2526: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2560: checking for LC_MESSAGES
+configure:2572: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2593: checking whether NLS is requested
+configure:2613: checking whether included gettext is requested
+configure:2632: checking for libintl.h
+configure:2642: gcc -E  conftest.c >/dev/null 2>conftest.out
+configure:2659: checking for gettext in libc
+configure:2671: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2785: checking for msgfmt
+configure:2819: checking for dcgettext
+configure:2847: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:2874: checking for gmsgfmt
+configure:2906: checking for xgettext
+configure:2946: gcc -o conftest -O6   conftest.c -lpthread -lnsl  1>&5
+configure:3392: checking for catalogs to be installed
+configure:3502: checking wether we have glibc 2.1 or later
+configure:3515: gcc -c -O6  conftest.c 1>&5
+configure:3509: #error Library needs fixed clntudp_call
+configure: failed program was:
+#line 3504 "configure"
+#include "confdefs.h"
+#include <features.h>
+int main() {
+#if defined(__GLIBC__) && 	(((__GLIBC__ == 2) && (__GLIBC_MINOR__ > 0)) || (__GLIBC__ > 2))
+	#else
+	#error Library needs fixed clntudp_call
+	#endif
+; return 0; }
+configure:3533: checking kernel version
