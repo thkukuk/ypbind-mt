@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000, 2001, 2002, 2003 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2000, 2001, 2002, 2003, 2004 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -61,7 +61,7 @@ typedef uint32_t u_int32_t;
 #define YPPROC_DOMAIN ((u_long)1)
 #define YPPROC_DOMAIN_NONACK ((u_long)2)
 
-#define _MAXSERVER 10
+#define _MAXSERVER 30
 
 struct bound_server
 {
@@ -759,7 +759,7 @@ ping_all (struct binding *list)
     return 0;
   xid_seed = (u_int32_t) (time (NULL) ^ getpid ());
 
-  for (i = 0; list->server[i].host; ++i)
+  for (i = 0; i < _MAXSERVER && list->server[i].host; ++i)
     {
       if (debug_flag)
 	log_msg (LOG_DEBUG, _("ping host '%s', domain '%s'"),
@@ -890,7 +890,7 @@ ping_all (struct binding *list)
   list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
-  while (list->server[i].host != NULL)
+  while (list->server[i].host != NULL && i < _MAXSERVER)
     {
 
       if (debug_flag)
@@ -914,7 +914,7 @@ ping_all (struct binding *list)
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG,
 		     _("clnt_create for server '%s' (domain '%s') failed"),
-		     list->server[i], domain);
+		     list->server[i].host, domain);
 	  ++i;
 	  continue;
 	}
@@ -980,6 +980,8 @@ do_binding (void)
   pthread_mutex_unlock (&search_lock);
 }
 
+int test_bindings_once(int);
+
 /* This thread will send an ping to all NIS server marked as active. If
    a server doesn't answer or tell us, that he doesn't serv this domain
    any longer, we mark it as inactive and try to find a new server */
@@ -987,7 +989,7 @@ void *
 test_bindings (void *param __attribute__ ((unused)))
 {
   static int success = 0;
-  int i, lastcheck = 0;
+  int lastcheck = 0;
 
   do_binding ();
 
@@ -1006,6 +1008,16 @@ test_bindings (void *param __attribute__ ((unused)))
       lastcheck += ping_interval;
       if (lastcheck >= 900) /* 900 = 15min. */
 	lastcheck = 0;
+
+      lastcheck = test_bindings_once(lastcheck);
+
+    } /* end while() endless loop */
+}
+
+int
+test_bindings_once(int lastcheck)
+{
+      int i;
 
       pthread_rdwr_rlock_np (&domainlock);
 
@@ -1116,5 +1128,5 @@ test_bindings (void *param __attribute__ ((unused)))
 
       pthread_rdwr_runlock_np (&domainlock);
 
-    } /* end while() endless loop */
+      return lastcheck;
 }

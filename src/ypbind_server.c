@@ -69,6 +69,7 @@ ypbindproc_domain (char *domain, ypbind_resp *result,
       return TRUE;
     }
 
+  test_bindings_once(1);
   find_domain (domain, result);
 
   if (debug_flag)
