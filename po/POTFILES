@@ -1,4 +1,0 @@
-	../src/serv_list.c \
-	../src/ypbind-mt.c \
-	../src/ypbind_server.c \
-	../src/ypbind_svc.c
