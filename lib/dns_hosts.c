@@ -57,7 +57,7 @@
 */
 
 #ifndef LINT
-static const char rcsid[] = "$Id: dns_hosts.c,v 1.1 1999/02/28 20:27:58 kukuk Exp $";
+static const char rcsid[] = "$Id: dns_hosts.c,v 1.1.1.1 1999/02/28 20:27:58 kukuk Exp $";
 #endif
 
 #if defined(HAVE_CONFIG_H)
