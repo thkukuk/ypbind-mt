@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 1999-05-18 19:01+0200\n"
+"POT-Creation-Date: 1999-06-01 21:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -192,7 +192,7 @@ msgstr ""
 #: src/ypbind-mt.c:386
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n"
-"\t  [-no_ping] [-broken_server] [-debug]\n"
+"\t  [-no-ping] [-broken-server] [-debug]\n"
 msgstr ""
 
 #: src/ypbind-mt.c:387
@@ -203,91 +203,91 @@ msgstr ""
 msgid "\typbind --version\n"
 msgstr ""
 
-#: src/ypbind-mt.c:455
+#: src/ypbind-mt.c:457
 #, c-format
 msgid "Config file %s is ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:463
+#: src/ypbind-mt.c:465
 msgid "domainname not set - aborting.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:469
+#: src/ypbind-mt.c:471
 msgid "ypbind must be run as root\n"
 msgstr ""
 
-#: src/ypbind-mt.c:477 src/ypbind-mt.c:486
+#: src/ypbind-mt.c:479 src/ypbind-mt.c:488
 #, c-format
 msgid "Could not create %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:493
+#: src/ypbind-mt.c:495
 #, c-format
 msgid "Could not change to directory %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:502
+#: src/ypbind-mt.c:504
 msgid "No NIS server and no -broadcast option specified.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:504
+#: src/ypbind-mt.c:506
 #, c-format
 msgid "Add a NIS server to the %s configuration file,\n"
 msgstr ""
 
-#: src/ypbind-mt.c:506
+#: src/ypbind-mt.c:508
 msgid "or start ypbind with the -broadcast option.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:551
+#: src/ypbind-mt.c:577
 msgid "Could not block signals."
 msgstr ""
 
-#: src/ypbind-mt.c:565
+#: src/ypbind-mt.c:591
 #, c-format
 msgid "Cannot create UDP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:578
+#: src/ypbind-mt.c:604
 #, c-format
 msgid "Cannot bind UDP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:588
+#: src/ypbind-mt.c:614
 msgid "Cannot create udp service."
 msgstr ""
 
-#: src/ypbind-mt.c:596
+#: src/ypbind-mt.c:622
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
 msgstr ""
 
-#: src/ypbind-mt.c:604
+#: src/ypbind-mt.c:630
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
 msgstr ""
 
-#: src/ypbind-mt.c:613
+#: src/ypbind-mt.c:639
 #, c-format
 msgid "Cannot create TCP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:626
+#: src/ypbind-mt.c:652
 #, c-format
 msgid "Cannot bind TCP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:636
+#: src/ypbind-mt.c:662
 msgid "Cannot create tcp service.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:643
+#: src/ypbind-mt.c:669
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
 msgstr ""
 
-#: src/ypbind-mt.c:651
+#: src/ypbind-mt.c:677
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
 msgstr ""
 
-#: src/ypbind-mt.c:658
+#: src/ypbind-mt.c:684
 msgid "svc_run returned."
 msgstr ""
 

@@ -1,3 +1,9 @@
+1999-06-01  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (main): lose controlling tty when daemonizing.
+	  allow -no_ping, -no-ping, -broken_server and -broken-server.
+	* man/ypbind.8.in: Use -no-ping and -broken-server.
+
 1999-05-18  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.5

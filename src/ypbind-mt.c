@@ -383,7 +383,7 @@ static void
 usage (void)
 {
   fputs (_("Usage:\n"), stderr);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no_ping] [-broken_server] [-debug]\n"), stderr);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-debug]\n"), stderr);
   fputs (_("\typbind -c [-f configfile]\n"), stderr);
   fputs (_("\typbind --version\n"), stderr);
   exit (1);
@@ -419,9 +419,11 @@ main (int argc, char **argv)
       else if (strcmp ("-d", argv[i]) == 0 ||
 	       strcmp ("-debug", argv[i]) == 0)
         debug_flag = 1;
-      else if (strcmp ("-broken_server", argv[i]) == 0)
+      else if (strcmp ("-broken-server", argv[i]) == 0 ||
+	       strcmp ("-broken_server", argv[i]) == 0)
         broken_server = 1;
-      else if (strcmp("-no-ping", argv[i]) == 0)
+      else if (strcmp ("-no-ping", argv[i]) == 0 ||
+	       strcmp ("-no_ping", argv[i]) == 0)
 	ping_interval = 0;
       else if (strcmp ("-broadcast", argv[i]) == 0)
 	use_broadcast = 1;
@@ -520,14 +522,38 @@ main (int argc, char **argv)
     {
       int j;
 
-      if (fork ())
-	exit (0);
+      if ((j = fork()) > 0)
+        exit(0);
+
+      if (j < 0)
+        {
+          log_msg (LOG_ERR, "Cannot fork: %s\n", strerror (errno));
+          exit (-1);
+        }
+
+      if (setsid() == -1)
+        {
+          log_msg (LOG_ERR, "Cannot setsid: %s\n", strerror (errno));
+          exit (-1);
+        }
+
+      if ((j = fork()) > 0)
+        exit(0);
+
+      if (j < 0)
+        {
+          log_msg (LOG_ERR, "Cannot fork: %s\n", strerror (errno));
+          exit (-1);
+        }
 
       for (j = 0; j < getdtablesize (); ++j)
-	close (j);
+        close (j);
+      errno = 0;
 
-      if (fork ())
-	exit (0);
+      umask (0);
+      j = open ("/dev/null", O_RDWR);
+      dup (j);
+      dup (j);
     }
 
 #if defined(HAVE___NSS_CONFIGURE_LOOKUP)

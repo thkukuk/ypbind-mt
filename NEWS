@@ -6,6 +6,10 @@ Please send bug reports, questions and suggestions to
 <kukuk@suse.de>.
 
 
+Version 1.6
+* Fix naming of options
+* Give away controlling tty
+
 Version 1.5
 * Ignore pidfile, if there is no file locking over NFS
 * Check all 15 minutes if the current binding is the fastest

@@ -33,7 +33,7 @@ ypbind
 ] [
 .B \-broadcast
 ] [
-.B \-broken_server
+.B \-broken-server
 ] [
 .B \-ypset
 ] [
@@ -206,7 +206,7 @@ in debug mode.
 will not put itself into background, and error messages and debug
 output are written to standard error.
 .TP
-.B "\-broken_server"
+.B "\-broken-server"
 lets
 .B ypbind
 accept answers from servers running on an illegal port number. This should

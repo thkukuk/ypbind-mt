@@ -48,7 +48,7 @@ const struct _msg_ent _msg_tbl[] = {
   {"Usage:\n", 39},
   {"\
 \typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\
-\t  [-no_ping] [-broken_server] [-debug]\n", 40},
+\t  [-no-ping] [-broken-server] [-debug]\n", 40},
   {"\typbind -c [-f configfile]\n", 41},
   {"\typbind --version\n", 42},
   {"Config file %s is ok.\n", 43},

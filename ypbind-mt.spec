@@ -1,6 +1,6 @@
 Summary: NIS (YP) binding process
 Name: ypbind-mt
-Version: 1.5
+Version: 1.6
 Release: 0
 Copyright: GPL
 Group: Networking
