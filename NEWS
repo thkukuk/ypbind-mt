@@ -4,6 +4,10 @@ Copyright (C) 1998-2004 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
+Version 1.18
+* Add -ping-interval option
+* Document all ypbind options in ypbind.8
+
 Version 1.17.3
 * Fix SLP URL parsing
 

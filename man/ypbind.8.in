@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.\" Copyright 1998, 1999, 2002 Thorsten Kukuk, Germany
+.\" Copyright 1998, 1999, 2002, 2004 Thorsten Kukuk, Germany
 .\"
 .\" This file is part of ypbind-mt.
 .\"
@@ -20,7 +20,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH ypbind 8 "August 2004" "ypbind-mt Version @VERSION@"
+.TH ypbind 8 "October 2004" "ypbind-mt Version @VERSION@"
 .SH NAME
 ypbind - NIS binding process
 .SH SYNOPSIS
@@ -42,6 +42,10 @@ ypbind
 .B \-no-ping
 ] [
 .BR \-f " configfile"
+] [
+.B \-local-only
+] [
+.BR \-ping-interval " ping-interval"
 ]
 .LP
 .B
@@ -225,6 +229,17 @@ will use
 .B configfile
 and not
 .B /etc/yp.conf
+.TP
+.B "\-local-only"
+.B ypbind
+will only bind to the loopback device and is not reacheable from
+a remote network.
+.TP
+.BR "\-ping-interval" " ping-interval"
+The default value for
+. B ypbind
+to check, if a NIS server is still reacheable, is 20 seconds.
+With this options another frequency in seconds can be specified.
 .TP
 .B "\--version"
 Prints the version number

@@ -671,7 +671,7 @@ __pmap_getport (struct sockaddr_in *address, u_long program, u_long version,
 {
   u_short rport = 0;
   int sock = -1;
-  register CLIENT *client;
+  CLIENT *client;
   struct pmap parms;
 
   address->sin_port = htons(PMAPPORT);

@@ -462,7 +462,7 @@ static void
 usage (void)
 {
   fputs (_("Usage:\n"), stderr);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local_only] [-debug]\n"), stderr);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"), stderr);
   fputs (_("\typbind -c [-f configfile]\n"), stderr);
   fputs (_("\typbind --version\n"), stderr);
   exit (1);
@@ -507,8 +507,8 @@ main (int argc, char **argv)
 	ping_interval = 0;
       else if (strcmp ("-broadcast", argv[i]) == 0)
 	use_broadcast = 1;
-      else if (strcmp ("-local_only", argv[i]) == 0 ||
-	       strcmp ("-local-only", argv[i]) == 0)
+      else if (strcmp ("-local-only", argv[i]) == 0 ||
+	       strcmp ("-local_only", argv[i]) == 0)
 	local_only = 1;
       else if (strcmp ("-f", argv[i]) == 0)
 	{
@@ -523,6 +523,15 @@ main (int argc, char **argv)
 	    usage ();
 	  ++i;
 	  port = atoi (argv[i]);
+	}
+      else if (strcmp ("-ping-interval", argv[i]) == 0 ||
+	       strcmp ("-ping-interval", argv[i]) == 0 ||
+	       strcmp ("-i", argv[i]) == 0)
+	{
+	  if (i+1 == argc || argv[i+1][0] == '-')
+	    usage ();
+	  ++i;
+	  ping_interval = atoi (argv[i]);
 	}
       else if (strcmp ("-c", argv[i]) == 0)
 	configcheck_only = 1;
@@ -610,7 +619,10 @@ main (int argc, char **argv)
   openlog ("ypbind", LOG_PID, LOG_DAEMON);
 
   if (debug_flag)
-    log_msg (LOG_DEBUG, "[Welcome to ypbind-mt, version %s]\n", VERSION);
+    {
+      log_msg (LOG_DEBUG, "[Welcome to ypbind-mt, version %s]\n", VERSION);
+      log_msg (LOG_DEBUG, "ping interval is %d seconds\n", ping_interval);
+    }
   else
     {
       int j;
