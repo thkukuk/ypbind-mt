@@ -69,7 +69,11 @@ will send YPPROC_DOMAIN requests to the current NIS server at 20 seconds
 intervals. If it doesn't get an response or the NIS server tells that he
 doesn't has this domain any longer,
 .B ypbind
-will search a new NIS server. You could tell
+will search a new NIS server. All 15 minutes
+.B ypbind
+will check, if the current NIS server is the fastest. If it find
+a server which answers faster, it will switch to this server.
+You could tell
 .B ypbind
 to use network broadcasts to find a new server, what is insecure,
 or you could give it a list of known, secure servers.

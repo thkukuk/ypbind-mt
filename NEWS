@@ -8,6 +8,7 @@ Please send bug reports, questions and suggestions to
 
 Version 1.5
 * Ignore pidfile, if there is no file locking over NFS
+* Check all 15 minutes if the current binding is the fastest
 
 Version 1.4
 * Add fixes for 64bit machines

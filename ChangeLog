@@ -1,5 +1,9 @@
 1999-05-18  Thorsten Kukuk  <kukuk@suse.de>
 
+	* release version 1.5
+
+	* man/ypbind.8.in: Update entry of searching new server.
+
 	* src/serv_list.c (test_bindings): Check every 15min. if we have
 	  the fastest NIS server.
 
@@ -20,7 +24,7 @@
 
 1998-11-11  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
 
-	* releaes version 1.4
+	* release version 1.4
 
 	* lib/clnt_udp.c: Include string.h, add prototype for
 	  _rpc_dtablesize.
