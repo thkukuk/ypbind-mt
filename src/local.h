@@ -13,6 +13,8 @@ extern int  add_server (const char *__domain, const char *__host,
 			int __check_syntax);
 extern void change_binding (const char *__domain, ypbind_binding *binding);
 
+extern int query_slp (const char *domain);
+
 extern void *test_bindings (void *param);
 extern int test_bindings_once (int lastcheck);
 

@@ -18,7 +18,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH yp.conf 5 "April 2002" "ypbind-mt Version @VERSION@"
+.TH yp.conf 5 "February 2004" "ypbind-mt Version @VERSION@"
 .SH NAME
 /etc/yp.conf - NIS binding configuration file
 .SH DESCRIPTION
@@ -48,6 +48,18 @@ You could have more then one entry of this type for a single domain.
 .RS
 Use broadcast on the local net for domain
 .IR nisdomain .
+.RE
+
+.B domain
+.I nisdomain
+.B slp
+.RS
+Query the local running SLP server for hosts running ypserv
+and distributing
+.IR nisdomain .
+This option is only available, if
+.B ypbind
+was compiled with SLP support.
 .RE
 
 .B ypserver

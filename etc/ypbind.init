@@ -1,7 +1,7 @@
 #! /bin/sh
-# Copyright (c) 2001 Thorsten Kukuk <kukuk@suse.de>
+# Copyright (c) 2004 Author: Thorsten Kukuk <kukuk@suse.de>
 #
-# init.d/ypbind
+# /etc/init.d/ypbind
 #
 #   and symbolic its link
 #
@@ -11,28 +11,27 @@
 #
 ### BEGIN INIT INFO
 # Provides: ypbind
-# Required-Start: $remote_fs portmap ypserv
+# Required-Start: $remote_fs $portmap
+# Should-Start: ypserv slpd
 # Required-Stop: portmap
 # Default-Start: 3 5
 # Default-Stop: 0 1 2 6
-# Description: Start ypbind (necessary for a NIS client)
+# Short-Description: Start ypbind (necessary for a NIS client)
+# Description: ypbind finds the server for NIS domains and maintains
+#	the NIS binding information.
 ### END INIT INFO
 
-# Determine the base and follow a runlevel link name.
-base=${0##*/}
-link=${base#*[SK][0-9][0-9]}
-
 YPBIND_BIN=/usr/sbin/ypbind
-test -x $YPBIND_BIN || exit 5
+test -x $YPBIND_BIN || { echo "$YPBIND_BIN not installed";
+        if [ "$1" = "stop" ]; then exit 0; else exit 5; fi; }
 
-# Shell functions sourced from /etc/rc.status:
-#      rc_check         check and set local and overall rc status
-#      rc_status        check and set local and overall rc status
-#      rc_status -v     ditto but be verbose in local rc status
-#      rc_status -v -r  ditto and clear the local rc status
-#      rc_failed        set local and overall rc status to failed
-#      rc_reset         clear local rc status (overall remains)
-#      rc_exit          exit appropriate to overall rc status
+YPBIND_CONFIG=/etc/sysconfig/ypbind
+test -r $YPBIND_CONFIG || { echo "$YPBIND_CONFIG not existing";
+        if [ "$1" = "stop" ]; then exit 0; else exit 6; fi; }
+
+# Read config
+. $YPBIND_CONFIG
+
 . /etc/rc.status
 
 # First reset status of this service
@@ -58,122 +57,114 @@ case "$1" in
 	## If the domainname is not set, skip starting of ypbind
 	## and return with "program not configured"
         /bin/ypdomainname &> /dev/null
-        if [ $? -ne 0 -o -z "`/bin/ypdomainname`" ]; then
-	   # Tell the user this has skipped
-           rc_status -s
-           # service is not configured
-           exit 6;
+        if [ $? -ne 0 -o -z "`/bin/ypdomainname 2>/dev/null`" ]; then
+           if [ -f /etc/defaultdomain ]; then
+             XDOMAINNAME=`cat /etc/defaultdomain`
+             /bin/ypdomainname "$XDOMAINNAME"
+	   fi
+           /bin/ypdomainname &> /dev/null
+           if [ $? -ne 0 -o -z "`/bin/ypdomainname 2>/dev/null`" ]; then
+	     # Tell the user this has skipped
+	     echo -n " . . . . . . . . . . No domainname set"
+             rc_status -s
+             # service is not configured
+	     rc_failed 6
+             rc_exit
+           fi
         fi
 
 	## If we don't have a /etc/yp.conf file, skip starting of
         ## ypbind and return with "program not configured"
         ## if you add the -broadcast Option later, comment this out.
-	if [ ! -f /etc/yp.conf ] ; then
+	if [ ! -f /etc/yp.conf -a "$YPBIND_BROADCAST" != "yes" ] ; then
 	  # Tell the user this has skipped
+	  echo -n " . . . . . . . . . . ${attn}/etc/yp.conf not found${norm}"
           rc_status -s
           # service is not configured
-          exit 6;
+	  rc_failed 6
+          rc_exit
         fi
 
-	## Start daemon with startproc(8). If this fails
-	## the echo return value is set appropriate.
+	## Check if portmap is running, else abort with error
+	checkproc /sbin/portmap
+	if [ $? -ne 0 ]; then
+	  echo -n " . . . . . . . . . . ${attn}No portmapper running${norm}"
+	  rc_failed
+	  rc_status -v
+	  rc_exit
+	fi
 
-	# startproc should return 0, even if service is
-	# already running to match LSB spec.
-	startproc $YPBIND_BIN
+	# evaluate the OPTIONS for ypbind-mt
+	OPTIONS=""
+	test "$YPBIND_LOCAL_ONLY" = "yes" && OPTIONS="-local-only $OPTIONS"
+	test "$YPBIND_BROADCAST" = "yes" && OPTIONS="-broadcast $OPTIONS"
+	test "$YPBIND_BROKEN_SERVER" = "yes" && OPTIONS="-broken-server $OPTIONS"
+
+	startproc $YPBIND_BIN $YPBIND_OPTIONS $OPTIONS
         if [ $? -eq 0 ]; then
             notfound=1
-            for i in 1 2 3 4 5 6 7 8 9 10; do
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
                 ypwhich &>/dev/null && { notfound=0 ; break; };
                 echo -n " ."
                 sleep 1;
             done
             if [ $notfound -eq 1 ]; then
-                echo -n "  No NIS server found";
-            fi
+                echo -n " ${warn}No NIS server found${norm}";
+	    fi
         else
             rc_failed
         fi
-	# Remember status and be verbose
 	rc_status -v
 	;;
     stop)
 	echo -n "Shutting down ypbind"
-	## Stop daemon with killproc(8) and if this fails
-	## set echo the echo return value.
-
 	killproc -TERM $YPBIND_BIN
+	# Remove static data, else glibc will continue to use NIS
         rm -f /var/yp/binding/* /var/run/ypbind.pid
-
-	# Remember status and be verbose
 	rc_status -v
 	;;
-    try-restart)
-	## Stop the service and if this succeeds (i.e. the
-	## service was running before), start it again.
-	$0 stop  && sleep 1 && $0 start
-
-	# Remember status and be quiet
-	rc_status
+    try-restart|condrestart)
+        ## Do a restart only if the service was active before.
+        ## Note: try-restart is now part of LSB (as of 1.9).
+        ## RH has a similar command named condrestart.
+        if test "$1" = "condrestart"; then
+                echo "${attn} Use try-restart ${done}(LSB)${attn} rather than condrestart ${warn}(RH)${norm}"
+        fi
+	$0 status
+        if test $? = 0; then
+                $0 restart
+        else
+                rc_reset        # Not running is not a failure.
+        fi
+        rc_status
 	;;
     restart)
-	## Stop the service and regardless of whether it was
-	## running or not, start it again.
 	$0 stop
 	sleep 1
 	$0 start
-
-	# Remember status and be quiet
 	rc_status
 	;;
     force-reload)
-	## Signal the daemon to reload its config. Most daemons
-	## do this on signal 1 (SIGHUP).
-	## If it does not support it, restart.
-
 	echo -n "Reload service ypbind"
-	## if it supports it:
 	killproc -HUP $YPBIND_BIN
 	rc_status -v
 	;;
     reload)
-	## Like force-reload, but if daemon does not support
-	## signalling, do nothing (!)
-
-	# If it supports signalling:
 	echo -n "Reload service ypbind"
 	killproc -HUP $YPBIND_BIN
 	rc_status -v
 	;;
     status)
 	echo -n "Checking for ypbind: "
-	## Check status with checkproc(8), if process is running
-	## checkproc will return with exit status 0.
-
-	# Status has a slightly different for the status command:
-	# 0 - service running
-	# 1 - service dead, but /var/run/  pid  file exists
-	# 2 - service dead, but /var/lock/ lock file exists
-	# 3 - service not running
-
-	# If checkproc would return LSB compliant ret values,
-	# things could be a little bit easier here. This will
-	# probably soon be the case ...
-	checkproc $YPBIND_BIN; rc=$?
-	if test $rc = 0; then echo "OK"
-	else echo "No process"
-		if test -e /var/run/ypbind.pid;
-		then exit 1
-		else exit 3
-		fi
-	fi
-	#rc_status
+	checkproc $YPBIND_BIN
+	rc_status -v
 	;;
     probe)
-	## Optional: Probe for the necessity of a reload,
-	## give out the argument which is required for a reload.
-
-	test /etc/yp.conf -nt /var/run/ypbind.pid && echo reload
+	if [ /etc/yp.conf -nt /var/run/ypbind.pid ]; then
+	  echo reload
+        elif [ $YPBIND_CONFIG -nt /var/run/ypbind.pid ]; then
+          echo restart
+	fi
 	;;
     *)
 	echo "Usage: $0 {start|stop|status|try-restart|restart|force-reload|reload|probe}"
@@ -181,4 +172,3 @@ case "$1" in
 	;;
 esac
 rc_exit
-

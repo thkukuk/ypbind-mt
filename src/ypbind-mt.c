@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2001, 2002 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2001, 2002, 2004 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -168,34 +168,63 @@ load_config (int check_syntax)
 	  /* We have
 	     domain <domain> server <host|ip>
 	     or
-	     domain <domain> broadcast*/
+	     domain <domain> broadcast
+	     or
+	     domain<domain> slp
+	  */
 
-	  count = sscanf (cp, "domain %64s server %80s", tmpdomain,
-			  tmpserver);
-	  if (count == 2)
+	  if (strstr (cp, "server") != NULL)
 	    {
-	      if (debug_flag)
-		log_msg (LOG_DEBUG, _("parsed domain '%s' server '%s'"),
-			 tmpdomain, tmpserver);
-	      if (add_server (tmpdomain, tmpserver, check_syntax))
-		++have_entries;
-	      else
-		++bad_entries;
+	      count = sscanf (cp, "domain %64s server %80s", tmpdomain,
+			      tmpserver);
+	      if (count == 2)
+		{
+		  if (debug_flag)
+		    log_msg (LOG_DEBUG, _("parsed domain '%s' server '%s'"),
+			     tmpdomain, tmpserver);
+		  if (add_server (tmpdomain, tmpserver, check_syntax))
+		    ++have_entries;
+		  else
+		    ++bad_entries;
 
-	      continue;
+		  continue;
+		}
 	    }
-	  count = sscanf (cp, "domain %s broadcast", tmpdomain);
-	  if (count == 1)
+	  if (strstr (cp, "broadcast") != NULL)
 	    {
-	      if (debug_flag)
-		log_msg (LOG_DEBUG, _("parsed domain '%s' broadcast"),
-			 tmpdomain);
-	      if (add_server (tmpdomain, NULL, check_syntax))
-		++have_entries;
-	      else
-		++bad_entries;
+	      count = sscanf (cp, "domain %s broadcast", tmpdomain);
+	      if (count == 1)
+		{
+		  if (debug_flag)
+		    log_msg (LOG_DEBUG, _("parsed domain '%s' broadcast"),
+			     tmpdomain);
+		  if (add_server (tmpdomain, NULL, check_syntax))
+		    ++have_entries;
+		  else
+		    ++bad_entries;
 
-	      continue;
+		  continue;
+		}
+	    }
+	  if (strstr (cp, "slp") != NULL)
+	    {
+	      count = sscanf (cp, "domain %s slp", tmpdomain);
+	      if (count == 1)
+		{
+		  int i;
+
+		  if (debug_flag)
+		    log_msg (LOG_DEBUG, _("parsed domain '%s' slp"),
+			     tmpdomain);
+		  i = query_slp (tmpdomain);
+
+		  if (i > 0)
+		    have_entries += 1;
+		  else
+		    ++bad_entries;
+
+		  continue;
+		}
 	    }
 	}
       else if (strncmp (cp, "ypserver", 8) == 0 && isspace ((int)cp[8]))

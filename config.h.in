@@ -53,6 +53,9 @@
 /* Define to 1 if you have the <rpc/svc_soc.h> header file. */
 #undef HAVE_RPC_SVC_SOC_H
 
+/* Define to 1 if you have the <slp.h> header file. */
+#undef HAVE_SLP_H
+
 /* Define to 1 if <sys/socket.h> defines socklen_t. */
 #undef HAVE_SOCKLEN_T
 
@@ -109,6 +112,9 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
+
+/* Enable SLP support */
+#undef USE_SLP
 
 /* Version number of package */
 #undef VERSION

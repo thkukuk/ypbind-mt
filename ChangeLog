@@ -1,3 +1,21 @@
+2004-02-13  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.17
+
+	* etc/ypbind.init: Rework to match latest LSB changes.
+
+	* src/ypbind-mt.c (load_config): Fix parsing of domain statements.
+	Add new rule for SLP usage.
+
+	* src/ypbind_slp.c (query_slp): New: use SLP to find ypserver.
+
+	* src/serv_list.c (ping_all): Check if ypserv runs on a illegal
+	port.
+
+	* man/yp.conf.5.in: Document SLP support.
+
+	* configure.in: Check for SLP support.
+
 2004-01-14  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.16

@@ -570,8 +570,10 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
 
       if (!broken_server && (ntohs(addr->sin_port) >= IPPORT_RESERVED))
 	{
-          log_msg (LOG_ERR, _("Answer for domain '%s' from '%s' on illegal port."),
-		   in_use->domain, inet_ntoa (addr->sin_addr));
+          log_msg (LOG_ERR,
+		   _("Answer for domain '%s' from '%s' on illegal port %d."),
+		   in_use->domain, inet_ntoa (addr->sin_addr),
+		   ntohs (addr->sin_port));
           return 0;
         }
 
@@ -771,6 +773,14 @@ ping_all (struct binding *list)
       s_in.sin_family = list->server[i].family;
       s_in.sin_port =
 	htons (__pmap_getport (&s_in, YPPROG, YPVERS, IPPROTO_UDP));
+      if (!broken_server && ntohs (s_in.sin_port) >= IPPORT_RESERVED)
+	{
+          log_msg (LOG_ERR,
+		   _("Answer for domain '%s' from '%s' on illegal port %d."),
+		   list->domain, list->server[i].host,
+		   ntohs (s_in.sin_port));
+	  continue;
+        }
       list->server[i].port = s_in.sin_port;
       if (s_in.sin_port == 0)
 	{
