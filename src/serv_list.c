@@ -371,7 +371,7 @@ get_entry (const char *domain, struct binding **entry)
 }
 
 int
-add_server (const char *domain, const char *host)
+add_server (const char *domain, const char *host, int check_syntax)
 {
   struct binding *entry;
   int active;
@@ -455,20 +455,36 @@ add_server (const char *domain, const char *host)
 	  switch (h_errno)
 	    {
 	    case HOST_NOT_FOUND:
-	      log_msg (LOG_ERR, _("Unknown host: %s"), host);
+	      if (check_syntax)
+		fprintf (stderr, "%s %s\n", _("Unknown host:"), host);
+	      else
+		log_msg (LOG_ERR, "%s %s", _("Unknown host:"), host);
 	      break;
 	    case TRY_AGAIN:
-	      log_msg (LOG_ERR, _("Host name lookup failure"));
+	      if (check_syntax)
+		fprintf (stderr, "%s\n", _("Host name lookup failure"));
+	      else
+		log_msg (LOG_ERR, _("Host name lookup failure"));
 	      break;
 	    case NO_DATA:
-	      log_msg (LOG_ERR, _("No address associated with name: %s"),
-		       host);
+	      if (check_syntax)
+		fprintf (stderr, "%s %s\n",
+			 _("No address associated with name:"), host);
+	      else
+		log_msg (LOG_ERR, "%s %s",
+			 _("No address associated with name:"), host);
 	      break;
 	    case NO_RECOVERY:
-	      log_msg (LOG_ERR, _("Unknown server error"));
+	      if (check_syntax)
+		fprintf (stderr, "%s\n", _("Unknown server error"));
+	      else
+		log_msg (LOG_ERR, _("Unknown server error"));
 	      break;
 	    default:
-	      log_msg (LOG_ERR, _("gethostbyname: Unknown error"));
+	      if (check_syntax)
+		fprintf (stderr, "%s\n", _("gethostbyname: Unknown error"));
+	      else
+		log_msg (LOG_ERR, _("gethostbyname: Unknown error"));
 	      break;
 	    }
 	  goto exit;

@@ -9,7 +9,8 @@ extern int ping_interval;
 
 extern void find_domain (const char *domain, ypbind_resp *result);
 extern void clear_server (void);
-extern int  add_server (const char *__domain, const char *__host);
+extern int  add_server (const char *__domain, const char *__host,
+			int __check_syntax);
 extern void change_binding (const char *__domain, ypbind_binding *binding);
 
 extern void *test_bindings (void *param);

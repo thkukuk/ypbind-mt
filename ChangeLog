@@ -1,6 +1,12 @@
 2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
 
+	* src/serv_list.c (add_server): Print to stderr if we make
+	a syntax check only.
+
+	* src/local.h: Add new argument for add_server prototype.
+
 	* src/ypbind-mt.c: Rework syntax check for yp.conf
+	(main): Call add_server with argument to check syntax only.
 
 	* man/yp.conf.5.in: Remove libc5 hints.
 

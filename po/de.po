@@ -1,12 +1,12 @@
 # German translation for ypbind-mt.
-# Copyright (C) 1998, 1999 Thorsten Kukuk
+# Copyright (C) 1998, 1999, 2002 Thorsten Kukuk
 # Thorsten Kukuk <kukuk@suse.de>, 1998.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
-"POT-Creation-Date: 2002-04-04 16:39+0200\n"
-"PO-Revision-Date: 1999-08-27 11:13+02:00\n"
+"POT-Creation-Date: 2002-04-04 17:04+0200\n"
+"PO-Revision-Date: 2002-04-04 17:12+02:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
 "MIME-Version: 1.0\n"
@@ -23,139 +23,129 @@ msgstr ""
 "Interner Fehler: add_server wurde mit NULL pointer für domain aufgerufen."
 
 #: src/serv_list.c:398
-#, fuzzy, c-format
+#, c-format
 msgid "add_server() domain: %s, broadcast"
-msgstr "add_server() Domain: %s, Broadcast, Slot: 0"
+msgstr "add_server() Domain: %s, Broadcast"
 
 #: src/serv_list.c:422
-#, fuzzy, c-format
+#, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
-msgstr "add_server() Domain: %s, Host: %s, %sBroadcast, Slot: %d"
+msgstr "add_server() Domain: %s, Rechner: %s, Kein Slot mehr frei!"
 
 #: src/serv_list.c:429
-#, fuzzy, c-format
+#, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
-msgstr "add_server() Domain: %s, Host: %s, %sBroadcast, Slot: %d"
+msgstr "add_server() Domain: %s, Rechner: %s, Slot: %d"
 
-#: src/serv_list.c:458
-#, c-format
-msgid "Unknown host: %s"
-msgstr "Unbekannter Rechner: %s"
+#: src/serv_list.c:459 src/serv_list.c:461
+msgid "Unknown host:"
+msgstr "Unbekannter Rechner:"
 
-#: src/serv_list.c:461
+#: src/serv_list.c:465 src/serv_list.c:467
 msgid "Host name lookup failure"
-msgstr "Hostname lookup Fehler"
+msgstr "Fehler beim Auflösen des Rechnernamens"
 
-#: src/serv_list.c:464
-#, c-format
-msgid "No address associated with name: %s"
-msgstr "Keine Addresse vorhanden für Rechner: %s"
+#: src/serv_list.c:472 src/serv_list.c:475
+msgid "No address associated with name:"
+msgstr "Keine Addresse vorhanden für Rechner:"
 
-#: src/serv_list.c:468
+#: src/serv_list.c:479 src/serv_list.c:481
 msgid "Unknown server error"
 msgstr "Unbekanter Server Fehler"
 
-#: src/serv_list.c:471
+#: src/serv_list.c:485 src/serv_list.c:487
 msgid "gethostbyname: Unknown error"
 msgstr "gethostbyname: Unbekannter Fehler"
 
-#: src/serv_list.c:543 src/serv_list.c:804
+#: src/serv_list.c:559 src/serv_list.c:820
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\""
 
-#: src/serv_list.c:547
+#: src/serv_list.c:563
 #, c-format
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr "Antwort für Domain \"%s\" von unbekantem Server \"%s\""
 
-#: src/serv_list.c:553
+#: src/serv_list.c:569
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port."
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\" vom illegalen Port."
 
-#: src/serv_list.c:716 src/serv_list.c:845
+#: src/serv_list.c:732 src/serv_list.c:861
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr "Ping Host \"%s\", Domain \"%s\""
 
-#: src/serv_list.c:729
+#: src/serv_list.c:745
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr "Server \"%s\" antwortet nicht."
 
-#: src/serv_list.c:864
+#: src/serv_list.c:880
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr "clnt_create für server \"%s\" (domain \"%s\") schlug fehl"
 
-#: src/serv_list.c:885
+#: src/serv_list.c:901
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr "Domain \"%s\" wird nicht von \"%s\" unterstützt"
 
-#: src/serv_list.c:964
+#: src/serv_list.c:980
 msgid "Pinging all active server."
 msgstr "Sende ein Ping zu allen aktiven Servern."
 
-#: src/serv_list.c:966
+#: src/serv_list.c:982
 msgid "Check new for fastest server."
 msgstr "Suche erneut den schnellsten Server."
 
-#: src/serv_list.c:1006
+#: src/serv_list.c:1022
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr "Server für Domain \"%s\" antwortet nicht."
 
-#: src/serv_list.c:1012 src/serv_list.c:1017
+#: src/serv_list.c:1028 src/serv_list.c:1033
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr "Server \"%s\" für Domain \"%s\" antwortet nicht."
 
-#: src/ypbind-mt.c:160
-#, c-format
-msgid "Trying entry: %s"
-msgstr "Versuche Eintrag: %s"
-
-#: src/ypbind-mt.c:163
-#, fuzzy, c-format
-msgid "Trying entry: %s\n"
-msgstr "Versuche Eintrag: %s"
+#: src/ypbind-mt.c:160 src/ypbind-mt.c:163
+msgid "Trying entry:"
+msgstr "Versuche Eintrag:"
 
 #: src/ypbind-mt.c:177
 #, c-format
 msgid "parsed domain '%s' server '%s'"
-msgstr ""
+msgstr "Parse domain '%s' server '%s'"
 
 #: src/ypbind-mt.c:190
 #, c-format
 msgid "parsed domain '%s' broadcast"
-msgstr ""
+msgstr "Parse domain '%s' broadcast"
 
 #: src/ypbind-mt.c:209
 #, c-format
 msgid "parsed ypserver %s"
-msgstr ""
+msgstr "Parse ypserver %s"
 
 #: src/ypbind-mt.c:219
-#, fuzzy, c-format
+#, c-format
 msgid "Entry \"%s\" is not valid!\n"
-msgstr "Der Eintrag \"%s\" ist syntaktisch falsch, er wird ignoriert!"
+msgstr "Der Eintrag \"%s\" ist syntaktisch falsch!\n"
 
 #: src/ypbind-mt.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr "Der Eintrag \"%s\" ist syntaktisch falsch, er wird ignoriert!"
 
 #: src/ypbind-mt.c:234
-#, fuzzy
 msgid "Bad entries found.\n"
-msgstr "Keinen Eintrag gefunden."
+msgstr "Ungültige Einträge gefunden.\n"
 
 #: src/ypbind-mt.c:239
-#, fuzzy
 msgid "No entry found.\n"
-msgstr "Keinen Eintrag gefunden."
+msgstr "Keinen Eintrag gefunden.\n"
 
 #: src/ypbind-mt.c:247
 msgid "No entry found."
@@ -223,18 +213,17 @@ msgid "\typbind --version\n"
 msgstr ""
 
 #: src/ypbind-mt.c:489
-#, fuzzy
 msgid "ERROR: domainname not set.\n"
-msgstr "Domainname wurde nicht gesetzt - Abbruch.\n"
+msgstr "Fehler: Domainname wurde nicht gesetzt.\n"
 
 #: src/ypbind-mt.c:494
 msgid "domainname not set - aborting.\n"
 msgstr "Domainname wurde nicht gesetzt - Abbruch.\n"
 
 #: src/ypbind-mt.c:503
-#, fuzzy, c-format
+#, c-format
 msgid "Config file %s is not ok.\n"
-msgstr "Konfigurationsdatei %s ist in Ordnung.\n"
+msgstr "Konfigurationsdatei %s ist nicht in Ordnung.\n"
 
 #: src/ypbind-mt.c:508
 #, c-format
@@ -355,6 +344,10 @@ msgstr "Kann Argumente nicht freigeben"
 #: src/ypbind_svc.c:83 src/ypbind_svc.c:148
 msgid "unable to free results"
 msgstr "Kann Result nicht freigeben"
+
+#, fuzzy
+#~ msgid "Trying entry: %s\n"
+#~ msgstr "Versuche Eintrag: %s"
 
 #~ msgid "unknown"
 #~ msgstr "unbekannt"

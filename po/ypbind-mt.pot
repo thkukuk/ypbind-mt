@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2002-04-04 16:39+0200\n"
+"POT-Creation-Date: 2002-04-04 17:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,89 +38,81 @@ msgstr ""
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr ""
 
-#: src/serv_list.c:458
-#, c-format
-msgid "Unknown host: %s"
+#: src/serv_list.c:459 src/serv_list.c:461
+msgid "Unknown host:"
 msgstr ""
 
-#: src/serv_list.c:461
+#: src/serv_list.c:465 src/serv_list.c:467
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/serv_list.c:464
-#, c-format
-msgid "No address associated with name: %s"
+#: src/serv_list.c:472 src/serv_list.c:475
+msgid "No address associated with name:"
 msgstr ""
 
-#: src/serv_list.c:468
+#: src/serv_list.c:479 src/serv_list.c:481
 msgid "Unknown server error"
 msgstr ""
 
-#: src/serv_list.c:471
+#: src/serv_list.c:485 src/serv_list.c:487
 msgid "gethostbyname: Unknown error"
 msgstr ""
 
-#: src/serv_list.c:543 src/serv_list.c:804
+#: src/serv_list.c:559 src/serv_list.c:820
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
 
-#: src/serv_list.c:547
+#: src/serv_list.c:563
 #, c-format
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr ""
 
-#: src/serv_list.c:553
+#: src/serv_list.c:569
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port."
 msgstr ""
 
-#: src/serv_list.c:716 src/serv_list.c:845
+#: src/serv_list.c:732 src/serv_list.c:861
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:729
+#: src/serv_list.c:745
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:864
+#: src/serv_list.c:880
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:885
+#: src/serv_list.c:901
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:964
+#: src/serv_list.c:980
 msgid "Pinging all active server."
 msgstr ""
 
-#: src/serv_list.c:966
+#: src/serv_list.c:982
 msgid "Check new for fastest server."
 msgstr ""
 
-#: src/serv_list.c:1006
+#: src/serv_list.c:1022
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:1012 src/serv_list.c:1017
+#: src/serv_list.c:1028 src/serv_list.c:1033
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr ""
 
-#: src/ypbind-mt.c:160
-#, c-format
-msgid "Trying entry: %s"
-msgstr ""
-
-#: src/ypbind-mt.c:163
-#, c-format
-msgid "Trying entry: %s\n"
+#: src/ypbind-mt.c:160 src/ypbind-mt.c:163
+msgid "Trying entry:"
 msgstr ""
 
 #: src/ypbind-mt.c:177

@@ -157,10 +157,10 @@ load_config (int check_syntax)
 	cp[strlen (cp) - 1] = '\0';
 
       if (debug_flag)
-        log_msg (LOG_DEBUG, _("Trying entry: %s"), cp);
+        log_msg (LOG_DEBUG, "%s %s", _("Trying entry:"), cp);
 
       if (check_syntax)
-	printf (_("Trying entry: %s\n"), cp);
+	printf ("%s %s\n", _("Trying entry:"), cp);
 
       if (strncmp (cp, "domain", 6) == 0 && isspace ((int)cp[6]))
 	{
@@ -176,7 +176,7 @@ load_config (int check_syntax)
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed domain '%s' server '%s'"),
 			 tmpdomain, tmpserver);
-	      if (add_server (tmpdomain, tmpserver))
+	      if (add_server (tmpdomain, tmpserver, check_syntax))
 		++have_entries;
 	      else
 		++bad_entries;
@@ -189,7 +189,7 @@ load_config (int check_syntax)
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed domain '%s' broadcast"),
 			 tmpdomain);
-	      if (add_server (tmpdomain, NULL))
+	      if (add_server (tmpdomain, NULL, check_syntax))
 		++have_entries;
 	      else
 		++bad_entries;
@@ -207,7 +207,7 @@ load_config (int check_syntax)
 	    {
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed ypserver %s"), tmpserver);
-	      if (add_server (domain, tmpserver))
+	      if (add_server (domain, tmpserver, check_syntax))
 		++have_entries;
 	      else
 		++bad_entries;
@@ -398,7 +398,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  clear_server ();
 
 	  if (use_broadcast)
-	    add_server (domain, NULL);
+	    add_server (domain, NULL, 0);
 	  else
 	    load_config (0);
 
@@ -554,7 +554,7 @@ main (int argc, char **argv)
 	}
     }
   else
-    add_server (domain, NULL);
+    add_server (domain, NULL, 0);
 
   unlink_bindingdir ();
 
