@@ -206,6 +206,7 @@ load_config (int check_syntax)
 		  continue;
 		}
 	    }
+#ifdef USE_SLP
 	  if (strstr (cp, "slp") != NULL)
 	    {
 	      count = sscanf (cp, "domain %s slp", tmpdomain);
@@ -226,6 +227,7 @@ load_config (int check_syntax)
 		  continue;
 		}
 	    }
+#endif
 	}
       else if (strncmp (cp, "ypserver", 8) == 0 && isspace ((int)cp[8]))
 	{
