@@ -1252,7 +1252,7 @@ fi
 
 # Define the identity of the package.
 PACKAGE=ypbind-mt
-VERSION=1.8.98
+VERSION=1.8.99
 
 cat >>confdefs.h <<EOF
 #define PACKAGE "$PACKAGE"

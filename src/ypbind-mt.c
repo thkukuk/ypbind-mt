@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2001 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -74,6 +74,9 @@ int broken_server = 0;
 int ping_interval = 20;
 int port = -1;
 static int lock_fd;
+static int pid_is_written = 0;
+static pthread_mutex_t mutex_pid = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t cond_pid = PTHREAD_COND_INITIALIZER;
 
 static void
 unlink_bindingdir (void)
@@ -307,6 +310,19 @@ sig_handler (void *v_param  __attribute__ ((unused)))
   struct flock lock;
   sigset_t sigs_to_catch;
   int caught;
+
+  /* Create pid file in sig handler thread. Due the broken
+     thread signal handling with Linux the pid must be the
+     one of the thread handler */
+  create_pidfile ();
+
+  /* Signal the main thread that we have the pid file created
+     and no other ypbind is running. So we can continue and
+     unset bogus portmap information and register ourself */
+  pthread_mutex_lock(&mutex_pid);
+  pid_is_written = 1;
+  pthread_cond_broadcast(&cond_pid);
+  pthread_mutex_unlock(&mutex_pid);
 
   sigemptyset (&sigs_to_catch);
   sigaddset (&sigs_to_catch, SIGCHLD);
@@ -550,8 +566,6 @@ main (int argc, char **argv)
   __nss_configure_lookup ("hosts", "files dns");
 #endif /* HAVE___NSS_CONFIGURE_LOOKUP */
 
-  create_pidfile ();
-
   sigemptyset (&sigs_to_block);
   sigaddset (&sigs_to_block, SIGCHLD);
   sigaddset (&sigs_to_block, SIGTERM);
@@ -566,6 +580,14 @@ main (int argc, char **argv)
     }
 
   pthread_create (&sig_thread, NULL, &sig_handler, NULL);
+
+  /* wait until signal thread has created the pid file */
+  pthread_mutex_lock(&mutex_pid);
+  while (pid_is_written < 1)
+    {
+      pthread_cond_wait(&cond_pid, &mutex_pid);
+    }
+  pthread_mutex_unlock(&mutex_pid);
 
   pmap_unset (YPBINDPROG, YPBINDOLDVERS);
   pmap_unset (YPBINDPROG, YPBINDVERS);
