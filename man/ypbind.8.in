@@ -20,7 +20,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH ypbind 8 "April 2002" "ypbind-mt Version @VERSION@"
+.TH ypbind 8 "August 2004" "ypbind-mt Version @VERSION@"
 .SH NAME
 ypbind - NIS binding process
 .SH SYNOPSIS
@@ -64,20 +64,20 @@ to be bound to more then one domain.
 After a binding has been established,
 .B ypbind
 will send YPPROC_DOMAIN requests to the current NIS server at 20 seconds
-intervals. If it doesn't get an response or the NIS server tells that he
-doesn't has this domain any longer,
+intervals. If it doesn't get an response or the NIS server reports that he
+doesn't have this domain any longer,
 .B ypbind
-will search a new NIS server. All 15 minutes
+will search for a new NIS server. All 15 minutes
 .B ypbind
-will check, if the current NIS server is the fastest. If it find
+will check to see if the current NIS server is the fastest. If it find
 a server which answers faster, it will switch to this server.
 You could tell
 .B ypbind
 to use network broadcasts to find a new server, what is insecure,
-or you could give it a list of known, secure servers.
+or you could give it a list of known secure servers.
 In this case
 .B ypbind
-will send a ping to all server and binds to first one which answers.
+will send a ping to all servers and binds to first one which answers.
 .LP
 Unless the option
 .B \-debug

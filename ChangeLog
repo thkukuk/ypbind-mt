@@ -1,3 +1,7 @@
+2004-08-11  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Lot of spelling improvements.
+
 2004-04-29  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.17.3
