@@ -4,7 +4,7 @@
 
 # serial 1
 
-AC_DEFUN(AM_WITH_EFENCE,
+AC_DEFUN([AM_WITH_EFENCE],
 [AC_MSG_CHECKING(if malloc debugging with efence is wanted)
 AC_ARG_WITH(efence,
 [  --with-efence           use ElectricFence 2.05],

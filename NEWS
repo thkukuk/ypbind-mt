@@ -1,8 +1,11 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2003 Thorsten Kukuk
+Copyright (C) 1998-2004 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
+
+Version 1.15
+* Allow -local-only and -p at the same time
 
 Version 1.14
 * Update binding file if ypset was called

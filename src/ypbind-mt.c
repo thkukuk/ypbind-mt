@@ -663,10 +663,10 @@ main (int argc, char **argv)
       if (local_only)
 	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
       else
-	{
-	  socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-	  socket_address.sin_port = htons (port);
-	}
+	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
+
+      if (port >= 0)
+	socket_address.sin_port = htons (port);
 
       result = bind (sock, (struct sockaddr *) &socket_address,
 		     sizeof (socket_address));
@@ -716,10 +716,10 @@ main (int argc, char **argv)
       if (local_only)
 	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
       else
-	{
-	  socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-	  socket_address.sin_port = htons (port);
-	}
+	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
+
+      if (port >= 0)
+	socket_address.sin_port = htons (port);
 
       result = bind (sock, (struct sockaddr *) &socket_address,
 		     sizeof (socket_address));

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2003-08-26 10:15+0200\n"
+"POT-Creation-Date: 2004-01-09 14:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -156,10 +156,12 @@ msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr ""
 
 #: src/ypbind-mt.c:249
+#, c-format
 msgid "Bad entries found.\n"
 msgstr ""
 
 #: src/ypbind-mt.c:254
+#, c-format
 msgid "No entry found.\n"
 msgstr ""
 
