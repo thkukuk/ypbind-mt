@@ -1,9 +1,13 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998, 1999 Thorsten Kukuk
+Copyright (C) 1998, 1999, 2001 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
+
+Version 1.8.98
+* Fix problems with locking
+* Fix problems with domain bounding errors
 
 Version 1.8
 * Makefile fixes

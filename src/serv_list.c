@@ -40,6 +40,7 @@
 #include <sys/uio.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <sys/socket.h>
 #if defined(HAVE_SYS_FILIO_H)
 #include <sys/filio.h>
 #endif
@@ -88,6 +89,7 @@ static pthread_mutex_t search_lock = PTHREAD_MUTEX_INITIALIZER;
 static void do_broadcast (struct binding *list);
 static void ping_all (struct binding *list);
 
+/* this is called from the RPC thread (ypset). */
 void
 change_binding (const char *domain, ypbind_binding *binding)
 {
@@ -242,20 +244,10 @@ update_bindingfile (struct binding *entry)
   struct iovec iov[2];
   struct ypbind_resp ybres;
   char path1[MAXPATHLEN + 1], path2[MAXPATHLEN + 1];
-  int fd1, fd2, len;
+  int fd, len;
 
   sprintf (path1, "%s/%s.1", BINDINGDIR, entry->domain);
   sprintf (path2, "%s/%s.2", BINDINGDIR, entry->domain);
-
-  if ((fd1 = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) == -1)
-    return;
-
-  if ((fd2 = open(path2, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) == -1)
-    {
-      close (fd1);
-      unlink (path1);
-      return;
-    }
 
   iov[0].iov_base = (caddr_t) &sport;
   iov[0].iov_len = sizeof (sport);
@@ -271,28 +263,48 @@ update_bindingfile (struct binding *entry)
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
 	      &entry->server[entry->active].port, sizeof (unsigned short int));
     }
-  else
+  else if (entry->active == -2) /* ypset was used */
     {
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
 	      &entry->ypset.addr, sizeof (struct in_addr));
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
 	      &entry->ypset.port, sizeof (unsigned short int));
     }
+  else
+    {
+       /* This should not happen. Remove binding files which means,
+          libc will query ypbind direct. */
+       unlink (path1);
+       unlink (path2);
+       log_msg (LOG_ERR, "INTERNAL ERROR: update_bindingfile called without valid data!");
+       return;
+    }
 
   len = iov[0].iov_len + iov[1].iov_len;
-  if (writev (fd1, iov, 2) != len )
-    {
-      log_msg (LOG_ERR, "writev (fd1): %s", strerror (errno));
-      unlink (path1);
-    }
-  close (fd1);
 
-  if (writev (fd2, iov, 2) != len )
-    {
-      log_msg (LOG_ERR, "writev (fd2): %s", strerror (errno));
-      unlink (path2);
+  if ((fd = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+    {  
+      if (writev (fd, iov, 2) != len )
+        {
+          log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
+          unlink (path1);
+        }
+      close (fd);
     }
-  close (fd2);
+  else
+    log_msg (LOG_ERR, "open(%s): %s", path1, strerror (errno));
+
+  if ((fd = open(path2, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+    {
+      if (writev (fd, iov, 2) != len )
+        {
+          log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
+          unlink (path2);
+        }
+      close (fd);
+    }
+  else
+    log_msg (LOG_ERR, "open(%s): %s", path2, strerror (errno));
 }
 
 void

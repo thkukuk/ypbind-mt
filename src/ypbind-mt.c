@@ -389,6 +389,7 @@ main (int argc, char **argv)
   int configcheck_only = 0;
 
   setlocale (LC_MESSAGES, "");
+  setlocale (LC_CTYPE, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
 

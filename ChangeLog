@@ -1,3 +1,12 @@
+2001-10-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (update_bindingfile): Make more robust, don't
+          truncate old files before we have all data.
+
+2001-08-14  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (main): Call setlocale for LC_CTYPE, too.
+
 2001-08-13  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/serv_list.c (find_domain): Fix comment, get read lock back if
