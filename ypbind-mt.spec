@@ -5,7 +5,7 @@ Release: 1
 Copyright: GPL
 Group: Networking
 Source: ftp.kernel.org:/pub/linux/utils/net/NIS/ypbind-mt-%{PACKAGE_VERSION}.tar.gz
-Packager: Thorsten Kukuk <kukuk@vt.uni-paderborn.de>
+Packager: Thorsten Kukuk <kukuk@suse.de>
 BuildRoot: /var/tmp/ypbind-mt
 Conflicts: ypbind
 

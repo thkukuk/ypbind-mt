@@ -1,3 +1,13 @@
+1999-05-03  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (create_pidfile): If no locking is available,
+	  don't exit. Hope the user knows what he is doing.
+
+1999-05-01  Thorsten Kukuk  <kukuk@suse.de>
+
+	* etc/ypbind.init: Change default values for checkconfig.
+	  Patch from Darrell Fuhriman <darrell@grumblesmurf.net>.
+
 1999-02-28  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/serv_list.c (find_domain): Print messages only,

@@ -1,5 +1,5 @@
 
-This directory contains the version 1.3 of the ypbind-mt.
+This directory contains the version 1.5 of the ypbind-mt.
 
 
 As of this release, ypbind-mt is known to run on the following
@@ -16,7 +16,7 @@ send me a note.
 
 See the file INSTALL to find out how to configure, build, install, and port
 ypbind-mt.  You might also consider reading the WWW pages for Linux NIS (YP)
-at http://www-vt.uni-paderborn.de/~kukuk/linux/.
+at http://www.suse.de/~kukuk/linux/.
 
 
 ypbind-mt is free software. See the file COPYING for copying conditions.
@@ -38,4 +38,4 @@ Linux. It has the following features:
 	* Binds to the server which answered as first
 
 
-Thorsten Kukuk <kukuk@vt.uni-paderborn.de>, 1. July 1998
+Thorsten Kukuk <kukuk@suse.de>, 2. May 1999

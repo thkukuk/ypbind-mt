@@ -1,6 +1,6 @@
-/* Copyright (c) 1998 Thorsten Kukuk
+/* Copyright (c) 1998, 1999 Thorsten Kukuk
    This file is part of ypbind-mt.
-   Author: Thorsten Kukuk <kukuk@vt.uni-paderborn.de>
+   Author: Thorsten Kukuk <kukuk@suse.de>
 
    The ypbind-mt are free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public License as
@@ -65,7 +65,9 @@
 #ifndef _PATH_VARRUN
 #define _PATH_VARRUN "/etc/"
 #endif
+#ifndef _YPBIND_PIDFILE
 #define _YPBIND_PIDFILE _PATH_VARRUN"ypbind.pid"
+#endif
 #endif /* USE_PIDFILE */
 
 char *domain = NULL;
@@ -262,14 +264,20 @@ create_pidfile (void)
 
   /* Is the pidfile locked by another ypserv ? */
   if (fcntl (lock_fd, F_GETLK, &lock) < 0)
-    log_msg (LOG_ERR, _("fcntl error"));
-
-  if (lock.l_type == F_UNLCK)
+    {
+      if (errno != ENOLCK)
+	{
+	  log_msg (LOG_ERR, _("fcntl error: %s"), strerror (errno));
+	  /* XXX look, which pid is in pidfile */
+	}
+      pid = 0;
+    }
+  else  if (lock.l_type == F_UNLCK)
     pid = 0;		   /* false, region is not locked by another proc */
   else
     pid = lock.l_pid;	   /* true, return pid of lock owner */
 
-  if (0 != pid)
+  if (pid != 0)
     {
       log_msg (LOG_ERR, _("ypbind-mt already running (pid %d) - exiting"),
 	       pid);

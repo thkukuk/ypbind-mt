@@ -1,10 +1,13 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998 Thorsten Kukuk
+Copyright (C) 1998, 1999 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to
-<kukuk@vt.uni-paderborn.de>.
+<kukuk@suse.de>.
 
+
+Version 1.5
+* XXX NOTHING
 
 Version 1.4
 * Add fixes for 64bit machines

@@ -4,7 +4,7 @@
 #
 # Version:      @(#) /etc/rc.d/init.d/ypbind.init 1.0
 #
-# chkconfig: - 70 30
+# chkconfig: - 13 87
 # description: This is a daemon which runs on NIS/YP clients and binds them \
 #              to a NIS domain. It must be running for systems based on glibc \
 #              to work as NIS clients, but it should not be enabled on systems \

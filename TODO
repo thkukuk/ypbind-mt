@@ -5,11 +5,4 @@ Things to do (in no particular order):
 
 	* A ypserv host could have multiple interfaces
 
-	* Try to reconfigure the host search order for other libraries
-	  then glibc (like Solaris, Linux libc5, Linux libc5+NYS)
-
 	* Fix the stupid yp.conf parser
-
-	* Write a better parser for yp.conf
-
-	* Use getopt_long_only for parsing options
