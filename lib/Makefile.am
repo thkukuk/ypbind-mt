@@ -1,11 +1,11 @@
 #
-# Copyright (c) 1998 Thorsten Kukuk, Germany
+# Copyright (c) 1998, 1999 Thorsten Kukuk, Germany
 #
-# Author: Thorsten Kukuk <kukuk@vt.uni-paderborn.de>
+# Author: Thorsten Kukuk <kukuk@suse.de>
 #
 # Process this file with automake to produce Makefile.in.
 
-AUTOMAKE_OPTIONS = 1.3 gnits
+AUTOMAKE_OPTIONS = 1.4 gnits
 
 noinst_LIBRARIES = libcompat.a
 

@@ -1,9 +1,7 @@
 .\" -*- nroff -*-
-.\" Copyright 1998 Thorsten Kukuk <kukuk@uni-paderborn.de>
+.\" Copyright 1998, 1999 Thorsten Kukuk <kukuk@suse.de>
 .\"
 .\" This file is part of ypbind-mt.
-.\"
-.\" Author: Thorsten Kukuk <kukuk@vt.uni-paderborn.de>
 .\"
 .\" ypbind-mt is free software; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
@@ -64,4 +62,4 @@ for the local domain.
 .BR ypbind (8)
 .SH AUTHOR
 .B ypbind-mt
-was written by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>.
+was written by Thorsten Kukuk <kukuk@suse.de>.

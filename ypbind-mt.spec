@@ -1,7 +1,7 @@
 Summary: NIS (YP) binding process
 Name: ypbind-mt
-Version: 1.4
-Release: 1
+Version: 1.5
+Release: 0
 Copyright: GPL
 Group: Networking
 Source: ftp.kernel.org:/pub/linux/utils/net/NIS/ypbind-mt-%{PACKAGE_VERSION}.tar.gz
@@ -16,7 +16,7 @@ as NIS clients. This version uses pthreads for better responses.
 
 This implementation is only for NIS _clients_. You must already have
 a NIS server running somewhere. You can find one for linux on
-http://www-vt.uni-paderborn.de/~kukuk/linux/nis.html. Please read the
+http://www.suse.de/~kukuk/linux/nis.html. Please read the
 NIS-HOWTO, too.
 
 %prep

@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
-.\" Copyright 1998 Thorsten Kukuk <kukuk@uni-paderborn.de>
+.\" Copyright 1998, 1999 Thorsten Kukuk, Germany
 .\"
 .\" This file is part of ypbind-mt.
 .\"
-.\" Author: Thorsten Kukuk <kukuk@vt.uni-paderborn.de>
+.\" Author: Thorsten Kukuk <kukuk@suse.de>
 .\"
 .\" ypbind-mt is free software; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
@@ -20,7 +20,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH ypbind 8 "July 1998" "ypbind-mt Version @PK_VERSION@"
+.TH ypbind 8 "May 1999" "ypbind-mt Version @PK_VERSION@"
 .SH NAME
 ypbind - NIS binding process
 .SH SYNOPSIS
@@ -264,4 +264,4 @@ master process.
 
 .SH AUTHOR
 .B ypbind-mt
-was written by Thorsten Kukuk <kukuk@vt.uni-paderborn.de>.
+was written by Thorsten Kukuk <kukuk@suse.de>.

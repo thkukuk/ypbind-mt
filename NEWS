@@ -7,7 +7,7 @@ Please send bug reports, questions and suggestions to
 
 
 Version 1.5
-* XXX NOTHING
+* Ignore pidfile, if there is no file locking over NFS
 
 Version 1.4
 * Add fixes for 64bit machines
