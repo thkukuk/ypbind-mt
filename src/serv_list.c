@@ -87,7 +87,7 @@ static pthread_rdwr_t domainlock = PTHREAD_RDWR_INITIALIZER;
 static pthread_mutex_t search_lock = PTHREAD_MUTEX_INITIALIZER;
 
 static void do_broadcast (struct binding *list);
-static void ping_all (struct binding *list);
+static int ping_all (struct binding *list);
 
 /* this is called from the RPC thread (ypset). */
 void
@@ -200,10 +200,9 @@ find_domain (const char *domain, ypbind_resp *result)
 		{
 		  if (debug_flag)
 		    log_msg (LOG_DEBUG, "trylock = success");
-		  if (domainlist[i].use_broadcast)
+		  if (!ping_all (&domainlist[i]) &&
+		      domainlist[i].use_broadcast)
 		    do_broadcast (&domainlist[i]);
-		  else
-		    ping_all (&domainlist[i]);
 		  pthread_mutex_unlock (&search_lock);
 		  ++second;
 		  /* Get the read lock again for next run. */
@@ -602,6 +601,10 @@ do_broadcast (struct binding *list)
   bool_t out;
   enum clnt_stat status;
 
+  if (debug_flag)
+    log_msg (LOG_DEBUG, _("do_broadcast() for domain '%s' is called"),
+	     domain);
+
   pthread_rdwr_wlock_np (&domainlock);
   list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
@@ -623,6 +626,10 @@ do_broadcast (struct binding *list)
       update_bindingfile (list);
       pthread_rdwr_runlock_np (&domainlock);
     }
+
+  if (debug_flag)
+    log_msg (LOG_DEBUG, _("leave do_broadcast() for domain '%s'"),
+	     domain);
 }
 
 #if USE_BROADCAST
@@ -701,7 +708,9 @@ struct findserv_req
   struct sockaddr_in sin;
 };
 
-static void
+/* This function sends a ping to every known ypserver. It returns 0,
+   if no running server is found, 1 else. */
+static int
 ping_all (struct binding *list)
 {
   const struct timeval TIMEOUT50 = {5, 0};
@@ -717,13 +726,16 @@ ping_all (struct binding *list)
   struct cu_data *cu;
   char *domain = list->domain;
 
+  if (list->server[0].host == NULL) /* There is no known server */
+    return 0;
+
   pthread_rdwr_wlock_np (&domainlock);
   list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
   pings = malloc (sizeof (struct findserv_req *) * _MAXSERVER);
   if (pings == NULL)
-    return;
+    return 0;
   xid_seed = (u_int32_t) (time (NULL) ^ getpid ());
 
   for (i = 0; list->server[i].host; ++i)
@@ -760,7 +772,7 @@ ping_all (struct binding *list)
   if (pings_count == 0)
     {
       free (pings);
-      return;
+      return 0;
     }
 
   /* Create RPC handle */
@@ -772,7 +784,7 @@ ping_all (struct binding *list)
       for (i = 0; i < pings_count; ++i)
         free (pings[i]);
       free (pings);
-      return;
+      return 0;
     }
   clnt->cl_auth = authunix_create_default ();
   cu = (struct cu_data *) clnt->cl_private;
@@ -833,12 +845,12 @@ ping_all (struct binding *list)
   if (!found)
     remove_bindingfile(list->domain);
 
-  return;
+  return found;
 }
 
 #else /* Don't send a ping to all server at the same time */
 
-static void
+static int
 ping_all (struct binding *list)
 {
   char *domain = list->domain;
@@ -849,6 +861,9 @@ ping_all (struct binding *list)
   struct timeval timeout;
   CLIENT *clnt_handlep = NULL;
   int i = 0;
+
+  if (list->server[0].host == NULL) /* There is no known server */
+    return 0;
 
   pthread_rdwr_wlock_np (&domainlock);
   list->active = -1;
@@ -915,16 +930,17 @@ ping_all (struct binding *list)
           pthread_rdwr_rlock_np (&domainlock);
           update_bindingfile (list);
           pthread_rdwr_runlock_np (&domainlock);
-          return;
+          return 1;
         }
 
       ++i;
       if (i == _MAXSERVER)
         {
           remove_bindingfile(list->domain);
-          return;
+          return 0;
         }
     }
+  return 0;
 }
 
 #endif
@@ -937,10 +953,8 @@ do_binding (void)
   pthread_mutex_lock (&search_lock);
   for (i = 0; i < max_domains; ++i)
     {
-      if (domainlist[i].use_broadcast)
+      if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
 	do_broadcast (&domainlist[i]);
-      else
-	ping_all (&domainlist[i]);
     }
   pthread_mutex_unlock (&search_lock);
 }
@@ -1059,10 +1073,9 @@ test_bindings (void *param __attribute__ ((unused)))
 		     the read lock again */
 		  pthread_rdwr_wunlock_np (&domainlock);
 		  pthread_mutex_lock (&search_lock);
-		  if (domainlist[i].use_broadcast)
+		  if (!ping_all (&domainlist[i]) &&
+		      domainlist[i].use_broadcast)
 		    do_broadcast (&domainlist[i]);
-		  else
-		    ping_all (&domainlist[i]);
 		  pthread_mutex_unlock (&search_lock);
 		  pthread_rdwr_rlock_np (&domainlock);
 		}
@@ -1073,10 +1086,8 @@ test_bindings (void *param __attribute__ ((unused)))
 		 server */
 	      pthread_rdwr_runlock_np (&domainlock);
 	      pthread_mutex_lock (&search_lock);
-	      if (domainlist[i].use_broadcast)
+	      if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
 		do_broadcast (&domainlist[i]);
-	      else
-		ping_all (&domainlist[i]);
 	      pthread_mutex_unlock (&search_lock);
 	      pthread_rdwr_rlock_np (&domainlock);
 	    }

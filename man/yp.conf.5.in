@@ -57,6 +57,11 @@ Use server
 .I server
 for the local domain.
 .RE
+
+If for a specific domain the broadcast option and fixed server are given,
+.BR ypbind-mt
+tries at first the given servers before falling back to broadcasting
+for a running server.
 .SH "SEE ALSO"
 .BR ypbind (8)
 .SH AUTHOR

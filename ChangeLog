@@ -1,5 +1,14 @@
 2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
 
+	* release version 1.11
+
+	* man/yp.conf.5.in: Describe new behaviour if broadcast and
+	specific servers are given.
+
+	* src/serv_list.c: Try at first given server before fallback to
+	broadcasting.
+	(do_broadcast): Add debug messages
+
 	* src/log_msg.c: define _GNU_SOURCE to get all glibc prototypes.
 
 	* src/serv_list.c (add_server): Print to stderr if we make

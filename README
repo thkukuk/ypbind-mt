@@ -1,15 +1,17 @@
 
-This directory contains the version 1.9 of the ypbind-mt.
+This directory contains the version 1.11 of the ypbind-mt.
 
 
 As of this release, ypbind-mt is known to run on the following
 configuration:
 
-   ix86-*-linuxu          Linux 2.x on Intel with glibc 2.x
+   ix86-*-linux           Linux 2.x on Intel with glibc 2.x
    alpha-*-linux          Linux 2.x on Alpha with glibc 2.x
+   mips-*-linux           Linux 2.x on Mips with glibc 2.x
    powerpc-*-linux	  Linux 2.x on PowerPC with glibc 2.x
-   sparc-*-linuxu         Linux 2.x on SPARC with glibc 2.x
+   sparc-*-linux          Linux 2.x on SPARC with glibc 2.x
    s390-*-linux		  Linux 2.x on S390 with glibc 2.x
+   s390x-*-linux	  Linux 2.x on S390x with glibc 2.x
    ix86-*-linux-gnulibc1  Linux 2.x on Intel with libc5/linuxthreads 0.7
    sparc-sun-solaris2.x   Solaris 2.x with pthread library
 
@@ -18,7 +20,7 @@ send me a note.
 
 See the file INSTALL to find out how to configure, build, install, and port
 ypbind-mt.  You might also consider reading the WWW pages for Linux NIS (YP)
-at http://www.suse.de/~kukuk/nis/.
+at http://www.linux-nis.org/nis/.
 
 
 ypbind-mt is free software. You can redistribute it and/or modify it
@@ -42,5 +44,5 @@ Linux. It has the following features:
 	* Binds to the server which answered as first
 
 
-Thorsten Kukuk <kukuk@suse.de>, 27. October 2001
+Thorsten Kukuk <kukuk@suse.de>, 04. April 2002
 

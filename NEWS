@@ -9,6 +9,8 @@ Version 1.11
 * Use new gettext, autoconf and automake
 * Fix deadlock if a host in /etc/yp.conf does not exists
 * Rewrote the yp.conf syntax check option to find more errors
+* If fixed server and broadcast is given, try at first given servers
+  and use broadcast as fallback
 
 Version 1.10
 * New gettext version to fix locale problems
