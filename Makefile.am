@@ -1,9 +1,9 @@
 #
-# Copyright (c) 1998, 1999, 2001 Thorsten Kukuk, Germany
+# Copyright (c) 1998, 1999, 2001, 2002 Thorsten Kukuk, Germany
 #
 # Author: Thorsten Kukuk <kukuk@suse.de>
 #
-AUTOMAKE_OPTIONS = 1.4 gnits dist-bzip2
+AUTOMAKE_OPTIONS = 1.6 gnits dist-bzip2
 MAINT_CHARSET = latin1
 #
 SUBDIRS = m4  lib src man po

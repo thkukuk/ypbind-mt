@@ -1,3 +1,15 @@
+2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c: Rework syntax check for yp.conf
+
+	* man/yp.conf.5.in: Remove libc5 hints.
+
+	* man/ypbind.8.in: Remove -p option.
+
+	* man/Makefile.am: Fix rules to build manual pages.
+
+	* configure.in: Create man/ypbind.8, man/yp.conf.5.
+
 2002-04-04  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.am (SUBDIRS): Add m4.

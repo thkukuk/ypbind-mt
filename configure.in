@@ -119,6 +119,5 @@ esac
 
 AC_SUBST(USE_BROADCAST)
 
-AC_OUTPUT([Makefile lib/Makefile src/Makefile man/Makefile  m4/Makefile  \
-	   po/Makefile.in man/sedscript],\
-          [chmod +x man/sedscript])
+AC_OUTPUT(Makefile lib/Makefile src/Makefile man/Makefile m4/Makefile  \
+	   po/Makefile.in man/yp.conf.5 man/ypbind.8)

@@ -15,7 +15,7 @@
 @SET_MAKE@
 
 #
-# Copyright (c) 1997, 1998, 1999 Thorsten Kukuk, Germany
+# Copyright (c) 1997, 1998, 1999, 2002 Thorsten Kukuk, Germany
 #
 # Author: Thorsten Kukuk <kukuk@suse.de>
 #
@@ -107,22 +107,22 @@ am__include = @am__include@
 am__quote = @am__quote@
 install_sh = @install_sh@
 
-AUTOMAKE_OPTIONS = 1.3 gnits
+AUTOMAKE_OPTIONS = 1.6 gnits
 
 CLEANFILES = *~ sedscript ypbind.8 yp.conf.5
 
-EXTRA_DIST = sedscript.in ypbind.8.in yp.conf.5.in
+EXTRA_DIST = $(addsuffix .in,$(MANS))
 
 man_MANS = ypbind.8 yp.conf.5
 subdir = man
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = sedscript
+CONFIG_CLEAN_FILES = yp.conf.5 ypbind.8
 DIST_SOURCES =
 
 NROFF = nroff
 MANS = $(man_MANS)
-DIST_COMMON = Makefile.am Makefile.in sedscript.in
+DIST_COMMON = Makefile.am Makefile.in yp.conf.5.in ypbind.8.in
 all: all-am
 
 .SUFFIXES:
@@ -131,7 +131,9 @@ $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	  $(AUTOMAKE) --gnits  man/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
-sedscript: $(top_builddir)/config.status sedscript.in
+yp.conf.5: $(top_builddir)/config.status yp.conf.5.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+ypbind.8: $(top_builddir)/config.status ypbind.8.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 uninstall-info-am:
 
@@ -319,14 +321,6 @@ uninstall-man: uninstall-man5 uninstall-man8
 	uninstall uninstall-am uninstall-info-am uninstall-man \
 	uninstall-man5 uninstall-man8
 
-
-ypbind.8: ypbind.8.in sedscript
-	-rm -f ypbind.8
-	./sedscript < $(srcdir)/ypbind.8.in > ypbind.8
-
-yp.conf.5: yp.conf.5.in sedscript
-	-rm -f yp.conf.5
-	./sedscript < $(srcdir)/yp.conf.5.in > yp.conf.5
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.\" Copyright 1998, 1999 Thorsten Kukuk, Germany
+.\" Copyright 1998, 1999, 2002 Thorsten Kukuk, Germany
 .\"
 .\" This file is part of ypbind-mt.
 .\"
@@ -20,7 +20,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH ypbind 8 "May 1999" "ypbind-mt Version @PK_VERSION@"
+.TH ypbind 8 "April 2002" "ypbind-mt Version @VERSION@"
 .SH NAME
 ypbind - NIS binding process
 .SH SYNOPSIS
@@ -41,8 +41,6 @@ ypbind
 ] [
 .B \-no-ping
 ] [
-.BR \-p " port"
-][
 .BR \-f " configfile"
 ]
 .LP
@@ -228,13 +226,6 @@ will use
 and not
 .B /etc/yp.conf
 .TP
-.BR "\-p" " port"
-.B ypbind
-will bind itself to this port.
-This makes it possible to have a router filter packets
-to the NIS ports, so that access to this service from
-hosts on the Internet can be restricted.
-.TP
 .B "\--version"
 Prints the version number
 .LP
@@ -262,6 +253,7 @@ master process.
 .SH "SEE ALSO"
 .BR syslog (3),
 .BR domainname (1),
+.BR ypdomainname (8),
 .BR ypwhich (1),
 .BR ypserv (8),
 .BR ypset (8)

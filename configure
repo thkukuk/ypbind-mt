@@ -5593,8 +5593,7 @@ esac
 
 
 
-ac_config_files="$ac_config_files Makefile lib/Makefile src/Makefile man/Makefile m4/Makefile po/Makefile.in man/sedscript"
-ac_config_commands="$ac_config_commands default"
+ac_config_files="$ac_config_files Makefile lib/Makefile src/Makefile man/Makefile m4/Makefile po/Makefile.in man/yp.conf.5 man/ypbind.8"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -6096,10 +6095,10 @@ do
   "man/Makefile" ) CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
   "m4/Makefile" ) CONFIG_FILES="$CONFIG_FILES m4/Makefile" ;;
   "po/Makefile.in" ) CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
-  "man/sedscript" ) CONFIG_FILES="$CONFIG_FILES man/sedscript" ;;
+  "man/yp.conf.5" ) CONFIG_FILES="$CONFIG_FILES man/yp.conf.5" ;;
+  "man/ypbind.8" ) CONFIG_FILES="$CONFIG_FILES man/ypbind.8" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "default-1" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default-1" ;;
-  "default" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -6895,8 +6894,6 @@ done
         ;;
       esac
     done ;;
-    default ) \
-          chmod +x man/sedscript ;;
   esac
 done
 _ACEOF

@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2001 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2001, 2002 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -101,12 +101,13 @@ unlink_bindingdir (void)
 
 /* Load the config file (/etc/yp.conf)  */
 static int
-load_config (int do_add)
+load_config (int check_syntax)
 {
   FILE *fp;
   char *buf = NULL;
   size_t buflen = 0;
   int have_entries = 0; /* # of entries we found in config file */
+  int bad_entries = 0;
 
   fp = fopen (configfile, "r");
   if (NULL == fp)
@@ -158,6 +159,9 @@ load_config (int do_add)
       if (debug_flag)
         log_msg (LOG_DEBUG, _("Trying entry: %s"), cp);
 
+      if (check_syntax)
+	printf (_("Trying entry: %s\n"), cp);
+
       if (strncmp (cp, "domain", 6) == 0 && isspace ((int)cp[6]))
 	{
 	  /* We have
@@ -172,9 +176,11 @@ load_config (int do_add)
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed domain '%s' server '%s'"),
 			 tmpdomain, tmpserver);
-	      ++have_entries;
-	      if (do_add)
-		add_server (tmpdomain, tmpserver);
+	      if (add_server (tmpdomain, tmpserver))
+		++have_entries;
+	      else
+		++bad_entries;
+
 	      continue;
 	    }
 	  count = sscanf (cp, "domain %s broadcast", tmpdomain);
@@ -183,9 +189,11 @@ load_config (int do_add)
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed domain '%s' broadcast"),
 			 tmpdomain);
-	      if (do_add)
-		add_server (tmpdomain, NULL);
-	      ++have_entries;
+	      if (add_server (tmpdomain, NULL))
+		++have_entries;
+	      else
+		++bad_entries;
+
 	      continue;
 	    }
 	}
@@ -199,18 +207,39 @@ load_config (int do_add)
 	    {
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed ypserver %s"), tmpserver);
-	      if (do_add)
-		add_server (domain, tmpserver);
-	      ++have_entries;
+	      if (add_server (domain, tmpserver))
+		++have_entries;
+	      else
+		++bad_entries;
 	      continue;
 	    }
 	}
-      log_msg (LOG_ERR, _("Entry \"%s\" is not valid, ignore it!"), cp);
+      if (check_syntax)
+	{
+	  fprintf (stderr, _("Entry \"%s\" is not valid!\n"), cp);
+	  ++bad_entries;
+	}
+      else
+	log_msg (LOG_ERR, _("Entry \"%s\" is not valid, ignore it!"), cp);
     }
   fclose (fp);
 
   if (buf)
     free (buf);
+
+  if (check_syntax)
+    {
+      if (bad_entries)
+	{
+	  fprintf (stderr, _("Bad entries found.\n"));
+	  return 1;
+	}
+      if (!have_entries)
+	{
+	  fprintf (stderr, _("No entry found.\n"));
+	  return 1;
+	}
+    }
 
   if (!have_entries)
     {
@@ -371,7 +400,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  if (use_broadcast)
 	    add_server (domain, NULL);
 	  else
-	    load_config (1);
+	    load_config (0);
 
 	  if (ping_interval < 1)
 	    do_binding ();
@@ -452,23 +481,33 @@ main (int argc, char **argv)
 	usage ();
     }
 
+  if (yp_get_default_domain (&domain) || domain == NULL ||
+      domain[0] == '\0' || strcmp(domain, "(none)") == 0)
+    {
+      if (configcheck_only)
+	{
+	  fputs (_("ERROR: domainname not set.\n"), stderr);
+	  domain = "(none)";
+	}
+      else
+	{
+	  fputs (_("domainname not set - aborting.\n"), stderr);
+	  exit (1);
+	}
+    }
+
   if (configcheck_only)
     {
-      debug_flag = 1;
-      if (load_config (0) != 0)
-	exit (1);
+      if (load_config (1) != 0)
+	{
+	  fprintf (stderr, _("Config file %s is not ok.\n"), configfile);
+	  exit (1);
+	}
       else
 	{
 	  fprintf (stdout, _("Config file %s is ok.\n"), configfile);
 	  exit (0);
 	}
-    }
-
-  if (yp_get_default_domain (&domain) || domain == NULL ||
-      domain[0] == '\0' || strcmp(domain, "(none)") == 0)
-    {
-      fputs (_("domainname not set - aborting.\n"), stderr);
-      exit (1);
     }
 
   if (getuid() != 0)
@@ -504,7 +543,7 @@ main (int argc, char **argv)
 
   if (!use_broadcast)
     {
-      if (load_config (1) != 0)
+      if (load_config (0) != 0)
 	{
 	  fputs (_("No NIS server and no -broadcast option specified.\n"), stderr);
 	  fprintf (stderr,

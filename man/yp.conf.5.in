@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.\" Copyright 1998, 1999 Thorsten Kukuk <kukuk@suse.de>
+.\" Copyright 1998, 1999, 2002 Thorsten Kukuk <kukuk@suse.de>
 .\"
 .\" This file is part of ypbind-mt.
 .\"
@@ -18,7 +18,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH yp.conf 5 "April 1998" "ypbind-mt Version @PK_VERSION@"
+.TH yp.conf 5 "April 2002" "ypbind-mt Version @VERSION@"
 .SH NAME
 /etc/yp.conf - NIS binding configuration file
 .SH DESCRIPTION
@@ -26,8 +26,7 @@ The file
 .B /etc/yp.conf
 is read from
 .BR ypbind (8)
-at startup or when receiving signal SIGHUP, and from
-Linux libc5 with NYS support compiled in.
+at startup or when receiving signal SIGHUP.
 The entries are used for the initial binding.
 Valid entries are
 

@@ -1,9 +1,14 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998, 1999, 2001 Thorsten Kukuk
+Copyright (C) 1998-2002 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
+
+Version 1.11
+* Use new gettext, autoconf and automake
+* Fix deadlock if a host in /etc/yp.conf does not exists
+* Rewrote the yp.conf syntax check option to find more errors
 
 Version 1.10
 * New gettext version to fix locale problems
