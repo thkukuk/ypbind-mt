@@ -1,7 +1,13 @@
+2000-09-25  Thorsten Kukuk  <kukuk@suse.de>
+
+	* configure.in: Check for vsyslog
+
+	* src/log_msg.c (log_msg): Fix missing syslog format string
+
 1999-11-21  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/serv_list.c: Use stdlib.h, not malloc.h. Some Unix have
-          a broken malloc.h to tell the developer to use stdelib.h.
+          a broken malloc.h to tell the developer to use stdlib.h.
 	* src/ypbind-mt.c: Likewise.
 	* src/ypbind_svc.c: Likewise.
 

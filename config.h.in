@@ -121,6 +121,9 @@
 /* Define if you have the strdup function.  */
 #undef HAVE_STRDUP
 
+/* Define if you have the vsyslog function.  */
+#undef HAVE_VSYSLOG
+
 /* Define if you have the <argz.h> header file.  */
 #undef HAVE_ARGZ_H
 

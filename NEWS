@@ -5,6 +5,10 @@ Copyright (C) 1998, 1999 Thorsten Kukuk
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
 
+Version 1.7
+* Fix missing syslog format string
+* Don't use malloc.h, will fail on *BSD systems
+
 Version 1.6
 * Use glibc 2.1.2 interface for reentrant functions
 * Fix naming of options
