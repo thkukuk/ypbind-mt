@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-01-14 20:14+0100\n"
+"Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
+"POT-Creation-Date: 2004-01-14 20:28+0100\n"
 "PO-Revision-Date: 2002-04-04 20:07+02:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
@@ -156,10 +156,12 @@ msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr "Der Eintrag \"%s\" ist syntaktisch falsch, er wird ignoriert!"
 
 #: src/ypbind-mt.c:249
+#, c-format
 msgid "Bad entries found.\n"
 msgstr "Ungültige Einträge gefunden.\n"
 
 #: src/ypbind-mt.c:254
+#, c-format
 msgid "No entry found.\n"
 msgstr "Keinen Eintrag gefunden.\n"
 
