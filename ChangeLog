@@ -1,5 +1,7 @@
 2003-08-24  Thorsten Kukuk  <kukuk@suse.de>
 
+	* release version 1.14
+
 	* src/serv_list.c (change_binding): Update binding files,
 	reported by David Nicklay <dnicklay@web.turner.com>.
 
