@@ -5,6 +5,9 @@ Copyright (C) 1998-2002 Thorsten Kukuk
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
 
+Version 1.12
+* Add new "broadcast" option to /etc/yp.conf
+
 Version 1.11
 * Use new gettext, autoconf and automake
 * Fix deadlock if a host in /etc/yp.conf does not exists

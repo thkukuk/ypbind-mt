@@ -58,6 +58,12 @@ Use server
 for the local domain.
 .RE
 
+.B broadcast
+.RS
+If no other server is given or all of them are not reachable,
+try a broadcast call for the default domain to find a server.
+.RE
+
 If for a specific domain the broadcast option and fixed server are given,
 .BR ypbind-mt
 tries at first the given servers before falling back to broadcasting

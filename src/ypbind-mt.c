@@ -168,7 +168,7 @@ load_config (int check_syntax)
 	  /* We have
 	     domain <domain> server <host|ip>
 	     or
-	     domain <domain> broadcast */
+	     domain <domain> broadcast*/
 
 	  count = sscanf (cp, "domain %64s server %80s", tmpdomain,
 			  tmpserver);
@@ -214,6 +214,20 @@ load_config (int check_syntax)
 		++bad_entries;
 	      continue;
 	    }
+	}
+      else if (strncmp (cp, "broadcast", 9) == 0 &&
+	       (isspace ((int)cp[9]) || cp[9] == '\0'))
+	{
+	  /* We have
+	     broadcast  */
+
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, _("parsed broadcast"));
+	  if (add_server (domain, NULL, check_syntax))
+	    ++have_entries;
+	  else
+	    ++bad_entries;
+	  continue;
 	}
       if (check_syntax)
 	{
