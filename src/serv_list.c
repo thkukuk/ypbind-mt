@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000, 2001 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2000, 2001, 2002 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -283,7 +283,7 @@ update_bindingfile (struct binding *entry)
   len = iov[0].iov_len + iov[1].iov_len;
 
   if ((fd = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
-    {  
+    {
       if (writev (fd, iov, 2) != len )
         {
           log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
@@ -370,11 +370,12 @@ get_entry (const char *domain, struct binding **entry)
   return 0;
 }
 
-void
+int
 add_server (const char *domain, const char *host)
 {
   struct binding *entry;
   int active;
+  int res = 0;
 
   if (domain == NULL)
     {
@@ -390,14 +391,24 @@ add_server (const char *domain, const char *host)
   if (host == NULL)
     {
       entry->use_broadcast = TRUE;
+      res = 1;
 
       if (debug_flag)
 	log_msg (LOG_DEBUG,
-		 _("add_server() domain: %s, broadcast, slot: 0"),
+		 _("add_server() domain: %s, broadcast"),
 		 domain);
     }
   else
     {
+      struct hostent *hent;
+#if defined (HAVE___NSS_CONFIGURE_LOOKUP)
+      struct hostent hostbuf;
+      size_t hstbuflen;
+      char *hsttmpbuf;
+      int herr;
+      int error;
+#endif
+
       /* find empty slot */
       for (active = 0; active < _MAXSERVER; ++active)
 	if (entry->server[active].host == NULL)
@@ -405,89 +416,79 @@ add_server (const char *domain, const char *host)
 
       /* There is no empty slot */
       if (entry->server[active].host != NULL)
-	goto exit;
+	{
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG,
+		     _("add_server() domain: %s, host: %s, NO SLOT FREE!"),
+		     domain, host);
+	  goto exit;
+	}
 
       if (debug_flag)
 	log_msg (LOG_DEBUG,
-		 _("add_server() domain: %s, host: %s, %sbroadcast, slot: %d"),
-		 domain, host ? host : _("unknown"), (host == NULL) ? "" :
-		 _("no"), active);
+		 _("add_server() domain: %s, host: %s, slot: %d"),
+		 domain, host, active);
 
-      if (host != NULL)
-	{
-	  struct hostent *hent;
 #if defined (HAVE___NSS_CONFIGURE_LOOKUP)
-	  struct hostent hostbuf;
-	  size_t hstbuflen;
-	  char *hsttmpbuf;
-	  int herr;
-	  int error;
-#endif
-	  entry->server[active].host = strdup(host);
-#if defined (HAVE___NSS_CONFIGURE_LOOKUP)
-	  hstbuflen = 1024;
-	  hsttmpbuf = alloca (hstbuflen);
-	  while ((error= gethostbyname_r (entry->server[active].host,
-					  &hostbuf, hsttmpbuf, hstbuflen,
-					  &hent, &herr)) != 0)
-	    if (herr == NETDB_INTERNAL || (error == -1 && errno == ERANGE)
-		|| error == ERANGE)
-	      {
-		/* Enlarge the buffer.  */
-		hstbuflen *= 2;
-		hsttmpbuf = alloca (hstbuflen);
-	      }
-	    else
-	      break;
-#else
-#if defined(HAVE_RES_GETHOSTBYNAME)
-	  hent = res_gethostbyname (entry->server[active].host);
+      hstbuflen = 1024;
+      hsttmpbuf = alloca (hstbuflen);
+      while ((error= gethostbyname_r (host, &hostbuf, hsttmpbuf, hstbuflen,
+				      &hent, &herr)) != 0)
+	if (herr == NETDB_INTERNAL || (error == -1 && errno == ERANGE)
+	    || error == ERANGE)
+	  {
+	    /* Enlarge the buffer.  */
+	    hstbuflen *= 2;
+	    hsttmpbuf = alloca (hstbuflen);
+	  }
+	else
+	  break;
+#elif defined(HAVE_RES_GETHOSTBYNAME)
+      hent = res_gethostbyname (host);
 #elif defined(HAVE__DNS_GETHOSTBYNAME)
-	  hent = _dns_gethostbyname (entry->server[active].host);
+      hent = _dns_gethostbyname (host);
 #else
-	  hent = gethostbyname (entry->server[active].host);
+      hent = gethostbyname (host);
 #endif
-#endif
-	  if (!hent)
+      if (!hent)
+	{
+	  switch (h_errno)
 	    {
-	      switch (h_errno)
-		{
-		case HOST_NOT_FOUND:
-		  log_msg (LOG_ERR, _("Unknown host: %s"),
-			   entry->server[active].host);
-		  break;
-		case TRY_AGAIN:
-		  log_msg (LOG_ERR, _("Host name lookup failure"));
-		  break;
-		case NO_DATA:
-		  log_msg (LOG_ERR, _("No address associated with name: %s"),
-			   entry->server[active].host);
-		  break;
-		case NO_RECOVERY:
-		  log_msg (LOG_ERR, _("Unknown server error"));
-		  break;
-		default:
-		  log_msg (LOG_ERR, _("gethostbyname: Unknown error"));
-		  break;
-		}
-	      return;
+	    case HOST_NOT_FOUND:
+	      log_msg (LOG_ERR, _("Unknown host: %s"), host);
+	      break;
+	    case TRY_AGAIN:
+	      log_msg (LOG_ERR, _("Host name lookup failure"));
+	      break;
+	    case NO_DATA:
+	      log_msg (LOG_ERR, _("No address associated with name: %s"),
+		       host);
+	      break;
+	    case NO_RECOVERY:
+	      log_msg (LOG_ERR, _("Unknown server error"));
+	      break;
+	    default:
+	      log_msg (LOG_ERR, _("gethostbyname: Unknown error"));
+	      break;
 	    }
-	  if (hent->h_addr_list[0] == NULL)
-	    return;
-	  entry->server[active].family = hent->h_addrtype;
-	  /* XXX host could have multiple interfaces. We should
-	     try to use the interface on the local network.
-	     If there is none, use the first one. */
-	  memcpy (&entry->server[active].addr, hent->h_addr_list[0],
-		  hent->h_length);
+	  goto exit;
 	}
-      else
-	entry->server[active].host = NULL;
+      if (hent->h_addr_list[0] == NULL)
+	goto exit;
+
+      entry->server[active].host = strdup (host);
+      entry->server[active].family = hent->h_addrtype;
+      /* XXX host could have multiple interfaces. We should
+	 try to use the interface on the local network.
+	 If there is none, use the first one. */
+      memcpy (&entry->server[active].addr, hent->h_addr_list[0],
+	      hent->h_length);
+      res = 1;
     }
 
  exit:
   pthread_rdwr_wunlock_np (&domainlock);
-  return;
+  return res;
 }
 
 static struct binding *in_use = NULL;
