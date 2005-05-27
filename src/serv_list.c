@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2004 Thorsten Kukuk
+/* Copyright (c) 1998-2005 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -834,6 +834,7 @@ ping_all (struct binding *list)
 		 (caddr_t) &domain, (xdrproc_t) xdr_bool, (caddr_t) &clnt_res,
 		 TIMEOUT00);
     }
+
   /* Receive reply from YPPROC_DOMAIN_NONACK asynchronously */
   memset ((char *) &clnt_res, 0, sizeof (clnt_res));
   clnt_call (clnt, YPPROC_DOMAIN_NONACK, (xdrproc_t) NULL, (caddr_t) NULL,
@@ -846,23 +847,31 @@ ping_all (struct binding *list)
       if (pings[i]->xid == xid_lookup)
         {
 	  pthread_rdwr_wlock_np (&domainlock);
-          list->active = pings[i]->server_nr;
 
 	  sock = RPC_ANYSOCK;
 	  list->client_handle =
 	    clntudp_create (&(pings[i]->sin),
 			    YPPROG, YPVERS, TIMEOUT50, &sock);
-	  /* XXX Missing NULL check here. But should not
-	     happen, we have got an answer from the server. */
-	  pthread_rdwr_wunlock_np (&domainlock);
-	  pthread_rdwr_rlock_np (&domainlock);
-	  update_bindingfile (list);
-	  pthread_rdwr_runlock_np (&domainlock);
-	  if (debug_flag)
-	    log_msg (LOG_DEBUG,
-		     _("Answer for domain '%s' from server '%s'"),
-		     domain, list->server[list->active].host);
-          found = 1;
+	  if (list->client_handle == NULL)
+	    {
+	      /* NULL should not happen, we have got an answer from the server. */
+	      log_msg (LOG_DEBUG,
+		       _("Server '%s' for domain '%s' answer to ping but failed to bind"),
+		       list->server[list->active].host, domain);
+	    }
+	  else
+	    {
+	      list->active = pings[i]->server_nr;
+	      pthread_rdwr_wunlock_np (&domainlock);
+	      pthread_rdwr_rlock_np (&domainlock);
+	      update_bindingfile (list);
+	      pthread_rdwr_runlock_np (&domainlock);
+	      if (debug_flag)
+		log_msg (LOG_DEBUG,
+			 _("Answer for domain '%s' from server '%s'"),
+			 domain, list->server[list->active].host);
+	      found = 1;
+	    }
         }
     }
 
@@ -1042,6 +1051,14 @@ test_bindings_once (int lastcheck)
       char *domain = domainlist[i].domain;
       bool_t out = TRUE;
       enum clnt_stat status = RPC_SUCCESS;
+
+      /* XXX We should never run into this. For debugging.  */
+      if (domainlist[i].client_handle == NULL && domainlist[i].active != -1)
+	{
+	  log_msg (LOG_ERR, "active=%d, but client_handle is NULL!",
+		   domainlist[i].active);
+	    domainlist[i].active = -1;
+	}
 
       if (domainlist[i].active != -1)
 	{
