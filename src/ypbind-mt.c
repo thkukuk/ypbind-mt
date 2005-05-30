@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2001, 2002, 2004 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2001, 2002, 2004, 2005 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -409,7 +409,13 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 
   while (1)
     {
-      sigwait (&sigs_to_catch, &caught);
+      int ret = sigwait (&sigs_to_catch, &caught);
+      if (ret != 0)
+	{
+	  if (ret != EINTR)
+	    log_msg (LOG_ERR, _("sigwait failed: ret=%d."), ret);
+	  continue;
+	}
       switch (caught)
 	{
 	case SIGCHLD:
