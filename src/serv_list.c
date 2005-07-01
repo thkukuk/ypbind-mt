@@ -1066,7 +1066,8 @@ test_bindings_once (int lastcheck, const char *req_domain)
       if (req_domain && strcmp (domain, req_domain) != 0)
 	{
 	  if (debug_flag)
-	    log_msg (LOG_DEBUG, _("Requested domain %s, found %s, ignored."));
+	    log_msg (LOG_DEBUG, _("Requested domain %s, found %s, ignored."),
+		     req_domain, domain);
 	  continue;
 	}
 
