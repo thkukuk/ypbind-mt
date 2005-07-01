@@ -194,6 +194,7 @@ change_binding (const char *domain, ypbind_binding *binding)
 
 	  if (domainlist[i].client_handle != NULL)
 	    clnt_destroy (domainlist[i].client_handle);
+
 	  domainlist[i].active = -2;
 	  memcpy(&(domainlist[i].ypset.addr),
 		 &(binding->ypbind_binding_addr),
@@ -221,7 +222,7 @@ change_binding (const char *domain, ypbind_binding *binding)
 	    }
 	  pthread_rdwr_wunlock_np (&domainlock);
 	  pthread_rdwr_rlock_np (&domainlock);
-	  update_bindingfile(&domainlist[i]);
+	  update_bindingfile (&domainlist[i]);
 	  pthread_rdwr_runlock_np (&domainlock);
 
 	  return;
@@ -235,75 +236,82 @@ change_binding (const char *domain, ypbind_binding *binding)
 void
 find_domain (const char *domain, ypbind_resp *result)
 {
-  int i, second;
+  int i, count = 0;
+
+  if (domainlist == NULL)
+    return;
 
   pthread_rdwr_rlock_np (&domainlock);
 
-  second = 0; /* Try only once to find a new server for a unbounded domain */
-  i = 0;
-  while (i < max_domains)
+  for (i = 0; i < max_domains; ++i)
+    if (strcmp (domainlist[i].domain, domain) == 0)
+      break;
+
+  if ( i >= max_domains)
     {
-      if (strcmp (domainlist[i].domain, domain) == 0)
+      pthread_rdwr_runlock_np (&domainlock);
+      return;
+    }
+
+ again:
+  ++count;
+  if (domainlist[i].active >= 0)
+    {
+      result->ypbind_status = YPBIND_SUCC_VAL;
+      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
+	      &domainlist[i].server[domainlist[i].active].addr,
+	      sizeof (struct in_addr));
+      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
+	      &domainlist[i].server[domainlist[i].active].port,
+	      sizeof (unsigned short int));
+      if (debug_flag)
+	log_msg (LOG_DEBUG, "YPBINDPROC_DOMAIN: server '%s', port %d",
+		 inet_ntoa(domainlist[i].server[domainlist[i].active].addr),
+		 ntohs(domainlist[i].server[domainlist[i].active].port));
+    }
+  else if (domainlist[i].active == -2)
+    {
+      result->ypbind_status = YPBIND_SUCC_VAL;
+      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
+	      &domainlist[i].ypset.addr, sizeof (struct in_addr));
+      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
+	      &domainlist[i].ypset.port,
+	      sizeof (unsigned short int));
+      if (debug_flag)
+	log_msg (LOG_DEBUG,
+		 "YPBINDPROC_DOMAIN: server '%s', port %d",
+		 inet_ntoa(domainlist[i].ypset.addr),
+		 ntohs(domainlist[i].ypset.port));
+    }
+  else
+    {
+      /* Look, if we could find a new server for this domain.
+	 But only, if the other thread is not searching already */
+      pthread_rdwr_runlock_np (&domainlock);
+
+      if (count > 2) /* No more than 2 tries.  */
+	return;
+
+      if (pthread_mutex_trylock (&search_lock) == 0)
 	{
-	  if (domainlist[i].active >= 0)
-	    {
-	      result->ypbind_status = YPBIND_SUCC_VAL;
-	      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-		      &domainlist[i].server[domainlist[i].active].addr,
-		      sizeof (struct in_addr));
-	      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-		      &domainlist[i].server[domainlist[i].active].port,
-		      sizeof (unsigned short int));
-	      if (debug_flag)
-		log_msg (LOG_DEBUG, "YPBINDPROC_DOMAIN: server '%s', port %d",
-			 inet_ntoa(domainlist[i].server[domainlist[i].active].addr),
-			 ntohs(domainlist[i].server[domainlist[i].active].port));
-	      break;
-	    }
-	  else if (domainlist[i].active == -2)
-	    {
-	      result->ypbind_status = YPBIND_SUCC_VAL;
-	      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-		      &domainlist[i].ypset.addr, sizeof (struct in_addr));
-	      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-		      &domainlist[i].ypset.port,
-		      sizeof (unsigned short int));
-	      if (debug_flag)
-		log_msg (LOG_DEBUG,
-			 "YPBINDPROC_DOMAIN: server '%s', port %d",
-			 inet_ntoa(domainlist[i].ypset.addr),
-			 ntohs(domainlist[i].ypset.port));
-	      break;
-	    }
-	  else
-	    {
-	      if (second)
-		{
-		  second = 0;
-		  break;
-		}
-	      /* Look, if we could find a new server for this domain.
-		 But only, if the other thread is not searching already */
-	      pthread_rdwr_runlock_np (&domainlock);
-	      if (pthread_mutex_trylock (&search_lock) == 0)
-		{
-		  if (debug_flag)
-		    log_msg (LOG_DEBUG, "trylock = success");
-		  if (!ping_all (&domainlist[i]) &&
-		      domainlist[i].use_broadcast)
-		    do_broadcast (&domainlist[i]);
-		  pthread_mutex_unlock (&search_lock);
-		  ++second;
-		  /* Get the read lock again for next run. */
-		  pthread_rdwr_rlock_np (&domainlock);
-		  continue;
-		}
-	      else
-		return;
-	      pthread_rdwr_rlock_np (&domainlock);
-	    }
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, "trylock = success");
+	  if (!ping_all (&domainlist[i]) &&
+	      domainlist[i].use_broadcast)
+	    do_broadcast (&domainlist[i]);
 	}
-      ++i;
+      else
+	{
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, "trylock = failed");
+	  /* Another thread has the lock, ugly hack to wait
+	     until this thread is finished with search.  */
+	  pthread_mutex_lock (&search_lock);
+	}
+      pthread_mutex_unlock (&search_lock);
+      /* Get the read lock again for next run. */
+      pthread_rdwr_rlock_np (&domainlock);
+      goto again;
     }
 
   pthread_rdwr_runlock_np (&domainlock);
@@ -883,7 +891,7 @@ ping_all (struct binding *list)
   free (pings);
 
   if (!found)
-    remove_bindingfile(list->domain);
+    remove_bindingfile (list->domain);
 
   return found;
 }
@@ -1026,17 +1034,20 @@ test_bindings (void *param __attribute__ ((unused)))
       if (lastcheck >= 900) /* 900 = 15min. */
 	lastcheck = 0;
 
-      lastcheck = test_bindings_once(lastcheck);
+      lastcheck = test_bindings_once (lastcheck, NULL);
 
     } /* end while() endless loop */
 }
 
 int
-test_bindings_once (int lastcheck)
+test_bindings_once (int lastcheck, const char *req_domain)
 {
   int i;
 
-  pthread_rdwr_rlock_np (&domainlock);
+  /* Since we need the write lock later, getting the read lock here is
+     not enough. During the time, where we wait for the write lock, the
+     other thread can modify our data. */
+  pthread_rdwr_wlock_np (&domainlock);
 
   if (debug_flag)
     {
@@ -1052,12 +1063,19 @@ test_bindings_once (int lastcheck)
       bool_t out = TRUE;
       enum clnt_stat status = RPC_SUCCESS;
 
-      /* XXX We should never run into this. For debugging.  */
+      if (req_domain && strcmp (domain, req_domain) != 0)
+	{
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, _("Requested domain %s, found %s, ignored."));
+	  continue;
+	}
+
+      /* We should never run into this. For debugging.  */
       if (domainlist[i].client_handle == NULL && domainlist[i].active != -1)
 	{
-	  log_msg (LOG_ERR, "active=%d, but client_handle is NULL!",
+	  log_msg (LOG_ERR, "ALERT: active=%d, but client_handle is NULL!",
 		   domainlist[i].active);
-	    domainlist[i].active = -1;
+	  domainlist[i].active = -1;
 	}
 
       if (domainlist[i].active != -1)
@@ -1077,6 +1095,7 @@ test_bindings_once (int lastcheck)
 			  (caddr_t) &domain, (xdrproc_t) xdr_bool,
 			  (caddr_t) &out, time_out);
 	    }
+
 	  /* time to search a new fastest server, but only if the current
 	     one was not set with ypset. We search in every case if the
 	     above check fails and the current data is not longer valid. */
@@ -1107,51 +1126,53 @@ test_bindings_once (int lastcheck)
 				 domain);
 		    }
 		}
-	      lastcheck = 0; /* If we need a new server before the TTL expires,
-				reset it. */
-
-	      /* We have the read lock, but we need the write lock for
-		 changes :-( */
-	      pthread_rdwr_runlock_np (&domainlock);
-	      pthread_rdwr_wlock_np (&domainlock);
 	      /* We can destroy the client_handle since we are the
 		 only thread who uses it. */
-	      clnt_destroy (domainlist[i].client_handle);
+	      /* client_handle can be NULL? */
+	      if (domainlist[i].client_handle == NULL)
+		{
+		  log_msg (LOG_ERR, "ALERT: client_handle=NULL, active=%d, lastcheck=%d, domain=%s",
+			   domainlist[i].active, lastcheck, domain);
+		}
+	      else
+		clnt_destroy (domainlist[i].client_handle);
 	      domainlist[i].client_handle = NULL;
 	      if (domainlist[i].active == -2)
 		{
 		  /* We can give this free, server does not answer any
 		     longer. */
-		  domainlist[i].active = -1;
 		  if (domainlist[i].ypset.host != NULL)
 		    free (domainlist[i].ypset.host);
 		  domainlist[i].ypset.host = NULL;
 		}
+	      domainlist[i].active = -1;
+	      lastcheck = 0; /* If we need a new server before the TTL expires,
+				reset it. */
 	      /* And give the write lock away, search a new host and get
-		 the read lock again */
+		 the write lock again. */
 	      pthread_rdwr_wunlock_np (&domainlock);
 	      pthread_mutex_lock (&search_lock);
 	      if (!ping_all (&domainlist[i]) &&
 		  domainlist[i].use_broadcast)
 		do_broadcast (&domainlist[i]);
 	      pthread_mutex_unlock (&search_lock);
-	      pthread_rdwr_rlock_np (&domainlock);
+	      pthread_rdwr_wlock_np (&domainlock);
 	    }
 	}
       else
 	{
 	  /* there is no binding for this domain, try to find a new
 	     server */
-	  pthread_rdwr_runlock_np (&domainlock);
+	  pthread_rdwr_wunlock_np (&domainlock);
 	  pthread_mutex_lock (&search_lock);
 	  if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
 	    do_broadcast (&domainlist[i]);
 	  pthread_mutex_unlock (&search_lock);
-	  pthread_rdwr_rlock_np (&domainlock);
+	  pthread_rdwr_wlock_np (&domainlock);
 	}
     } /* end for () all domains */
 
-  pthread_rdwr_runlock_np (&domainlock);
+  pthread_rdwr_wunlock_np (&domainlock);
 
   return lastcheck;
 }

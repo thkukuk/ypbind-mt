@@ -4,6 +4,9 @@ Copyright (C) 1998-2004 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
+Version 1.19
+* Fix some races when searching for hosts running ypserv
+
 Version 1.18
 * Add -ping-interval option
 * Document all ypbind options in ypbind.8

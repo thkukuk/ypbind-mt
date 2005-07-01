@@ -28,6 +28,21 @@
 #include <unistd.h>
 #include "log_msg.h"
 
+#include <sys/syscall.h>
+#ifdef __NR_gettid
+pid_t
+gettid (void)
+{
+  return syscall (__NR_gettid);
+}
+#else
+pid_t
+gettid (void)
+{
+    return getpid ();
+}
+#endif
+
 int debug_flag = 0;
 
 void
@@ -42,6 +57,7 @@ log_msg (int type, const char *fmt,...)
 
   if (debug_flag)
     {
+      fprintf (stderr, "%d: ", gettid ());
       vfprintf (stderr, fmt, ap);
       fputc ('\n', stderr);
     }
