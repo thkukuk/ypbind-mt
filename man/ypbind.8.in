@@ -1,9 +1,9 @@
 .\" -*- nroff -*-
-.\" Copyright 1998, 1999, 2002, 2004 Thorsten Kukuk, Germany
+.\" Copyright 1998, 1999, 2002, 2004, 2005 Thorsten Kukuk, Germany
 .\"
 .\" This file is part of ypbind-mt.
 .\"
-.\" Author: Thorsten Kukuk <kukuk@suse.de>
+.\" Author: Thorsten Kukuk <kukuk@thkukuk.de>
 .\"
 .\" ypbind-mt is free software; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License as
@@ -20,7 +20,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH ypbind 8 "October 2004" "ypbind-mt Version @VERSION@"
+.TH ypbind 8 "November 2005" "ypbind-mt Version @VERSION@"
 .SH NAME
 ypbind - NIS binding process
 .SH SYNOPSIS
@@ -63,7 +63,7 @@ and are conventionally named
 .BR [domainname].[version] .
 The supported versions are 1 and 2.
 There could be several such files since it is possible for an NIS client
-to be bound to more then one domain.
+to be bound to more than one domain.
 .LP
 After a binding has been established,
 .B ypbind
