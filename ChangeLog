@@ -1,3 +1,7 @@
+2005-11-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Fix another typo.
+
 2005-07-12  Thorsten Kukuk  <kukuk@suse.de>
 
 	* man/ypbind.8.in: Fix typo.
