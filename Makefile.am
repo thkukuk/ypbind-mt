@@ -5,10 +5,11 @@
 #
 AUTOMAKE_OPTIONS = 1.6 gnits dist-bzip2
 #
-SUBDIRS = m4 lib src man po
+SUBDIRS = lib src man po
 
 CLEANFILES = *~
 
-EXTRA_DIST = config.rpath  ChangeLog etc/yp.conf etc/ypbind.init
+EXTRA_DIST = config.rpath  ChangeLog etc/yp.conf etc/ypbind.init \
+	$(shell ls $(srcdir)/m4/*.m4)
 
 ACLOCAL_AMFLAGS = -I m4
