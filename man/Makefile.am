@@ -4,9 +4,7 @@
 # Author: Thorsten Kukuk <kukuk@suse.de>
 #
 
-AUTOMAKE_OPTIONS = 1.6 gnits
-
-CLEANFILES = *~ sedscript ypbind.8 yp.conf.5
+CLEANFILES = *~ ypbind.8 yp.conf.5
 
 EXTRA_DIST = $(addsuffix .in,$(MANS))
 

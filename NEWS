@@ -4,6 +4,9 @@ Copyright (C) 1998-2005 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
+Version 1.19.90
+* Add DBUS/NetworkManager support
+
 Version 1.19.1
 * Fix crash if debug mode is enabled
 

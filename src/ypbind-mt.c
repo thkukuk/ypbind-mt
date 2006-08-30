@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2001, 2002, 2004, 2005 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2001, 2002, 2004, 2005, 2006 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -101,7 +101,7 @@ unlink_bindingdir (void)
 }
 
 /* Load the config file (/etc/yp.conf)  */
-static int
+int
 load_config (int check_syntax)
 {
   FILE *fp;
@@ -429,8 +429,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG, _("Signal (%d) for quitting program arrived."),
 		     caught);
-	  pmap_unset (YPBINDPROG, YPBINDVERS);
-	  pmap_unset (YPBINDPROG, YPBINDOLDVERS);
+	  portmapper_disconnect ();
 	  /* unlock pidfile */
 	  lock.l_type = F_UNLCK;
 	  lock.l_start = 0;
@@ -465,23 +464,167 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 }
 
 static void
-usage (void)
+usage (int ret)
 {
-  fputs (_("Usage:\n"), stderr);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"), stderr);
-  fputs (_("\typbind -c [-f configfile]\n"), stderr);
-  fputs (_("\typbind --version\n"), stderr);
-  exit (1);
+  FILE *output;
+
+  if (ret)
+    output = stderr;
+  else
+    output = stdout;
+   
+  fputs (_("Usage:\n"), output);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"), output);
+  fputs (_("\typbind -c [-f configfile]\n"), output);
+  fputs (_("\typbind --version\n"), output);
+  exit (ret);
+}
+
+void
+portmapper_disconnect (void)
+{
+  pmap_unset (YPBINDPROG, YPBINDOLDVERS);
+  pmap_unset (YPBINDPROG, YPBINDVERS);
+}
+
+static int portmapper_udp_port;
+static int portmapper_tcp_port;
+
+int
+portmapper_connect (void)
+{
+  pmap_set (YPBINDPROG, YPBINDVERS, IPPROTO_UDP, portmapper_udp_port);
+  pmap_set (YPBINDPROG, YPBINDOLDVERS, IPPROTO_UDP, portmapper_udp_port);
+  pmap_set (YPBINDPROG, YPBINDVERS, IPPROTO_TCP, portmapper_tcp_port);
+  pmap_set (YPBINDPROG, YPBINDOLDVERS, IPPROTO_TCP, portmapper_tcp_port);
+  return 0;
+}
+
+static int
+portmapper_register (void)
+{
+  struct sockaddr_in socket_address;
+  SVCXPRT *transp;
+  int sock, result;
+
+  if (port >= 0 || local_only)
+    {
+      sock = socket (AF_INET, SOCK_DGRAM, 0);
+      if (sock < 0)
+	{
+	  log_msg (LOG_ERR, _("Cannot create UDP: %s"), strerror (errno));
+	  return 1;
+	}
+
+      memset ((char *) &socket_address, 0, sizeof (socket_address));
+      socket_address.sin_family = AF_INET;
+      if (local_only)
+	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+      else
+	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
+
+      if (port >= 0)
+	socket_address.sin_port = htons (port);
+
+      result = bind (sock, (struct sockaddr *) &socket_address,
+		     sizeof (socket_address));
+      if (result < 0)
+	{
+	  log_msg (LOG_ERR, _("Cannot bind UDP: %s"), strerror (errno));
+	  return 1;
+	}
+    }
+  else
+    sock = RPC_ANYSOCK;
+
+  transp = svcudp_create (sock);
+  if (transp == NULL)
+    {
+      log_msg (LOG_ERR, _("Cannot create udp service."));
+      return 1;
+    }
+  portmapper_udp_port = transp->xp_port;
+
+  if (!svc_register (transp, YPBINDPROG, YPBINDVERS, ypbindprog_2,
+		     IPPROTO_UDP))
+    {
+      log_msg (LOG_ERR,
+	       _("Unable to register (YPBINDPROG, YPBINDVERS, udp)."));
+      return 1;
+    }
+
+  if (!svc_register (transp, YPBINDPROG, YPBINDOLDVERS, ypbindprog_1,
+		     IPPROTO_UDP))
+    {
+      log_msg (LOG_ERR,
+	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."));
+      return 1;
+    }
+
+  if (port >= 0 || local_only)
+    {
+      sock = socket (AF_INET, SOCK_STREAM, 0);
+      if (sock < 0)
+	{
+	  log_msg (LOG_ERR, _("Cannot create TCP: %s"), strerror (errno));
+	  return 1;
+	}
+
+      memset (&socket_address, 0, sizeof (socket_address));
+      socket_address.sin_family = AF_INET;
+      if (local_only)
+	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+      else
+	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
+
+      if (port >= 0)
+	socket_address.sin_port = htons (port);
+
+      result = bind (sock, (struct sockaddr *) &socket_address,
+		     sizeof (socket_address));
+      if (result < 0)
+	{
+	  log_msg (LOG_ERR, _("Cannot bind TCP: %s"), strerror (errno));
+	  return 1;
+	}
+    }
+  else
+    sock = RPC_ANYSOCK;
+
+  transp = svctcp_create (sock, 0, 0);
+  if (transp == NULL)
+    {
+      log_msg (LOG_ERR, _("Cannot create tcp service.\n"));
+      return 1;
+    }
+  portmapper_tcp_port = transp->xp_port;
+
+  if (!svc_register (transp, YPBINDPROG, YPBINDVERS, ypbindprog_2,
+		     IPPROTO_TCP))
+    {
+      log_msg (LOG_ERR, _("Unable to register (YPBINDPROG, YPBINDVERS, tcp)."));
+      return 1;
+    }
+
+  if (!svc_register (transp, YPBINDPROG, YPBINDOLDVERS, ypbindprog_1,
+		     IPPROTO_TCP))
+    {
+      log_msg (LOG_ERR,
+	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."));
+      return 1;
+    }
+  return 0;
 }
 
 int
 main (int argc, char **argv)
 {
-  SVCXPRT *transp;
-  int sock, result, i;
+  int i;
   sigset_t sigs_to_block;
-  struct sockaddr_in socket_address;
   pthread_t sig_thread, ping_thread;
+#ifdef USE_DBUS_NM
+  pthread_t dbus_thread;
+#endif
   struct stat st;
   int configcheck_only = 0;
 
@@ -495,8 +638,8 @@ main (int argc, char **argv)
     {
       if (strcmp ("--version", argv[i]) == 0)
         {
-          fprintf (stderr, "ypbind (%s) %s\n", PACKAGE, VERSION);
-          exit (1);
+          fprintf (stdout, "ypbind (%s) %s\n", PACKAGE, VERSION);
+          exit (0);
         }
       else if (strcmp ("-ypset", argv[i]) == 0)
 	ypset = SET_YPSET;
@@ -519,14 +662,14 @@ main (int argc, char **argv)
       else if (strcmp ("-f", argv[i]) == 0)
 	{
 	  if (i+1 == argc || argv[i+1][0] == '-')
-	    usage ();
+	    usage (1);
 	  ++i;
 	  configfile = argv[i];
 	}
       else if (strcmp ("-p", argv[i]) == 0)
 	{
 	  if (i+1 == argc || argv[i+1][0] == '-')
-	    usage ();
+	    usage (1);
 	  ++i;
 	  port = atoi (argv[i]);
 	}
@@ -535,14 +678,16 @@ main (int argc, char **argv)
 	       strcmp ("-i", argv[i]) == 0)
 	{
 	  if (i+1 == argc || argv[i+1][0] == '-')
-	    usage ();
+	    usage (1);
 	  ++i;
 	  ping_interval = atoi (argv[i]);
 	}
       else if (strcmp ("-c", argv[i]) == 0)
 	configcheck_only = 1;
+      else if (strcmp ("--help", argv[i]) == 0)
+        usage (0);
       else
-	usage ();
+	usage (1);
     }
 
   if (yp_get_default_domain (&domain) || domain == NULL ||
@@ -695,115 +840,20 @@ main (int argc, char **argv)
     }
   pthread_mutex_unlock(&mutex_pid);
 
-  pmap_unset (YPBINDPROG, YPBINDOLDVERS);
-  pmap_unset (YPBINDPROG, YPBINDVERS);
-
-  if (port >= 0 || local_only)
+  portmapper_disconnect ();
+  if (portmapper_register () != 0)
     {
-      sock = socket (AF_INET, SOCK_DGRAM, 0);
-      if (sock < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot create UDP: %s"), strerror (errno));
-	  exit (1);
-	}
-
-      memset ((char *) &socket_address, 0, sizeof (socket_address));
-      socket_address.sin_family = AF_INET;
-      if (local_only)
-	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
-      else
-	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-
-      if (port >= 0)
-	socket_address.sin_port = htons (port);
-
-      result = bind (sock, (struct sockaddr *) &socket_address,
-		     sizeof (socket_address));
-      if (result < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot bind UDP: %s"), strerror (errno));
-	  exit (1);
-	}
-    }
-  else
-    sock = RPC_ANYSOCK;
-
-  transp = svcudp_create (sock);
-  if (transp == NULL)
-    {
-      log_msg (LOG_ERR, _("Cannot create udp service."));
+      portmapper_disconnect ();
       exit (1);
     }
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDVERS, ypbindprog_2,
-		     IPPROTO_UDP))
-    {
-      log_msg (LOG_ERR,
-	       _("Unable to register (YPBINDPROG, YPBINDVERS, udp)."));
-      exit (1);
-    }
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDOLDVERS, ypbindprog_1,
-		     IPPROTO_UDP))
-    {
-      log_msg (LOG_ERR,
-	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."));
-      exit (1);
-    }
-
-  if (port >= 0 || local_only)
-    {
-      sock = socket (AF_INET, SOCK_STREAM, 0);
-      if (sock < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot create TCP: %s"), strerror (errno));
-	  exit (1);
-	}
-
-      memset (&socket_address, 0, sizeof (socket_address));
-      socket_address.sin_family = AF_INET;
-      if (local_only)
-	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
-      else
-	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-
-      if (port >= 0)
-	socket_address.sin_port = htons (port);
-
-      result = bind (sock, (struct sockaddr *) &socket_address,
-		     sizeof (socket_address));
-      if (result < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot bind TCP: %s"), strerror (errno));
-	  exit (1);
-	}
-    }
-  else
-    sock = RPC_ANYSOCK;
-
-  transp = svctcp_create (sock, 0, 0);
-  if (transp == NULL)
-    {
-      log_msg (LOG_ERR, _("Cannot create tcp service.\n"));
-      exit (1);
-    }
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDVERS, ypbindprog_2,
-		     IPPROTO_TCP))
-    {
-      log_msg (LOG_ERR, _("Unable to register (YPBINDPROG, YPBINDVERS, tcp)."));
-      exit (1);
-    }
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDOLDVERS, ypbindprog_1,
-		     IPPROTO_TCP))
-    {
-      log_msg (LOG_ERR,
-	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."));
-      exit (1);
-    }
+  if (!is_online)
+    portmapper_disconnect ();
 
   pthread_create (&ping_thread, NULL, &test_bindings, NULL);
+
+#ifdef USE_DBUS_NM
+  pthread_create (&dbus_thread, NULL, &watch_dbus_nm, NULL);
+#endif
 
   svc_run ();
   log_msg (LOG_ERR, _("svc_run returned."));

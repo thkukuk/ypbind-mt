@@ -1,6 +1,8 @@
 Makefile
+Makefile.in
 config.status
 config.log
+configure
 stamp-h
 config.h
 stamp-h1

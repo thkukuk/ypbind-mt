@@ -5,8 +5,6 @@
 #
 # Process this file with automake to produce Makefile.in.
 
-AUTOMAKE_OPTIONS = 1.4 gnits
-
 noinst_LIBRARIES = libcompat.a
 
 EXTRA_DIST = clnt_udp.c

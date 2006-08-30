@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2005 Thorsten Kukuk
+/* Copyright (c) 1998-2006 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -330,15 +330,20 @@ clear_server (void)
     {
       for (i = 0; i < max_domains; ++i)
 	{
-	  for (j = 0; j < _MAXSERVER; ++j)
+	  if (domainlist[i].active != -1)
 	    {
-	      if (domainlist[i].server[j].host != NULL)
-		free (domainlist[i].server[j].host);
+	      remove_bindingfile (domainlist[i].domain);
+	      for (j = 0; j < _MAXSERVER; ++j)
+		{
+		  if (domainlist[i].server[j].host != NULL)
+		    free (domainlist[i].server[j].host);
+		}
+	      if (domainlist[i].ypset.host != NULL)
+		free (domainlist[i].ypset.host);
+	      if (domainlist[i].client_handle != NULL)
+		clnt_destroy (domainlist[i].client_handle);
+	      domainlist[i].active = -1;
 	    }
-	  if (domainlist[i].ypset.host != NULL)
-	    free (domainlist[i].ypset.host);
-	  if (domainlist[i].client_handle != NULL)
-	    clnt_destroy (domainlist[i].client_handle);
 	}
       free (domainlist);
     }
@@ -1016,7 +1021,10 @@ test_bindings (void *param __attribute__ ((unused)))
   static int success = 0;
   int lastcheck = 0;
 
-  do_binding ();
+#ifdef USE_DBUS_NM
+  if (is_online)
+#endif
+    do_binding ();
 
   if (ping_interval < 1)
     pthread_exit (&success);
@@ -1025,8 +1033,7 @@ test_bindings (void *param __attribute__ ((unused)))
     {
       sleep (ping_interval);
 
-      /* Check, if ping_interval was changed through a SIGHUP.
-	 Not possible in the moment, but maybe in the future. */
+      /* Check, if ping_interval was changed through a SIGHUP.  */
       if (ping_interval < 1)
 	pthread_exit (&success);
 
@@ -1034,8 +1041,11 @@ test_bindings (void *param __attribute__ ((unused)))
       if (lastcheck >= 900) /* 900 = 15min. */
 	lastcheck = 0;
 
-      lastcheck = test_bindings_once (lastcheck, NULL);
+#if USE_DBUS_NM
+      if (is_online)
 
+#endif
+	lastcheck = test_bindings_once (lastcheck, NULL);
     } /* end while() endless loop */
 }
 

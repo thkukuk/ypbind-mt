@@ -113,6 +113,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Enable DBUS/NetworkManager support */
+#undef USE_DBUS_NM
+
 /* Enable SLP support */
 #undef USE_SLP
 

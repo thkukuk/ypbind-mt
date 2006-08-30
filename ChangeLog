@@ -1,3 +1,14 @@
+2006-08-17  Thorsten Kukuk  <kukuk@suse.de>
+
+	* configure.in: Check for dbus/glib2.
+
+	* src/Makefile.am: Add ypbind_dbus_nm.c.
+
+	* src/ypbind_dbus_nm.c: Add dbus/NetworkManager support.
+	* src/ypbind-mt.c: Likewise.
+	* src/serv_list.c: Likewise.
+	* src/local.h: Likewise.
+
 2005-11-28  Thorsten Kukuk  <kukuk@suse.de>
 
 	* man/ypbind.8.in: Fix another typo.

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.\" Copyright 1998, 1999, 2002, 2004, 2005 Thorsten Kukuk, Germany
+.\" Copyright 1998, 1999, 2002, 2004, 2005, 2006 Thorsten Kukuk, Germany
 .\"
 .\" This file is part of ypbind-mt.
 .\"
@@ -20,7 +20,7 @@
 .\" write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 .\" Boston, MA 02111-1307, USA.
 .\"
-.TH ypbind 8 "November 2005" "ypbind-mt Version @VERSION@"
+.TH ypbind 8 "August 2006" "ypbind-mt Version @VERSION@"
 .SH NAME
 ypbind - NIS binding process
 .SH SYNOPSIS
@@ -95,37 +95,8 @@ At startup or when receiving signal SIGHUP,
 .B ypbind
 parses the file
 .B /etc/yp.conf
-and tries to use the entries for its initial binding. Valid entries
-are
-
-.B domain
-.I nisdomain
-.B server
-.I hostname
-.RS
-Use server
-.I hostname
-for the domain
-.IR nisdomain .
-You could have more then one entry of this type for a single domain.
-.RE
-
-.B domain
-.I nisdomain
-.B broadcast
-.RS
-Use broadcast on the local net for domain
-.IR nisdomain .
-.RE
-
-.B ypserver
-.I hostname
-.RS
-Use server
-.I hostname
-for the local domain.
-.RE
-
+and tries to use the entries for its initial binding.
+.LP
 A broadcast entry in the configuration file will overwrite a ypserver/server
 entry and a ypserver/server entry broadcast. If all given server are down,
 .B ypbind
@@ -160,13 +131,18 @@ exit.
 .LP
 This
 .B ypbind
-is a special version which uses
-.BR pthreads .
-It will start 2 more threads.  The master process services RPC requests
-asking for binding info. The first thread initializes the binding and
-checks it periodically. Upon failure, the binding is invalidated and
-the process tries again to find a valid server. The second thread
-will handle all the signals.
+version listens for DBUS messages from NetworkManager. If no NetworkManager
+is running at startup,
+.B ypbind
+will behave as usual and assumes there is a working network
+connection. If NetworkManager is running on the system, ypbind will only
+search and providde NIS informations, if NetworkManager tells that a network
+connection is available. If NetworkManager establishes a connection,
+.B ypbind
+will reread all configuration files, registers at the local portmapper and
+try to search NIS servers. If NetworkManager drops a connection,
+.B ypbind
+will unregister from portmapper.
 
 .SH OPTIONS
 .TP
@@ -244,14 +220,6 @@ With this options another frequency in seconds can be specified.
 .B "\--version"
 Prints the version number
 .LP
-.SH NOTES
-Binding to multiple domains is tested and works.
-Load sharing between multiple servers for a single domain is
-not supported.
-.B ypbind
-will always try to bind a domain to a server. If there is no valid
-server in the list or answers to a broadcast, the domain is unbounded.
-.LP
 .SH FILES
 .TP
 .B /etc/yp.conf
@@ -268,6 +236,7 @@ master process.
 .SH "SEE ALSO"
 .BR syslog (3),
 .BR domainname (1),
+.BR yp.conf (5),
 .BR ypdomainname (8),
 .BR ypwhich (1),
 .BR ypserv (8),
