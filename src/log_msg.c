@@ -1,4 +1,4 @@
-/* Copyright (c) 2000, 2002 Thorsten Kukuk
+/* Copyright (c) 2000, 2002, 2006 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -30,7 +30,7 @@
 
 #include <sys/syscall.h>
 #ifdef __NR_gettid
-pid_t
+static pid_t
 gettid (void)
 {
   return syscall (__NR_gettid);

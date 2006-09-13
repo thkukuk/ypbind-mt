@@ -90,13 +90,13 @@ static void do_broadcast (struct binding *list);
 static int ping_all (struct binding *list);
 
 static void
-remove_bindingfile (const char *domain)
+remove_bindingfile (const char *domain_name)
 {
-  char path[strlen (BINDINGDIR) + strlen (domain) + 10];
+  char path[strlen (BINDINGDIR) + strlen (domain_name) + 10];
 
-  sprintf (path, "%s/%s.1", BINDINGDIR, domain);
+  sprintf (path, "%s/%s.1", BINDINGDIR, domain_name);
   unlink (path);
-  sprintf (path, "%s/%s.2", BINDINGDIR, domain);
+  sprintf (path, "%s/%s.2", BINDINGDIR, domain_name);
   unlink (path);
 }
 

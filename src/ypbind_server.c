@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000, 2001 Thorsten Kukuk, Germany
+/* Copyright (c) 1998, 1999, 2000, 2001, 2006 Thorsten Kukuk, Germany
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -55,22 +55,22 @@ ypbindproc_null_2_svc (void *argp __attribute__ ((unused)), void *result,
 }
 
 static bool_t
-ypbindproc_domain (char *domain, ypbind_resp *result,
+ypbindproc_domain (char *domain_name, ypbind_resp *result,
 		   struct svc_req *rqstp __attribute__ ((unused)))
 {
   memset (result, 0, sizeof (ypbind_resp));
   result->ypbind_status = YPBIND_FAIL_VAL;
   result->ypbind_resp_u.ypbind_error = YPBIND_ERR_NOSERV;
 
-  if (strchr (domain, '/'))
+  if (strchr (domain_name, '/'))
     {
       log_msg (LOG_ERR, _("Domain name '%s' has embedded slash -- rejecting."),
-	       domain);
+	       domain_name);
       return TRUE;
     }
 
-  test_bindings_once (1, domain);
-  find_domain (domain, result);
+  test_bindings_once (1, domain_name);
+  find_domain (domain_name, result);
 
   if (debug_flag)
     {
@@ -103,13 +103,13 @@ ypbindproc_domain_2_svc (domainname *argp, ypbind_resp *result,
 }
 
 static bool_t
-ypbindproc_setdom (const char *domain, ypbind_binding *binding,
+ypbindproc_setdom (const char *domain_name, ypbind_binding *binding,
 		   struct sockaddr_in *fromhost)
 {
-  if (strchr (domain, '/'))
+  if (strchr (domain_name, '/'))
     {
       log_msg (LOG_ERR, _("Domain name '%s' has embedded slash -- rejecting."),
-	       domain);
+	       domain_name);
       return TRUE;
     }
 
@@ -138,7 +138,7 @@ ypbindproc_setdom (const char *domain, ypbind_binding *binding,
       return TRUE;
     }
 
-  change_binding (domain, binding);
+  change_binding (domain_name, binding);
 
   return TRUE;
 }
