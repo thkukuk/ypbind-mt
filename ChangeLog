@@ -1,3 +1,17 @@
+2006-09-13  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Document -no-dbus option.
+
+	* src/ypbind-mt.c: Add -no-dbus option.
+
+2006-08-29  Thorsten Kukuk <kukuk@suse.de>
+
+	* src/ypbind_dbus_nm.c (watch_dbus_nm): Tell main thread that
+	dubs connection is initialized.
+	* src/ypbind-mt.c (main): Wait that dbus connection is
+	initialized.
+	* src/local.h: Add prototypes.
+
 2006-08-17  Thorsten Kukuk  <kukuk@suse.de>
 
 	* configure.in: Check for dbus/glib2.

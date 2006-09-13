@@ -46,6 +46,8 @@ ypbind
 .B \-local-only
 ] [
 .BR \-ping-interval " ping-interval"
+] [
+.B \-no-dubs
 ]
 .LP
 .B
@@ -216,6 +218,9 @@ The default value for
 . B ypbind
 to check, if a NIS server is still reacheable, is 20 seconds.
 With this options another frequency in seconds can be specified.
+.TP
+.B "\-no-dbus"
+Disables DBUS support if compiled int.
 .TP
 .B "\--version"
 Prints the version number

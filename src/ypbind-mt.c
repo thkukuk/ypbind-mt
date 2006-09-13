@@ -472,9 +472,12 @@ usage (int ret)
     output = stderr;
   else
     output = stdout;
-   
+
   fputs (_("Usage:\n"), output);
   fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"), output);
+#ifdef USE_DBUS_NM
+  fputs (_("\t  [-no-dbus]\n"), output);
+#endif
   fputs (_("\typbind -c [-f configfile]\n"), output);
   fputs (_("\typbind --version\n"), output);
   exit (ret);
@@ -624,6 +627,7 @@ main (int argc, char **argv)
   pthread_t sig_thread, ping_thread;
 #ifdef USE_DBUS_NM
   pthread_t dbus_thread;
+  int disable_dbus = 0;
 #endif
   struct stat st;
   int configcheck_only = 0;
@@ -684,6 +688,10 @@ main (int argc, char **argv)
 	}
       else if (strcmp ("-c", argv[i]) == 0)
 	configcheck_only = 1;
+#ifdef USE_DBUS_NM
+      else if (strcmp ("-no-dbus", argv[i]) == 0)
+	disable_dbus = 1;
+#endif
       else if (strcmp ("--help", argv[i]) == 0)
         usage (0);
       else
@@ -840,6 +848,22 @@ main (int argc, char **argv)
     }
   pthread_mutex_unlock(&mutex_pid);
 
+#ifdef USE_DBUS_NM
+  if (!disable_dbus)
+    {
+      pthread_create (&dbus_thread, NULL, &watch_dbus_nm, NULL);
+      /* wait until signal thread has created the pid file */
+      pthread_mutex_lock(&mutex_dbus);
+      while (dbus_is_initialized < 1)
+	{
+	  pthread_cond_wait(&cond_dbus, &mutex_dbus);
+	}
+      pthread_mutex_unlock(&mutex_dbus);
+    }
+  else
+    is_online = 1;
+#endif
+
   portmapper_disconnect ();
   if (portmapper_register () != 0)
     {
@@ -850,10 +874,6 @@ main (int argc, char **argv)
     portmapper_disconnect ();
 
   pthread_create (&ping_thread, NULL, &test_bindings, NULL);
-
-#ifdef USE_DBUS_NM
-  pthread_create (&dbus_thread, NULL, &watch_dbus_nm, NULL);
-#endif
 
   svc_run ();
   log_msg (LOG_ERR, _("svc_run returned."));

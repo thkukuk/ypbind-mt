@@ -24,6 +24,9 @@ extern int test_bindings_once (int lastcheck, const char *domain);
 #if defined(USE_DBUS_NM)
 extern void *watch_dbus_nm (void *param);
 extern int is_online;
+extern int dbus_is_initialized;
+extern pthread_mutex_t mutex_dbus;
+extern pthread_cond_t cond_dbus;
 #endif
 
 extern void do_binding (void);

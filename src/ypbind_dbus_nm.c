@@ -43,6 +43,11 @@
 
 int is_online = 0;
 
+int dbus_is_initialized = 0;
+pthread_mutex_t mutex_dbus = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond_dbus = PTHREAD_COND_INITIALIZER;
+
+
 static void
 go_offline (void)
 {
@@ -224,7 +229,7 @@ check_for_nm (DBusConnection *connection)
   else
     {
       if (debug_flag)
-	log_msg (LOG_DEBUG, "NetworkManager is running.\n");
+	log_msg (LOG_DEBUG, "NetworkManager is not running.\n");
       return 0;
     }
 }
@@ -315,14 +320,26 @@ watch_dbus_nm (void *param __attribute__ ((unused)))
 {
   static int status = 1;
   GMainLoop *loop;
+  int dbus_init_ret;
 
   g_type_init ();
 
-  if (dbus_init () != 1)
+  dbus_init_ret = dbus_init ();
+
+  /* Signal the main thread that we have the dbus connection
+     initialized. So we can continue.  */
+  pthread_mutex_lock(&mutex_dbus);
+  dbus_is_initialized = 1;
+  pthread_cond_broadcast(&cond_dbus);
+  pthread_mutex_unlock(&mutex_dbus);
+
+  /* Now return if no DBUS/NetworkManager is in use.  */
+  if (dbus_init_ret != 1)
     {
       status = 0;
       return &status;
     }
+
 
   loop = g_main_loop_new (NULL, FALSE);
 

@@ -1,10 +1,10 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2005 Thorsten Kukuk
+Copyright (C) 1998-2006 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@suse.de>.
 
-Version 1.19.90
+Version 1.19.91
 * Add DBUS/NetworkManager support
 
 Version 1.19.1
@@ -20,7 +20,7 @@ Version 1.18
 Version 1.17.3
 * Fix SLP URL parsing
 
-Version 1.17.2
+ersion 1.17.2
 * Change SLP server URL to service:ypserv
 
 Version 1.17.1
