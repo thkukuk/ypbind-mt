@@ -456,6 +456,10 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  if (ping_interval < 1)
 	    do_binding ();
 	  break;
+	case SIGPIPE:
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, _("Ignoring SIGPIPE."));
+	  break;
 	default:
 	  log_msg (LOG_ERR, _("Unknown signal: %d"), caught);
 	  break;
@@ -832,6 +836,7 @@ main (int argc, char **argv)
   sigaddset (&sigs_to_block, SIGQUIT);
   sigaddset (&sigs_to_block, SIGSEGV);
   sigaddset (&sigs_to_block, SIGHUP);
+  sigaddset (&sigs_to_block, SIGPIPE);
   if (pthread_sigmask (SIG_BLOCK, &sigs_to_block, NULL) != 0)
     {
       log_msg (LOG_ERR, _("Could not block signals."));

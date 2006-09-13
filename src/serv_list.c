@@ -869,7 +869,7 @@ ping_all (struct binding *list)
 	    {
 	      /* NULL should not happen, we have got an answer from the server. */
 	      log_msg (LOG_DEBUG,
-		       _("Server '%s' for domain '%s' answer to ping but failed to bind"),
+		       _("Server '%s' for domain '%s' answered ping but failed to bind"),
 		       list->server[list->active].host, domain);
 	    }
 	  else
@@ -1062,9 +1062,9 @@ test_bindings_once (int lastcheck, const char *req_domain)
   if (debug_flag)
     {
       if (lastcheck)
-	log_msg (LOG_DEBUG, _("Pinging all active server."));
+	log_msg (LOG_DEBUG, _("Pinging all active servers."));
       else
-	log_msg (LOG_DEBUG, _("Check new for fastest server."));
+	log_msg (LOG_DEBUG, _("Checking for new fastest server."));
     }
 
   for (i = 0; i < max_domains; ++i)

@@ -5,6 +5,10 @@
 	* man/ypbind.8.in: Document -no-dbus option.
 
 	* src/ypbind-mt.c: Add -no-dbus option.
+	Ignore SIGPIPE, patch from Mark Brown <broonie@sirena.org.uk>.
+
+	* src/serv_list.c: Fix grammar issues. Patch from
+	Mark Brown <broonie@sirena.org.uk>.
 
 2006-08-29  Thorsten Kukuk <kukuk@suse.de>
 

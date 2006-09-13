@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2006-09-13 14:46+0200\n"
+"POT-Creation-Date: 2006-09-13 15:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -96,7 +96,7 @@ msgstr ""
 
 #: src/serv_list.c:872
 #, c-format
-msgid "Server '%s' for domain '%s' answer to ping but failed to bind"
+msgid "Server '%s' for domain '%s' answered ping but failed to bind"
 msgstr ""
 
 #: src/serv_list.c:948
@@ -110,11 +110,11 @@ msgid "domain '%s' not served by '%s'"
 msgstr ""
 
 #: src/serv_list.c:1065
-msgid "Pinging all active server."
+msgid "Pinging all active servers."
 msgstr ""
 
 #: src/serv_list.c:1067
-msgid "Check new for fastest server."
+msgid "Checking for new fastest server."
 msgstr ""
 
 #: src/serv_list.c:1079
@@ -225,127 +225,131 @@ msgstr ""
 msgid "SIGHUP arrived, reloading config file."
 msgstr ""
 
-#: src/ypbind-mt.c:460
+#: src/ypbind-mt.c:461
+msgid "Ignoring SIGPIPE."
+msgstr ""
+
+#: src/ypbind-mt.c:464
 #, c-format
 msgid "Unknown signal: %d"
 msgstr ""
 
-#: src/ypbind-mt.c:476
+#: src/ypbind-mt.c:480
 msgid "Usage:\n"
 msgstr ""
 
-#: src/ypbind-mt.c:477
+#: src/ypbind-mt.c:481
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n"
 "\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:479
+#: src/ypbind-mt.c:483
 msgid "\t  [-no-dbus]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:481
+#: src/ypbind-mt.c:485
 msgid "\typbind -c [-f configfile]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:482
+#: src/ypbind-mt.c:486
 msgid "\typbind --version\n"
 msgstr ""
 
-#: src/ypbind-mt.c:518
+#: src/ypbind-mt.c:522
 #, c-format
 msgid "Cannot create UDP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:536
+#: src/ypbind-mt.c:540
 #, c-format
 msgid "Cannot bind UDP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:546
+#: src/ypbind-mt.c:550
 msgid "Cannot create udp service."
 msgstr ""
 
-#: src/ypbind-mt.c:555
+#: src/ypbind-mt.c:559
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
 msgstr ""
 
-#: src/ypbind-mt.c:563
+#: src/ypbind-mt.c:567
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
 msgstr ""
 
-#: src/ypbind-mt.c:572
+#: src/ypbind-mt.c:576
 #, c-format
 msgid "Cannot create TCP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:590
+#: src/ypbind-mt.c:594
 #, c-format
 msgid "Cannot bind TCP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:600
+#: src/ypbind-mt.c:604
 msgid "Cannot create tcp service.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:608
+#: src/ypbind-mt.c:612
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
 msgstr ""
 
-#: src/ypbind-mt.c:616
+#: src/ypbind-mt.c:620
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
 msgstr ""
 
-#: src/ypbind-mt.c:706
+#: src/ypbind-mt.c:710
 msgid "ERROR: domainname not set.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:711
+#: src/ypbind-mt.c:715
 msgid "domainname not set - aborting.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:720
+#: src/ypbind-mt.c:724
 #, c-format
 msgid "Config file %s is not ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:725
+#: src/ypbind-mt.c:729
 #, c-format
 msgid "Config file %s is ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:732
+#: src/ypbind-mt.c:736
 msgid "ypbind must be run as root\n"
 msgstr ""
 
-#: src/ypbind-mt.c:740 src/ypbind-mt.c:749
+#: src/ypbind-mt.c:744 src/ypbind-mt.c:753
 #, c-format
 msgid "Could not create %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:756
+#: src/ypbind-mt.c:760
 #, c-format
 msgid "Could not change to directory %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:765
+#: src/ypbind-mt.c:769
 msgid "No NIS server and no -broadcast option specified.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:767
+#: src/ypbind-mt.c:771
 #, c-format
 msgid "Add a NIS server to the %s configuration file,\n"
 msgstr ""
 
-#: src/ypbind-mt.c:769
+#: src/ypbind-mt.c:773
 msgid "or start ypbind with the -broadcast option.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:837
+#: src/ypbind-mt.c:842
 msgid "Could not block signals."
 msgstr ""
 
-#: src/ypbind-mt.c:879
+#: src/ypbind-mt.c:884
 msgid "svc_run returned."
 msgstr ""
 
