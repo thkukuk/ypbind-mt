@@ -875,8 +875,11 @@ main (int argc, char **argv)
       portmapper_disconnect ();
       exit (1);
     }
+
+#ifdef USE_DBUS_NM
   if (!is_online)
     portmapper_disconnect ();
+#endif
 
   pthread_create (&ping_thread, NULL, &test_bindings, NULL);
 

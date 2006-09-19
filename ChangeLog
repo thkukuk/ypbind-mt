@@ -1,3 +1,8 @@
+2006-09-19  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (main): Fix compiling without DBUS support.
+	Reported by Peter Breitenlohner <peb@mppmu.mpg.de>.
+
 2006-09-15  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.20.1
