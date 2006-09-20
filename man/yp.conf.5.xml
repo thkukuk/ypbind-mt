@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<!-- lifted from troff+man by doclifter -->
+<refentry id='ypconf5'>
+<!--  \-*\- nroff \-*\- -->
+<!--  Copyright 1998, 1999, 2002 Thorsten Kukuk &lt;kukuk@suse.de&gt; -->
+
+<!--  This file is part of ypbind\-mt. -->
+
+<!--  ypbind\-mt is free software; you can redistribute it and/or -->
+<!--  modify it under the terms of the GNU General Public License as -->
+<!--  published by the Free Software Foundation; either version 2 of the -->
+<!--  License, or (at your option) any later version. -->
+
+<!--  ypbind\-mt is distributed in the hope that it will be useful, -->
+<!--  but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU -->
+<!--  General Public License for more details. -->
+
+<!--  You should have received a copy of the GNU General Public -->
+<!--  License along with ypbind\-mt; see the file COPYING.  If not, -->
+<!--  write to the Free Software Foundation, Inc., 59 Temple Place \- Suite 330, -->
+<!--  Boston, MA 02111\-1307, USA. -->
+
+<refmeta>
+<refentrytitle>yp.conf</refentrytitle>
+<manvolnum>5</manvolnum>
+<refmiscinfo class='source'>February 2004</refmiscinfo>
+<refmiscinfo class='manual'>ypbind-mt Version 1.20.1</refmiscinfo>
+</refmeta>
+<refnamediv id='name'>
+<refname>/etc/yp.conf</refname>
+<refpurpose>NIS binding configuration file</refpurpose>
+</refnamediv>
+<!-- body begins here -->
+
+<refsect1 id='description'><title>DESCRIPTION</title>
+<para>The file
+<filename>/etc/yp.conf</filename>
+is read from
+<citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+at startup or when receiving signal SIGHUP.
+The entries are used for the initial binding.
+Valid entries are</para>
+
+<para><emphasis remap='B'>domain</emphasis>
+<emphasis remap='I'>nisdomain</emphasis>
+<emphasis remap='B'>server</emphasis>
+<emphasis remap='I'>hostname</emphasis>
+<!-- .RS -->
+Use server
+<emphasis remap='I'>hostname</emphasis>
+for the domain
+<emphasis remap='I'>nisdomain</emphasis>.
+You could have more then one entry of this type for a single domain.</para>
+<!-- .RE -->
+
+<para><emphasis remap='B'>domain</emphasis>
+<emphasis remap='I'>nisdomain</emphasis>
+<emphasis remap='B'>broadcast</emphasis>
+<!-- .RS -->
+Use broadcast on the local net for domain
+<emphasis remap='I'>nisdomain</emphasis>.</para>
+<!-- .RE -->
+
+<para><emphasis remap='B'>domain</emphasis>
+<emphasis remap='I'>nisdomain</emphasis>
+<emphasis remap='B'>slp</emphasis>
+<!-- .RS -->
+Query the local running SLP server for hosts running ypserv
+and distributing
+<emphasis remap='I'>nisdomain</emphasis>.
+This option is only available, if
+<emphasis remap='B'>ypbind</emphasis>
+was compiled with SLP support.</para>
+<!-- .RE -->
+
+<para><emphasis remap='B'>ypserver</emphasis>
+<emphasis remap='I'>hostname</emphasis>
+<!-- .RS -->
+Use server
+<emphasis remap='I'>hostname</emphasis>
+for the local domain.</para>
+<!-- .RE -->
+
+<para><emphasis remap='B'>broadcast</emphasis>
+<!-- .RS -->
+If no other server is given or all of them are not reachable,
+try a broadcast call for the default domain to find a server.</para>
+<!-- .RE -->
+
+<para>If for a specific domain the broadcast option and fixed server are given,
+<emphasis remap='B'>ypbind-mt</emphasis>
+tries at first the given servers before falling back to broadcasting
+for a running server.</para>
+</refsect1>
+
+<refsect1 id='see_also'><title>SEE ALSO</title>
+<para><citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry></para>
+</refsect1>
+
+<refsect1 id='author'><title>AUTHOR</title>
+<para><emphasis remap='B'>ypbind-mt</emphasis>
+was written by Thorsten Kukuk &lt;kukuk@suse.de&gt;.</para>
+</refsect1>
+</refentry>
+
