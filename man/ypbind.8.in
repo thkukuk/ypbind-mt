@@ -220,7 +220,7 @@ to check, if a NIS server is still reacheable, is 20 seconds.
 With this options another frequency in seconds can be specified.
 .TP
 .B "\-no-dbus"
-Disables DBUS support if compiled int.
+Disables DBUS support if compiled in.
 .TP
 .B "\--version"
 Prints the version number
