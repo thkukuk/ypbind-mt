@@ -9,7 +9,9 @@ SUBDIRS = lib src man po
 
 CLEANFILES = *~
 
+M4_FILES = $(shell ls $(srcdir)/m4/*.m4)
+
 EXTRA_DIST = config.rpath  ChangeLog etc/yp.conf etc/ypbind.init \
-	$(shell ls $(srcdir)/m4/*.m4)
+	$(shell ls $(srcdir)/m4/*.m4) $(M4_FILES)
 
 ACLOCAL_AMFLAGS = -I m4

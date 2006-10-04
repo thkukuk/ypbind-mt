@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/ypbind-mt.c)
-AM_INIT_AUTOMAKE(ypbind-mt, 1.20.1)
+AM_INIT_AUTOMAKE(ypbind-mt, 1.20.2)
 AM_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT(/usr)
 
@@ -87,6 +87,23 @@ AC_CHECK_HEADERS(paths.h sys/filio.h rpc/svc_soc.h rpc/clnt_soc.h nss.h)
 dnl Checks for library functions.
 AC_CHECK_FUNCS(getline getdelim vsyslog res_gethostbyname _dns_gethostbyname)
 
+dnl
+dnl Check for xsltproc
+dnl
+enable_man=yes
+AC_PATH_PROG([XSLTPROC], [xsltproc])
+if test -z "$XSLTPROC"; then
+     enable_man=no
+fi
+AC_PATH_PROG([XMLLINT], [xmllint],[/bin/true])
+dnl check for DocBook DTD and stylesheets in the local catalog.
+JH_CHECK_XML_CATALOG([-//OASIS//DTD DocBook XML V4.3//EN],
+                [DocBook XML DTD V4.3], [], enable_man=no)
+JH_CHECK_XML_CATALOG([http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl],
+                [DocBook XSL Stylesheets], [], enable_man=no)
+AM_CONDITIONAL(ENABLE_REGENERATE_MAN, test x$enable_man != xno)
+
+
 dnl internationalization macros
 AM_GNU_GETTEXT_VERSION
 AM_GNU_GETTEXT([external])
@@ -150,5 +167,4 @@ esac
 
 AC_SUBST(USE_BROADCAST)
 
-AC_OUTPUT(Makefile lib/Makefile src/Makefile man/Makefile \
-	   po/Makefile.in man/yp.conf.5 man/ypbind.8)
+AC_OUTPUT(Makefile lib/Makefile src/Makefile man/Makefile po/Makefile.in)

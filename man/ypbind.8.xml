@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-                   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-<!-- lifted from troff+man by doclifter -->
-<refentry id='ypbind8'>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+
 <!--  \-*\- nroff \-*\- -->
 <!--  Copyright 1998, 1999, 2002, 2004, 2005, 2006 Thorsten Kukuk, Germany -->
 
@@ -25,72 +24,70 @@
 <!--  write to the Free Software Foundation, Inc., 59 Temple Place \- Suite 330, -->
 <!--  Boston, MA 02111\-1307, USA. -->
 
-<refmeta>
-<refentrytitle>ypbind</refentrytitle>
-<manvolnum>8</manvolnum>
-<refmiscinfo class='source'>August 2006</refmiscinfo>
-<refmiscinfo class='manual'>ypbind-mt Version 1.20.1</refmiscinfo>
-</refmeta>
-<refnamediv id='name'>
-<refname>ypbind</refname>
-<refpurpose>NIS binding process</refpurpose>
-</refnamediv>
-<!-- body begins here -->
-<refsynopsisdiv id='synopsis'>
-<cmdsynopsis>
-  <command>ypbind</command>    
-    <arg choice='opt'>-c </arg>
-    <group choice='opt'><arg choice='plain'>-d </arg><arg choice='plain'>-debug </arg></group>
-    <arg choice='opt'>-broadcast </arg>
-    <arg choice='opt'>-broken-server </arg>
-    <arg choice='opt'>-ypset </arg>
-    <arg choice='opt'>-ypsetme </arg>
-    <arg choice='opt'>-no-ping </arg>
-    <arg choice='opt'>-f <replaceable>configfile</replaceable></arg>
-    <arg choice='opt'>-local-only </arg>
-    <arg choice='opt'>-ping-interval <replaceable>ping-interval</replaceable></arg>
-    <arg choice='opt'>-no-dubs </arg>
-</cmdsynopsis>
-<cmdsynopsis>
-  <command>ypbind</command>    
-    <arg choice='plain'>--version </arg>
-</cmdsynopsis>
-</refsynopsisdiv>
+<refentry id='ypbind8'>
+  <refmeta>
+    <refentrytitle>ypbind</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo class='sectdesc'>ypbind-mt</refmiscinfo>
+  </refmeta>
+
+  <refnamediv id='name'>
+    <refname>ypbind</refname>
+    <refpurpose>NIS binding process</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>ypbind</command>
+      <arg choice='opt'>-c </arg>
+      <group choice='opt'><arg choice='plain'>-d </arg><arg choice='plain'>-debug </arg></group>
+      <arg choice='opt'>-broadcast </arg>
+      <arg choice='opt'>-broken-server </arg>
+      <arg choice='opt'>-ypset </arg>
+      <arg choice='opt'>-ypsetme </arg>
+      <arg choice='opt'>-no-ping </arg>
+      <arg choice='opt'>-f <replaceable>configfile</replaceable></arg>
+      <arg choice='opt'>-local-only </arg>
+      <arg choice='opt'>-ping-interval <replaceable>ping-interval</replaceable></arg>
+      <arg choice='opt'>-no-dbus </arg>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>ypbind</command>
+      <arg choice='plain'>--version </arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
 
 
-<refsect1 id='description'><title>DESCRIPTION</title>
-<para><command>ypbind</command>
-finds the server for NIS domains and maintains the NIS binding
-information. The client (normaly the NIS routines in the standard C library)
-could get the information over RPC from
-<command>ypbind</command>
-or read the binding files. The binding files resides in the directory
-<filename>/var/yp/binding</filename>
-and are conventionally named
-<emphasis remap='B'>[domainname].[version]</emphasis>.
-The supported versions are 1 and 2.
-There could be several such files since it is possible for an NIS client
-to be bound to more than one domain.</para>
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>ypbind</command> finds the server for NIS domains and
+      maintains the NIS binding information. The client (normaly the
+      NIS routines in the standard C library) could get the information
+      over RPC from <command>ypbind</command> or read the binding files.
+      The binding files resides in the directory
+      <filename>/var/yp/binding</filename> and are conventionally named
+      <emphasis remap='B'>[domainname].[version]</emphasis>. The supported
+      versions are 1 and 2. There could be several such files since it
+      is possible for an NIS client to be bound to more than one domain.
+    </para>
 
-<para>After a binding has been established,
-<command>ypbind</command>
-will send YPPROC_DOMAIN requests to the current NIS server at 20 seconds
-intervals. If it doesn't get an response or the NIS server reports that he
-doesn't have this domain any longer,
-<command>ypbind</command>
-will search for a new NIS server. All 15 minutes
-<command>ypbind</command>
-will check to see if the current NIS server is the fastest. If it find
-a server which answers faster, it will switch to this server.
-You could tell
-<command>ypbind</command>
-to use network broadcasts to find a new server, what is insecure,
-or you could give it a list of known secure servers.
-In this case
-<command>ypbind</command>
-will send a ping to all servers and binds to first one which answers.</para>
+    <para>
+      After a binding has been established, <command>ypbind</command>
+      will send YPPROC_DOMAIN requests to the current NIS server at 20
+      seconds intervals. If it doesn't get an response or the NIS server
+      reports that he doesn't have this domain any longer,
+      <command>ypbind</command> will search for a new NIS server.
+      All 15 minutes <command>ypbind</command> will check to see if the
+      current NIS server is the fastest. If it find a server which answers
+      faster, it will switch to this server. You could tell
+      <command>ypbind</command> to use network broadcasts to find a new
+      server, what is insecure, or you could give it a list of known
+      secure servers. In this case <command>ypbind</command> will send
+      a ping to all servers and binds to first one which answers.
+    </para>
 
-<para>Unless the option
+    <para>Unless the option
 <option>-debug</option>
 is used, ypbind detaches itself from the controlling terminal and puts
 itself into background.
@@ -151,20 +148,22 @@ try to search NIS servers. If NetworkManager drops a connection,
 <command>ypbind</command>
 will unregister from portmapper.</para>
 
-</refsect1>
+  </refsect1>
 
-<refsect1 id='options'><title>OPTIONS</title>
-<variablelist remap='TP'>
-  <varlistentry>
-  <term><option>-broadcast</option></term>
-  <listitem>
-<para>Send a broadcast to request the information needed to bind to a
-specific NIS server. With this option,
-<filename>/etc/yp.conf</filename>
-will be ignored.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>-broadcast</option></term>
+        <listitem>
+          <para>
+            Send a broadcast to request the information needed to
+            bind to a specific NIS server. With this option,
+            <filename>/etc/yp.conf</filename> will be ignored.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
   <term><option>-ypset</option></term>
   <listitem>
 <para>Allow
@@ -298,20 +297,24 @@ master process.</para>
 
 </refsect1>
 
-<refsect1 id='see_also'><title>SEE ALSO</title>
-<para><citerefentry><refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>domainname</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>yp.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ypdomainname</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ypwhich</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ypserv</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
-<citerefentry><refentrytitle>ypset</refentrytitle><manvolnum>8</manvolnum></citerefentry></para>
+  <refsect1 id='see_also'>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry><refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>domainname</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>yp.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypdomainname</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypwhich</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypserv</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypset</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+    </para>
+  </refsect1>
 
-</refsect1>
-
-<refsect1 id='author'><title>AUTHOR</title>
-<para><emphasis remap='B'>ypbind-mt</emphasis>
-was written by Thorsten Kukuk &lt;kukuk@suse.de&gt;.</para>
-</refsect1>
+  <refsect1 id='author'>
+    <title>AUTHOR</title>
+      <para>
+        <emphasis remap='B'>ypbind-mt</emphasis> was written by
+        Thorsten Kukuk &lt;kukuk@thkukuk.de&gt;.
+      </para>
+  </refsect1>
 </refentry>
-

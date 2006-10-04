@@ -249,6 +249,7 @@ dbus_init (void)
       log_msg (LOG_ERR, "Connection to D-BUS system message bus failed: %s.",
                error.message);
       dbus_error_free (&error);
+      connection = NULL;
       goto out;
     }
 
@@ -267,6 +268,8 @@ dbus_init (void)
 	       error.name, error.message);
 
       dbus_error_free (&error);
+      dbus_connection_close (connection);
+      connection = NULL;
       goto out;
     }
 
@@ -280,6 +283,8 @@ dbus_init (void)
       log_msg (LOG_ERR, "Error adding match, %s: %s",
 	       error.name, error.message);
       dbus_error_free (&error);
+      dbus_connection_close (connection);
+      connection = NULL;
       goto out;
     }
 
@@ -310,7 +315,12 @@ dbus_init (void)
       return 1;
     }
   else
-    return 0;
+    {
+      if (debug_flag)
+	log_msg (LOG_DEBUG, "No connection possible, assume online mode");
+      is_online = 1;
+      return 0;
+    }
 }
 
 

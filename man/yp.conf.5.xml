@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
-<!-- lifted from troff+man by doclifter -->
-<refentry id='ypconf5'>
+
 <!--  \-*\- nroff \-*\- -->
-<!--  Copyright 1998, 1999, 2002 Thorsten Kukuk &lt;kukuk@suse.de&gt; -->
+<!--  Copyright 1998, 1999, 2002, 2006 Thorsten Kukuk &lt;kukuk@suse.de&gt; -->
 
 <!--  This file is part of ypbind\-mt. -->
 
@@ -23,86 +22,103 @@
 <!--  write to the Free Software Foundation, Inc., 59 Temple Place \- Suite 330, -->
 <!--  Boston, MA 02111\-1307, USA. -->
 
-<refmeta>
-<refentrytitle>yp.conf</refentrytitle>
-<manvolnum>5</manvolnum>
-<refmiscinfo class='source'>February 2004</refmiscinfo>
-<refmiscinfo class='manual'>ypbind-mt Version 1.20.1</refmiscinfo>
-</refmeta>
-<refnamediv id='name'>
-<refname>/etc/yp.conf</refname>
-<refpurpose>NIS binding configuration file</refpurpose>
-</refnamediv>
-<!-- body begins here -->
+<refentry id='ypconf5'>
+  <refmeta>
+    <refentrytitle>yp.conf</refentrytitle>
+    <manvolnum>5</manvolnum>
+    <refmiscinfo class='sectdesc'>ypbind-mt</refmiscinfo>
+  </refmeta>
 
-<refsect1 id='description'><title>DESCRIPTION</title>
-<para>The file
-<filename>/etc/yp.conf</filename>
-is read from
-<citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry>
-at startup or when receiving signal SIGHUP.
-The entries are used for the initial binding.
-Valid entries are</para>
+  <refnamediv id='name'>
+    <refname>yp.conf</refname>
+    <refpurpose>NIS binding configuration file</refpurpose>
+  </refnamediv>
 
-<para><emphasis remap='B'>domain</emphasis>
-<emphasis remap='I'>nisdomain</emphasis>
-<emphasis remap='B'>server</emphasis>
-<emphasis remap='I'>hostname</emphasis>
-<!-- .RS -->
-Use server
-<emphasis remap='I'>hostname</emphasis>
-for the domain
-<emphasis remap='I'>nisdomain</emphasis>.
-You could have more then one entry of this type for a single domain.</para>
-<!-- .RE -->
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      The file <filename>/etc/yp.conf</filename> is read from
+      <citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+      at startup or when receiving signal SIGHUP. The entries are
+      used for the initial binding. Valid entries are
+    </para>
 
-<para><emphasis remap='B'>domain</emphasis>
-<emphasis remap='I'>nisdomain</emphasis>
-<emphasis remap='B'>broadcast</emphasis>
-<!-- .RS -->
-Use broadcast on the local net for domain
-<emphasis remap='I'>nisdomain</emphasis>.</para>
-<!-- .RE -->
+    <variablelist>
+      <varlistentry>
+        <term> <emphasis remap='B'>domain</emphasis> <emphasis remap='I'>nisdomain</emphasis> <emphasis remap='B'>server</emphasis> <emphasis remap='I'>hostname</emphasis> </term>
+        <listitem>
+          <para>
+            Use server <emphasis remap='I'>hostname</emphasis> for the
+            domain <emphasis remap='I'>nisdomain</emphasis>. You could
+            have more then one entry of this type for a single domain.
+          </para>
+        </listitem>
+      </varlistentry>
 
-<para><emphasis remap='B'>domain</emphasis>
-<emphasis remap='I'>nisdomain</emphasis>
-<emphasis remap='B'>slp</emphasis>
-<!-- .RS -->
-Query the local running SLP server for hosts running ypserv
-and distributing
-<emphasis remap='I'>nisdomain</emphasis>.
-This option is only available, if
-<emphasis remap='B'>ypbind</emphasis>
-was compiled with SLP support.</para>
-<!-- .RE -->
+      <varlistentry>
+        <term><emphasis remap='B'>domain</emphasis> <emphasis remap='I'>nisdomain</emphasis> <emphasis remap='B'>broadcast</emphasis></term>
+        <listitem>
+          <para>
+            Use broadcast on the local net for domain
+            <emphasis remap='I'>nisdomain</emphasis>.
+          </para>
+        </listitem>
+      </varlistentry>
 
-<para><emphasis remap='B'>ypserver</emphasis>
-<emphasis remap='I'>hostname</emphasis>
-<!-- .RS -->
-Use server
-<emphasis remap='I'>hostname</emphasis>
-for the local domain.</para>
-<!-- .RE -->
+      <varlistentry>
+        <term><emphasis remap='B'>domain</emphasis> <emphasis remap='I'>nisdomain</emphasis> <emphasis remap='B'>slp</emphasis></term>
+        <listitem>
+          <para>
+            Query the local running SLP server for hosts running
+            ypserv and distributing <emphasis remap='I'>nisdomain</emphasis>.
+            This option is only available, if
+            <emphasis remap='B'>ypbind</emphasis> was compiled with SLP
+            support.
+          </para>
+        </listitem>
+      </varlistentry>
 
-<para><emphasis remap='B'>broadcast</emphasis>
-<!-- .RS -->
-If no other server is given or all of them are not reachable,
-try a broadcast call for the default domain to find a server.</para>
-<!-- .RE -->
+      <varlistentry>
+        <term><emphasis remap='B'>ypserver</emphasis> <emphasis remap='I'>hostname</emphasis></term>
+        <listitem>
+          <para>
+            Use server <emphasis remap='I'>hostname</emphasis>
+            for the local domain.
+          </para>
+        </listitem>
+      </varlistentry>
 
-<para>If for a specific domain the broadcast option and fixed server are given,
-<emphasis remap='B'>ypbind-mt</emphasis>
-tries at first the given servers before falling back to broadcasting
-for a running server.</para>
-</refsect1>
+      <varlistentry>
+        <term><emphasis remap='B'>broadcast</emphasis></term>
+        <listitem>
+          <para>
+            If no other server is given or all of them are not reachable,
+            try a broadcast call for the default domain to find a server.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
 
-<refsect1 id='see_also'><title>SEE ALSO</title>
-<para><citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry></para>
-</refsect1>
+    <para>
+      If for a specific domain the broadcast option and fixed server
+      are given, <emphasis remap='B'>ypbind-mt</emphasis> tries at
+      first the given servers before falling back to broadcasting
+      for a running server.
+    </para>
+  </refsect1>
 
-<refsect1 id='author'><title>AUTHOR</title>
-<para><emphasis remap='B'>ypbind-mt</emphasis>
-was written by Thorsten Kukuk &lt;kukuk@suse.de&gt;.</para>
-</refsect1>
+  <refsect1 id='see_also'>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+    </para>
+  </refsect1>
+
+  <refsect1 id='author'>
+    <title>AUTHOR</title>
+    <para>
+      <emphasis remap='B'>ypbind-mt</emphasis>
+      was written by Thorsten Kukuk &lt;kukuk@thkukuk.de&gt;.
+    </para>
+  </refsect1>
 </refentry>
-

@@ -1,3 +1,13 @@
+2006-10-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.2
+
+	* man/ypbind.8.xml: New, generate ypbind.8 from XML source.
+	* man/yp.conf.5.xml: New, generate yp.conf.5 from XML source.
+
+	* src/ypbind_dbus_nm.c (dbus_init): In error case, assume we
+	are online (Reported by Mark Brown <broonie@sirena.org.uk>).
+
 2006-09-19  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind-mt.c (main): Fix compiling without DBUS support.
