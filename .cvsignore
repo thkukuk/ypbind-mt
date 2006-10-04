@@ -10,3 +10,4 @@ stamp-h1
 .deps
 ypbind-mt-*.tar.gz
 ypbind-mt-*.tar.bz2
+aclocal.m4
