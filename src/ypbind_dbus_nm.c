@@ -31,7 +31,24 @@
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus-glib.h>
+
+#ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 #include <NetworkManager/NetworkManager.h>
+#else
+#define NM_DBUS_INTERFACE "org.freedesktop.NetworkManager"
+#define NM_DBUS_SERVICE   "org.freedesktop.NetworkManager"
+#define NM_DBUS_PATH      "/org/freedesktop/NetworkManager"
+#define NM_DBUS_SIGNAL_STATE_CHANGE "StateChange"
+
+typedef enum NMState {
+  NM_STATE_UNKNOWN = 0,
+  NM_STATE_ASLEEP,
+  NM_STATE_CONNECTING,
+  NM_STATE_CONNECTED,
+  NM_STATE_DISCONNECTED
+} NMState;
+
+#endif
 
 #include "ypbind.h"
 #include "log_msg.h"

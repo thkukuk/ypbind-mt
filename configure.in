@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/ypbind-mt.c)
-AM_INIT_AUTOMAKE(ypbind-mt, 1.20.2)
+AM_INIT_AUTOMAKE(ypbind-mt, 1.20.3)
 AM_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT(/usr)
 
@@ -61,6 +61,8 @@ then
   AC_SUBST(GLIB_LIBS)
   AC_DEFINE(USE_DBUS_NM, 1, [Enable DBUS/NetworkManager support])
 fi
+
+AC_CHECK_HEADERS([NetworkManager/NetworkManager.h])
 
 dnl The difficult part: could we reconfigure NSS or must we use DNS ?
 AC_CHECK_FUNCS(__nss_configure_lookup)
