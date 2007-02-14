@@ -285,7 +285,7 @@ dbus_init (void)
 	       error.name, error.message);
 
       dbus_error_free (&error);
-      dbus_connection_close (connection);
+      dbus_connection_unref (connection);
       connection = NULL;
       goto out;
     }
@@ -300,7 +300,7 @@ dbus_init (void)
       log_msg (LOG_ERR, "Error adding match, %s: %s",
 	       error.name, error.message);
       dbus_error_free (&error);
-      dbus_connection_close (connection);
+      dbus_connection_unref (connection);
       connection = NULL;
       goto out;
     }
@@ -313,7 +313,7 @@ dbus_init (void)
       if (!check_for_nm (connection))
 	{
 	  /* NetworkManager not in use.  */
-	  dbus_connection_close (connection);
+	  dbus_connection_unref (connection);
 	  is_online = 1;
 	  return 0;
 	}

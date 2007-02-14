@@ -1,3 +1,13 @@
+2007-02-14  Thorsten Kukuk  <kukuk@suse.de>
+
+	* po/sv.po: Add swedish translation from
+	Daniel Nylander <info@danielnylander.se>.
+
+2006-10-20  Timo Hoenig  <thoenig@suse.de>
+
+	* src/ypbind_dbus_nm.c: Do not close shared connection
+	to the D-Bus system bus.
+
 2006-10-04  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.20.3
