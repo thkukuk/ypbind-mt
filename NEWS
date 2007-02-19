@@ -4,6 +4,10 @@ Copyright (C) 1998-2006 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 1.20.4
+* Small bug fixes
+* Add swedish translation
+
 Version 1.20.3
 * Add checks if NetworkManager headers are installed
 
