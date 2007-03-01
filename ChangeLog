@@ -1,3 +1,10 @@
+2007-03-01  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.5
+
+	* src/serv_list.c (add_server): Fix array access above
+	array bounds [bnc #247312].
+
 2007-02-19  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.20.4

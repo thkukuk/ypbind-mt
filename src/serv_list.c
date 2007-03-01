@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2006 Thorsten Kukuk
+/* Copyright (c) 1998-2007 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -432,7 +432,7 @@ add_server (const char *domain, const char *host, int check_syntax)
 	  break;
 
       /* There is no empty slot */
-      if (entry->server[active].host != NULL)
+      if (active >= _MAXSERVER)
 	{
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG,
