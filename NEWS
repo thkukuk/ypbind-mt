@@ -1,8 +1,12 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2007 Thorsten Kukuk
+Copyright (C) 1998-2008 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 1.21
+* Add -verbose option
+* Fix typo in option handling
 
 Version 1.20.5
 * Small bug fix

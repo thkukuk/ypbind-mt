@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copyright (c) 2004 Author: Thorsten Kukuk <kukuk@suse.de>
+# Copyright (c) 2004, 2008 Author: Thorsten Kukuk <kukuk@suse.de>
 #
 # /etc/init.d/ypbind
 #
@@ -13,7 +13,7 @@
 # Provides: ypbind
 # Required-Start: $remote_fs $portmap
 # Should-Start: ypserv slpd
-# Required-Stop: portmap
+# Required-Stop: $portmap
 # Default-Start: 3 5
 # Default-Stop: 0 1 2 6
 # Short-Description: Start ypbind (necessary for a NIS client)
@@ -85,9 +85,15 @@ case "$1" in
           rc_exit
         fi
 
-	## Check if portmap is running, else abort with error
-	checkproc /sbin/portmap
-	if [ $? -ne 0 ]; then
+	## Check if portmap or rpcbind is running, else abort with error
+	portmap_found=0
+	for prog in /sbin/rpcbind /sbin/portmap ; do
+	    checkproc $prog
+	    if [ $? -eq 0 ]; then
+		portmap_found=1
+	    fi
+	done
+	if [ $portmap_found -eq 0 ]; then
 	  echo -n " . . . . . . . . . . ${attn}No portmapper running${norm}"
 	  rc_failed
 	  rc_status -v
@@ -96,9 +102,12 @@ case "$1" in
 
 	# evaluate the OPTIONS for ypbind-mt
 	OPTIONS=""
+	test "$YPBIND_VERBOSE" = "yes" && OPTIONS="-verbose $OPTIONS"
 	test "$YPBIND_LOCAL_ONLY" = "yes" && OPTIONS="-local-only $OPTIONS"
 	test "$YPBIND_BROADCAST" = "yes" && OPTIONS="-broadcast $OPTIONS"
 	test "$YPBIND_BROKEN_SERVER" = "yes" && OPTIONS="-broken-server $OPTIONS"
+	test "X$YPBIND_PING_INTERVAL" -ne "X" && OPTIONS="-ping-interval $YPBIND_PING_INTERVAL $OPTIONS"
+	test "$YPBIND_DBUS" = "no" && OPTIONS="-no-dbus $OPTIONS"
 
 	startproc $YPBIND_BIN $YPBIND_OPTIONS $OPTIONS
         if [ $? -eq 0 ]; then

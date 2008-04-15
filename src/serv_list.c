@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2007 Thorsten Kukuk
+/* Copyright (c) 1998-2008 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -50,6 +50,8 @@
 #include "local.h"
 #include "pthread_np.h"
 
+extern int verbose_flag;
+
 #if (defined(__sun__) || defined(sun)) && defined(__svr4__)
 typedef uint32_t u_int32_t;
 #endif
@@ -80,6 +82,22 @@ struct binding
   struct bound_server ypset;
   CLIENT *client_handle;
 };
+static inline char *
+bound_host(struct binding *bptr)
+{
+  struct bound_server *sptr;
+
+  if (bptr->active >= 0)
+  	sptr = &bptr->server[bptr->active];
+  else if (bptr->active == -2)
+  	sptr = &bptr->ypset;
+  else
+  	return "Unknown Host";
+
+  if (sptr->host != NULL)
+  	return(sptr->host);
+  return (inet_ntoa(sptr->addr));
+}
 
 static struct binding *domainlist = NULL;
 static int max_domains = 0;
@@ -224,6 +242,12 @@ change_binding (const char *domain, ypbind_binding *binding)
 	  pthread_rdwr_rlock_np (&domainlock);
 	  update_bindingfile (&domainlist[i]);
 	  pthread_rdwr_runlock_np (&domainlock);
+	  if (verbose_flag)
+	    {
+	      log_msg (LOG_NOTICE, "NIS server set to '%s'"
+		" for domain '%s'",
+	        bound_host(&domainlist[i]), domainlist[i].domain);
+	    }
 
 	  return;
 	}
@@ -797,6 +821,10 @@ ping_all (struct binding *list)
       list->server[i].port = s_in.sin_port;
       if (s_in.sin_port == 0)
 	{
+	  if (verbose_flag && list->active == i)
+		log_msg (LOG_NOTICE, "NIS server '%s' not repsonding "
+		    "for domain '%s'", list->server[i].host, list->domain);
+
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG, _("host '%s' doesn't answer."),
 		     list->server[i].host);
@@ -1001,13 +1029,21 @@ ping_all (struct binding *list)
 void
 do_binding (void)
 {
-  int i;
+  int i, active;
 
   pthread_mutex_lock (&search_lock);
   for (i = 0; i < max_domains; ++i)
     {
+      active = domainlist[i].active;
+
       if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
 	do_broadcast (&domainlist[i]);
+      if (verbose_flag &&
+		domainlist[i].active >= 0 && active != domainlist[i].active)
+	{
+		log_msg (LOG_NOTICE, "NIS server is '%s' for domain '%s'",
+		    bound_host(&domainlist[i]), domainlist[i].domain);
+    	}
     }
   pthread_mutex_unlock (&search_lock);
 }
@@ -1052,7 +1088,7 @@ test_bindings (void *param __attribute__ ((unused)))
 int
 test_bindings_once (int lastcheck, const char *req_domain)
 {
-  int i;
+  int i, active;
 
   /* Since we need the write lock later, getting the read lock here is
      not enough. During the time, where we wait for the write lock, the
@@ -1081,6 +1117,8 @@ test_bindings_once (int lastcheck, const char *req_domain)
 	  continue;
 	}
 
+      active = domainlist[i].active;
+
       /* We should never run into this. For debugging.  */
       if (domainlist[i].client_handle == NULL && domainlist[i].active != -1)
 	{
@@ -1105,6 +1143,10 @@ test_bindings_once (int lastcheck, const char *req_domain)
 			  YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
 			  (caddr_t) &domain, (xdrproc_t) xdr_bool,
 			  (caddr_t) &out, time_out);
+		if (verbose_flag && status != RPC_SUCCESS)
+			log_msg (LOG_NOTICE, "NIS server '%s' not responding"
+			" for domain '%s'", bound_host(&domainlist[i]),
+			domainlist[i].domain);
 	    }
 
 	  /* time to search a new fastest server, but only if the current
@@ -1180,6 +1222,12 @@ test_bindings_once (int lastcheck, const char *req_domain)
 	    do_broadcast (&domainlist[i]);
 	  pthread_mutex_unlock (&search_lock);
 	  pthread_rdwr_wlock_np (&domainlock);
+	}
+      if (verbose_flag &&
+          domainlist[i].active >= 0 && active != domainlist[i].active)
+	{
+	  log_msg (LOG_NOTICE, "NIS server is '%s' for domain '%s'",
+	      bound_host(&domainlist[i]), domainlist[i].domain);
 	}
     } /* end for () all domains */
 

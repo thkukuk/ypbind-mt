@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2001, 2002, 2004, 2005, 2006 Thorsten Kukuk
+/* Copyright (c) 1998, 1999, 2001, 2002, 2004, 2005, 2006, 2008 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -466,6 +466,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	}
     }
 }
+int verbose_flag;
 
 static void
 usage (int ret)
@@ -478,7 +479,7 @@ usage (int ret)
     output = stdout;
 
   fputs (_("Usage:\n"), output);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"), output);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug] [-verbose]\n"), output);
 #ifdef USE_DBUS_NM
   fputs (_("\t  [-no-dbus]\n"), output);
 #endif
@@ -656,6 +657,9 @@ main (int argc, char **argv)
       else if (strcmp ("-d", argv[i]) == 0 ||
 	       strcmp ("-debug", argv[i]) == 0)
         debug_flag = 1;
+      else if (strcmp ("-v", argv[i]) == 0 ||
+	       strcmp ("-verbose", argv[i]) == 0)
+        verbose_flag = 1;
       else if (strcmp ("-broken-server", argv[i]) == 0 ||
 	       strcmp ("-broken_server", argv[i]) == 0)
         broken_server = 1;
@@ -682,7 +686,7 @@ main (int argc, char **argv)
 	  port = atoi (argv[i]);
 	}
       else if (strcmp ("-ping-interval", argv[i]) == 0 ||
-	       strcmp ("-ping-interval", argv[i]) == 0 ||
+	       strcmp ("-ping_interval", argv[i]) == 0 ||
 	       strcmp ("-i", argv[i]) == 0)
 	{
 	  if (i+1 == argc || argv[i+1][0] == '-')
@@ -820,8 +824,16 @@ main (int argc, char **argv)
 
       umask (0);
       j = open ("/dev/null", O_RDWR);
-      dup (j);
-      dup (j);
+      if (dup (j) == -1)
+	{
+          log_msg (LOG_ERR, "Cannot dup file handle: %s\n", strerror (errno));
+          exit (-1);
+	}
+      if (dup (j) == -1)
+	{
+          log_msg (LOG_ERR, "Cannot dup file handle: %s\n", strerror (errno));
+          exit (-1);
+	}
     }
 
 #if defined(HAVE___NSS_CONFIGURE_LOOKUP)

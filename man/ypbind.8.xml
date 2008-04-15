@@ -41,6 +41,7 @@
     <command>ypbind</command>
       <arg choice='opt'>-c </arg>
       <group choice='opt'><arg choice='plain'>-d </arg><arg choice='plain'>-debug </arg></group>
+      <arg choice='opt'>-verbose </arg>
       <arg choice='opt'>-broadcast </arg>
       <arg choice='opt'>-broken-server </arg>
       <arg choice='opt'>-ypset </arg>
@@ -205,6 +206,14 @@ in debug mode.
 <command>ypbind</command>
 will not put itself into background, and error messages and debug
 output are written to standard error.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-verbose</option></term>
+  <listitem>
+<para>Causes
+<command>ypbind</command>
+to syslog(2) any and all changes in the server its bound to.</para>
   </listitem>
   </varlistentry>
   <varlistentry>

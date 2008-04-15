@@ -1,5 +1,5 @@
 #
-# Copyright (c) 1998, 1999, 2001, 2002, 2004, 2006, 2007 Thorsten Kukuk, Germany
+# Copyright (c) 1998-2002, 2004, 2006-2008 Thorsten Kukuk, Germany
 #
 # Author: Thorsten Kukuk <kukuk@suse.de>
 #
@@ -12,6 +12,6 @@ CLEANFILES = *~
 M4_FILES = 
 
 EXTRA_DIST = config.rpath  ChangeLog etc/yp.conf etc/ypbind.init \
-	$(M4_FILES)
+	etc/sysconfig.ypbind $(M4_FILES)
 
 ACLOCAL_AMFLAGS = -I m4
