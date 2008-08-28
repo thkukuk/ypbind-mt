@@ -81,6 +81,7 @@ struct binding
   struct bound_server server[_MAXSERVER];
   struct bound_server ypset;
   CLIENT *client_handle;
+  struct bound_server last; /* last written */
 };
 static inline char *
 bound_host(struct binding *bptr)
@@ -133,26 +134,44 @@ update_bindingfile (struct binding *entry)
   sprintf (path1, "%s/%s.1", BINDINGDIR, entry->domain);
   sprintf (path2, "%s/%s.2", BINDINGDIR, entry->domain);
 
-  iov[0].iov_base = (caddr_t) &sport;
-  iov[0].iov_len = sizeof (sport);
-  iov[1].iov_base = (caddr_t) &ybres;
-  iov[1].iov_len = sizeof ybres;
-
   memset(&ybres, 0, sizeof (ybres));
   ybres.ypbind_status = YPBIND_SUCC_VAL;
   if (entry->active >= 0)
     {
+      if (entry->last.host &&
+          !memcmp(&entry->server[entry->active].addr, &entry->last.addr,
+		  sizeof(struct in_addr)) &&
+          entry->server[entry->active].port == entry->last.port)
+        {
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, "Entry for %s unchanged, skipping writeout",
+		     entry->domain);
+          return;
+        }
+
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
 	      &entry->server[entry->active].addr, sizeof (struct in_addr));
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
 	      &entry->server[entry->active].port, sizeof (unsigned short int));
+      entry->last= entry->server[entry->active];
     }
   else if (entry->active == -2) /* ypset was used */
     {
+      if (entry->last.host &&
+          !memcmp(&entry->ypset.addr, &entry->last.addr,
+		  sizeof(struct in_addr)) &&
+          entry->ypset.port == entry->last.port)
+        {
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, "Entry for %s unchanged, skipping writeout",
+		     entry->domain);
+          return;
+        }
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
 	      &entry->ypset.addr, sizeof (struct in_addr));
       memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
 	      &entry->ypset.port, sizeof (unsigned short int));
+      entry->last= entry->ypset;
     }
   else
     {
@@ -160,9 +179,15 @@ update_bindingfile (struct binding *entry)
           libc will query ypbind direct. */
        unlink (path1);
        unlink (path2);
+       entry->last.host = NULL;
        log_msg (LOG_ERR, "INTERNAL ERROR: update_bindingfile called without valid data!");
        return;
     }
+
+  iov[0].iov_base = (caddr_t) &sport;
+  iov[0].iov_len = sizeof (sport);
+  iov[1].iov_base = (caddr_t) &ybres;
+  iov[1].iov_len = sizeof ybres;
 
   len = iov[0].iov_len + iov[1].iov_len;
 
@@ -171,6 +196,7 @@ update_bindingfile (struct binding *entry)
       if (writev (fd, iov, 2) != len )
         {
           log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
+	  entry->last.host = NULL;
           unlink (path1);
         }
       close (fd);
@@ -183,6 +209,7 @@ update_bindingfile (struct binding *entry)
       if (writev (fd, iov, 2) != len )
         {
           log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
+	   entry->last.host = NULL;
           unlink (path2);
         }
       close (fd);
@@ -403,6 +430,7 @@ get_entry (const char *domain, struct binding **entry)
       domainlist[max_domains - 1].ypset.host = NULL;
       domainlist[max_domains - 1].active = (-1);
       domainlist[max_domains - 1].use_broadcast = FALSE;
+      domainlist[max_domains - 1].last.host = NULL;
       memset (domainlist[max_domains - 1].server, 0,
 	      (_MAXSERVER * sizeof (struct bound_server)));
       *entry = &domainlist[max_domains - 1];

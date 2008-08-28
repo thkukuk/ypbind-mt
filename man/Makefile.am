@@ -12,11 +12,11 @@ man_MANS = ypbind.8 yp.conf.5
 XMLS = ypbind.8.xml yp.conf.5.xml
 
 if ENABLE_REGENERATE_MAN
-%.5: %.5.xml
+yp.conf.5: yp.conf.5.xml
 	$(XMLLINT) --nonet --xinclude --postvalid --noout $<
 	$(XSLTPROC) -o $(srcdir)/$@ --path $(srcdir) --xinclude --nonet http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
 
-%.8: %.8.xml
+ypbind.8: ypbind.8.xml
 	$(XMLLINT) --nonet --xinclude --postvalid --noout $<
 	$(XSLTPROC) -o $(srcdir)/$@ --path $(srcdir) --xinclude --nonet http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
 endif

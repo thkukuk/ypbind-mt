@@ -4,6 +4,9 @@ Copyright (C) 1998-2008 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 1.22
+* Only write binding files if they really changed
+
 Version 1.21
 * Add -verbose option
 * Fix typo in option handling

@@ -1,3 +1,15 @@
+2008-08-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.22
+
+	* src/serv_list.c: Only write binding file if there were
+	really changes. Based on patch from
+	Eric Sandeen <sandeen@redhat.com>.
+
+2008-08-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* etc/ypbind.init: Adjust init script to new openSUSE policy
+
 2008-04-15  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.21

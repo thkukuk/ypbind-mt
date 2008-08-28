@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2008-04-15 13:22+0200\n"
+"POT-Creation-Date: 2008-08-28 14:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,118 +16,118 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/serv_list.c:399
+#: src/serv_list.c:426
 msgid "Not enough memory !"
 msgstr ""
 
-#: src/serv_list.c:424
+#: src/serv_list.c:452
 msgid "internal error: add_server called with NULL domain."
 msgstr ""
 
-#: src/serv_list.c:439
+#: src/serv_list.c:467
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr ""
 
-#: src/serv_list.c:463
+#: src/serv_list.c:491
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr ""
 
-#: src/serv_list.c:470
+#: src/serv_list.c:498
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr ""
 
-#: src/serv_list.c:500 src/serv_list.c:502
+#: src/serv_list.c:528 src/serv_list.c:530
 msgid "Unknown host:"
 msgstr ""
 
-#: src/serv_list.c:506 src/serv_list.c:508
+#: src/serv_list.c:534 src/serv_list.c:536
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/serv_list.c:513 src/serv_list.c:516
+#: src/serv_list.c:541 src/serv_list.c:544
 msgid "No address associated with name:"
 msgstr ""
 
-#: src/serv_list.c:520 src/serv_list.c:522
+#: src/serv_list.c:548 src/serv_list.c:550
 msgid "Unknown server error"
 msgstr ""
 
-#: src/serv_list.c:526 src/serv_list.c:528
+#: src/serv_list.c:554 src/serv_list.c:556
 msgid "gethostbyname: Unknown error"
 msgstr ""
 
-#: src/serv_list.c:600 src/serv_list.c:912
+#: src/serv_list.c:628 src/serv_list.c:940
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
 
-#: src/serv_list.c:604
+#: src/serv_list.c:632
 #, c-format
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr ""
 
-#: src/serv_list.c:611 src/serv_list.c:816
+#: src/serv_list.c:639 src/serv_list.c:844
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr ""
 
-#: src/serv_list.c:656
+#: src/serv_list.c:684
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:691
+#: src/serv_list.c:719
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:804 src/serv_list.c:957
+#: src/serv_list.c:832 src/serv_list.c:985
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:829
+#: src/serv_list.c:857
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:900
+#: src/serv_list.c:928
 #, c-format
 msgid "Server '%s' for domain '%s' answered ping but failed to bind"
 msgstr ""
 
-#: src/serv_list.c:976
+#: src/serv_list.c:1004
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:997
+#: src/serv_list.c:1025
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:1101
+#: src/serv_list.c:1129
 msgid "Pinging all active servers."
 msgstr ""
 
-#: src/serv_list.c:1103
+#: src/serv_list.c:1131
 msgid "Checking for new fastest server."
 msgstr ""
 
-#: src/serv_list.c:1115
+#: src/serv_list.c:1143
 #, c-format
 msgid "Requested domain %s, found %s, ignored."
 msgstr ""
 
-#: src/serv_list.c:1166
+#: src/serv_list.c:1194
 #, c-format
 msgid "Server for domain '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:1172 src/serv_list.c:1177
+#: src/serv_list.c:1200 src/serv_list.c:1205
 #, c-format
 msgid "Server '%s' for domain '%s' doesn't answer."
 msgstr ""
