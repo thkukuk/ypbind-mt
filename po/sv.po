@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt 1.20-2\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2008-08-28 14:40+0200\n"
+"POT-Creation-Date: 2009-03-30 13:00+0200\n"
 "PO-Revision-Date: 2006-11-12 16:48+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -184,61 +184,74 @@ msgstr "Ingen post hittades.\n"
 msgid "No entry found."
 msgstr "Ingen post hittades."
 
-#: src/ypbind-mt.c:313
+#: src/ypbind-mt.c:307
+msgid "No NIS server and no -broadcast option specified.\n"
+msgstr "Ingen NIS-server och flaggan -broadcast angavs inte.\n"
+
+#: src/ypbind-mt.c:310
+#, c-format
+msgid "Add a NIS server to the %s configuration file,\n"
+msgstr "Lägg till en NIS-server till konfigurationsfilen för %s,\n"
+
+#: src/ypbind-mt.c:312
+msgid "or start ypbind with the -broadcast option.\n"
+msgstr "eller starta ypbind med flaggan -broadcast.\n"
+
+#: src/ypbind-mt.c:332
 #, c-format
 msgid "cannot create pidfile %s"
 msgstr "kan inte skapa pid-filen %s"
 
-#: src/ypbind-mt.c:341
+#: src/ypbind-mt.c:360
 #, c-format
 msgid "fcntl error: %s"
 msgstr "fcntl-fel: %s"
 
-#: src/ypbind-mt.c:353
+#: src/ypbind-mt.c:372
 #, c-format
 msgid "ypbind-mt already running (pid %d) - exiting"
 msgstr "ypbind-mt kör redan (pid %d) - avslutar"
 
-#: src/ypbind-mt.c:364
+#: src/ypbind-mt.c:383
 msgid "cannot lock pidfile"
 msgstr "kan inte låsa pid-fil"
 
-#: src/ypbind-mt.c:416
+#: src/ypbind-mt.c:435
 #, c-format
 msgid "sigwait failed: ret=%d."
 msgstr "sigwait misslyckades: ret=%d."
 
-#: src/ypbind-mt.c:422
+#: src/ypbind-mt.c:441
 msgid "SIGCHLD arrived, what should I do ?"
 msgstr "SIGCHLD togs emot, vad ska jag göra?"
 
-#: src/ypbind-mt.c:430
+#: src/ypbind-mt.c:449
 #, c-format
 msgid "Signal (%d) for quitting program arrived."
 msgstr "Signalen (%d) för programavslut togs emot."
 
-#: src/ypbind-mt.c:439
+#: src/ypbind-mt.c:458
 msgid "cannot unlock pidfile"
 msgstr "kan inte låsa upp pid-fil"
 
-#: src/ypbind-mt.c:448
+#: src/ypbind-mt.c:467
 msgid "SIGHUP arrived, reloading config file."
 msgstr "SIGHUP togs emot, läser om konfigurationsfilen."
 
-#: src/ypbind-mt.c:461
+#: src/ypbind-mt.c:480
 msgid "Ignoring SIGPIPE."
 msgstr "Ignorerar SIGPIPE."
 
-#: src/ypbind-mt.c:464
+#: src/ypbind-mt.c:483
 #, c-format
 msgid "Unknown signal: %d"
 msgstr "Okänd signal: %d"
 
-#: src/ypbind-mt.c:481
+#: src/ypbind-mt.c:500
 msgid "Usage:\n"
 msgstr "Användning:\n"
 
-#: src/ypbind-mt.c:482
+#: src/ypbind-mt.c:501
 #, fuzzy
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n"
@@ -248,112 +261,99 @@ msgstr ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f konfigurationsfil]\n"
 "\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"
 
-#: src/ypbind-mt.c:484
+#: src/ypbind-mt.c:503
 msgid "\t  [-no-dbus]\n"
 msgstr "\t  [-no-dbus]\n"
 
-#: src/ypbind-mt.c:486
+#: src/ypbind-mt.c:505
 msgid "\typbind -c [-f configfile]\n"
 msgstr "\typbind -c [-f konfigurationsfil]\n"
 
-#: src/ypbind-mt.c:487
+#: src/ypbind-mt.c:506
 msgid "\typbind --version\n"
 msgstr "\typbind --version\n"
 
-#: src/ypbind-mt.c:523
+#: src/ypbind-mt.c:542
 #, c-format
 msgid "Cannot create UDP: %s"
 msgstr "Kan inte skapa UDP: %s"
 
-#: src/ypbind-mt.c:541
+#: src/ypbind-mt.c:560
 #, c-format
 msgid "Cannot bind UDP: %s"
 msgstr "Kan inte binda UDP: %s"
 
-#: src/ypbind-mt.c:551
+#: src/ypbind-mt.c:570
 msgid "Cannot create udp service."
 msgstr "Kan inte skapa udp-tjänst."
 
-#: src/ypbind-mt.c:560
+#: src/ypbind-mt.c:579
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDVERS, udp)."
 
-#: src/ypbind-mt.c:568
+#: src/ypbind-mt.c:587
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDOLDVERS, udp)."
 
-#: src/ypbind-mt.c:577
+#: src/ypbind-mt.c:596
 #, c-format
 msgid "Cannot create TCP: %s"
 msgstr "Kan inte skapa TCP: %s"
 
-#: src/ypbind-mt.c:595
+#: src/ypbind-mt.c:614
 #, c-format
 msgid "Cannot bind TCP: %s"
 msgstr "Kan inte binda TCP: %s"
 
-#: src/ypbind-mt.c:605
+#: src/ypbind-mt.c:624
 msgid "Cannot create tcp service.\n"
 msgstr "Kan inte skapa tcp-tjänst.\n"
 
-#: src/ypbind-mt.c:613
+#: src/ypbind-mt.c:632
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDVERS, tcp)."
 
-#: src/ypbind-mt.c:621
+#: src/ypbind-mt.c:640
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDOLDVERS, tcp)."
 
-#: src/ypbind-mt.c:714
+#: src/ypbind-mt.c:733
 msgid "ERROR: domainname not set.\n"
 msgstr "FEL: domainname inte inställt.\n"
 
-#: src/ypbind-mt.c:719
+#: src/ypbind-mt.c:738
 msgid "domainname not set - aborting.\n"
 msgstr "domainname inte inställt - avbryter.\n"
 
-#: src/ypbind-mt.c:728
+#: src/ypbind-mt.c:747
 #, c-format
 msgid "Config file %s is not ok.\n"
 msgstr "Konfigurationsfilen %s är inte ok.\n"
 
-#: src/ypbind-mt.c:733
+#: src/ypbind-mt.c:752
 #, c-format
 msgid "Config file %s is ok.\n"
 msgstr "Konfigurationsfilen %s är ok.\n"
 
-#: src/ypbind-mt.c:740
+#: src/ypbind-mt.c:759
 msgid "ypbind must be run as root\n"
 msgstr "ypbind måste köras som root\n"
 
-#: src/ypbind-mt.c:748 src/ypbind-mt.c:757
+#: src/ypbind-mt.c:767 src/ypbind-mt.c:776
 #, c-format
 msgid "Could not create %s: %s\n"
 msgstr "Kunde inte skapa %s: %s\n"
 
-#: src/ypbind-mt.c:764
+#: src/ypbind-mt.c:783
 #, c-format
 msgid "Could not change to directory %s: %s\n"
 msgstr "Kunde inte ändra till katalogen %s: %s\n"
 
-#: src/ypbind-mt.c:773
-msgid "No NIS server and no -broadcast option specified.\n"
-msgstr "Ingen NIS-server och flaggan -broadcast angavs inte.\n"
-
-#: src/ypbind-mt.c:775
-#, c-format
-msgid "Add a NIS server to the %s configuration file,\n"
-msgstr "Lägg till en NIS-server till konfigurationsfilen för %s,\n"
-
-#: src/ypbind-mt.c:777
-msgid "or start ypbind with the -broadcast option.\n"
-msgstr "eller starta ypbind med flaggan -broadcast.\n"
-
-#: src/ypbind-mt.c:854
+#: src/ypbind-mt.c:871
 msgid "Could not block signals."
 msgstr "Kunde inte blockera signaler."
 
-#: src/ypbind-mt.c:899
+#: src/ypbind-mt.c:916
 msgid "svc_run returned."
 msgstr "svc_run återvände."
 

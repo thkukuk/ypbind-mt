@@ -15,6 +15,7 @@ extern int  add_server (const char *__domain, const char *__host,
 			int __check_syntax);
 extern void change_binding (const char *__domain, ypbind_binding *binding);
 extern int load_config (int check_syntax);
+extern void load_config_or_exit (void);
 
 extern int query_slp (const char *domain);
 

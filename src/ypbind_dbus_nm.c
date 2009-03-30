@@ -96,7 +96,7 @@ go_online (void)
   if (use_broadcast)
     add_server (domain, NULL, 0);
   else
-    load_config (0);
+    load_config_or_exit();
 
   if (portmapper_connect () != 0)
     {
@@ -320,13 +320,13 @@ dbus_init (void)
       if (check_online (connection) == 1)
 	{
 	  if (debug_flag)
-	    log_msg (LOG_DEBUG, "Are already online");
-	  is_online = 1;
+	    log_msg (LOG_DEBUG, "Network is available.");
+	  go_online ();
 	}
       else
 	{
 	  if (debug_flag)
-	    log_msg (LOG_DEBUG, "Are offline");
+	    log_msg (LOG_DEBUG, "No network is available.  Waiting...");
 	  is_online = 0;
 	}
       return 1;
@@ -335,7 +335,7 @@ dbus_init (void)
     {
       if (debug_flag)
 	log_msg (LOG_DEBUG, "No connection possible, assume online mode");
-      is_online = 1;
+      go_online ();
       return 0;
     }
 }

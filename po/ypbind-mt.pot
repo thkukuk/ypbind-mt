@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2008-08-28 14:40+0200\n"
+"POT-Creation-Date: 2009-03-30 13:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,173 +184,173 @@ msgstr ""
 msgid "No entry found."
 msgstr ""
 
-#: src/ypbind-mt.c:313
+#: src/ypbind-mt.c:307
+msgid "No NIS server and no -broadcast option specified.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:310
+#, c-format
+msgid "Add a NIS server to the %s configuration file,\n"
+msgstr ""
+
+#: src/ypbind-mt.c:312
+msgid "or start ypbind with the -broadcast option.\n"
+msgstr ""
+
+#: src/ypbind-mt.c:332
 #, c-format
 msgid "cannot create pidfile %s"
 msgstr ""
 
-#: src/ypbind-mt.c:341
+#: src/ypbind-mt.c:360
 #, c-format
 msgid "fcntl error: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:353
+#: src/ypbind-mt.c:372
 #, c-format
 msgid "ypbind-mt already running (pid %d) - exiting"
 msgstr ""
 
-#: src/ypbind-mt.c:364
+#: src/ypbind-mt.c:383
 msgid "cannot lock pidfile"
 msgstr ""
 
-#: src/ypbind-mt.c:416
+#: src/ypbind-mt.c:435
 #, c-format
 msgid "sigwait failed: ret=%d."
 msgstr ""
 
-#: src/ypbind-mt.c:422
+#: src/ypbind-mt.c:441
 msgid "SIGCHLD arrived, what should I do ?"
 msgstr ""
 
-#: src/ypbind-mt.c:430
+#: src/ypbind-mt.c:449
 #, c-format
 msgid "Signal (%d) for quitting program arrived."
 msgstr ""
 
-#: src/ypbind-mt.c:439
+#: src/ypbind-mt.c:458
 msgid "cannot unlock pidfile"
 msgstr ""
 
-#: src/ypbind-mt.c:448
+#: src/ypbind-mt.c:467
 msgid "SIGHUP arrived, reloading config file."
 msgstr ""
 
-#: src/ypbind-mt.c:461
+#: src/ypbind-mt.c:480
 msgid "Ignoring SIGPIPE."
 msgstr ""
 
-#: src/ypbind-mt.c:464
+#: src/ypbind-mt.c:483
 #, c-format
 msgid "Unknown signal: %d"
 msgstr ""
 
-#: src/ypbind-mt.c:481
+#: src/ypbind-mt.c:500
 msgid "Usage:\n"
 msgstr ""
 
-#: src/ypbind-mt.c:482
+#: src/ypbind-mt.c:501
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n"
 "\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug] [-"
 "verbose]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:484
+#: src/ypbind-mt.c:503
 msgid "\t  [-no-dbus]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:486
+#: src/ypbind-mt.c:505
 msgid "\typbind -c [-f configfile]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:487
+#: src/ypbind-mt.c:506
 msgid "\typbind --version\n"
 msgstr ""
 
-#: src/ypbind-mt.c:523
+#: src/ypbind-mt.c:542
 #, c-format
 msgid "Cannot create UDP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:541
+#: src/ypbind-mt.c:560
 #, c-format
 msgid "Cannot bind UDP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:551
+#: src/ypbind-mt.c:570
 msgid "Cannot create udp service."
 msgstr ""
 
-#: src/ypbind-mt.c:560
+#: src/ypbind-mt.c:579
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
 msgstr ""
 
-#: src/ypbind-mt.c:568
+#: src/ypbind-mt.c:587
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
 msgstr ""
 
-#: src/ypbind-mt.c:577
+#: src/ypbind-mt.c:596
 #, c-format
 msgid "Cannot create TCP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:595
+#: src/ypbind-mt.c:614
 #, c-format
 msgid "Cannot bind TCP: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:605
+#: src/ypbind-mt.c:624
 msgid "Cannot create tcp service.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:613
+#: src/ypbind-mt.c:632
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
 msgstr ""
 
-#: src/ypbind-mt.c:621
+#: src/ypbind-mt.c:640
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
 msgstr ""
 
-#: src/ypbind-mt.c:714
+#: src/ypbind-mt.c:733
 msgid "ERROR: domainname not set.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:719
+#: src/ypbind-mt.c:738
 msgid "domainname not set - aborting.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:728
+#: src/ypbind-mt.c:747
 #, c-format
 msgid "Config file %s is not ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:733
+#: src/ypbind-mt.c:752
 #, c-format
 msgid "Config file %s is ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:740
+#: src/ypbind-mt.c:759
 msgid "ypbind must be run as root\n"
 msgstr ""
 
-#: src/ypbind-mt.c:748 src/ypbind-mt.c:757
+#: src/ypbind-mt.c:767 src/ypbind-mt.c:776
 #, c-format
 msgid "Could not create %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:764
+#: src/ypbind-mt.c:783
 #, c-format
 msgid "Could not change to directory %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:773
-msgid "No NIS server and no -broadcast option specified.\n"
-msgstr ""
-
-#: src/ypbind-mt.c:775
-#, c-format
-msgid "Add a NIS server to the %s configuration file,\n"
-msgstr ""
-
-#: src/ypbind-mt.c:777
-msgid "or start ypbind with the -broadcast option.\n"
-msgstr ""
-
-#: src/ypbind-mt.c:854
+#: src/ypbind-mt.c:871
 msgid "Could not block signals."
 msgstr ""
 
-#: src/ypbind-mt.c:899
+#: src/ypbind-mt.c:916
 msgid "svc_run returned."
 msgstr ""
 

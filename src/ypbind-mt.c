@@ -100,7 +100,7 @@ unlink_bindingdir (void)
     }
 }
 
-/* Load the config file (/etc/yp.conf)  */
+/* Load or check syntax of the config file (/etc/yp.conf)  */
 int
 load_config (int check_syntax)
 {
@@ -296,6 +296,25 @@ load_config (int check_syntax)
 
   return 0;
 }
+
+
+/* Load the configuration, exiting if there's an error */
+void
+load_config_or_exit(void)
+{
+  if (load_config (0) != 0)
+    {
+      fputs (_("No NIS server and no -broadcast option specified.\n"), 
+	     stderr);
+      fprintf (stderr,
+	       _("Add a NIS server to the %s configuration file,\n"),
+	       configfile);
+      fputs (_("or start ypbind with the -broadcast option.\n"), 
+	     stderr);
+      exit (1);
+    }
+}
+
 
 /* Create a pidfile on startup */
 static void
@@ -768,15 +787,13 @@ main (int argc, char **argv)
 
   if (!use_broadcast)
     {
-      if (load_config (0) != 0)
-	{
-	  fputs (_("No NIS server and no -broadcast option specified.\n"), stderr);
-	  fprintf (stderr,
-		   _("Add a NIS server to the %s configuration file,\n"),
-		   configfile);
-	  fputs (_("or start ypbind with the -broadcast option.\n"), stderr);
-	  exit (1);
-	}
+      /* 
+       * If we're using dbus, the config will be loaded later when a network
+       * becomes available.  Otherwise, assume we have a network and load
+       * the config now.
+       */
+      if (disable_dbus)
+	load_config_or_exit();
     }
   else
     add_server (domain, NULL, 0);

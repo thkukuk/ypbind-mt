@@ -1,3 +1,16 @@
+2009-03-30  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.23
+
+	* etc/ypbind.init: Don't initialise domainname,
+	should be done by network scripts.
+	Don't check for working ypbind if we use NetworkManager.
+
+2009-03-30  Chris Burghart  <burghart@ucar.edu>
+
+	* src/ypbind_dbus_nm.c: Use always go_online().
+	* src/ypbind-mt.c: Add load_config_or_exit().
+
 2008-08-28  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.22
