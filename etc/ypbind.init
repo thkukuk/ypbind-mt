@@ -80,7 +80,7 @@ case "$1" in
 	RETVAL=$?
 	if [ "$YPBIND_DBUS" = "no" ]; then
 	    # Only check if we don't use NetworkManager
-            if [ $? -eq 0]; then
+            if [ $? -eq 0 ]; then
                 notfound=1
                 for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
                     ypwhich &>/dev/null && { notfound=0 ; break; };
