@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2001, 2002, 2004, 2005, 2006, 2008 Thorsten Kukuk
+/* Copyright (c) 1998 - 2009 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -299,17 +299,17 @@ load_config (int check_syntax)
 
 
 /* Load the configuration, exiting if there's an error */
-void
+static void
 load_config_or_exit(void)
 {
   if (load_config (0) != 0)
     {
-      fputs (_("No NIS server and no -broadcast option specified.\n"), 
+      fputs (_("No NIS server and no -broadcast option specified.\n"),
 	     stderr);
       fprintf (stderr,
 	       _("Add a NIS server to the %s configuration file,\n"),
 	       configfile);
-      fputs (_("or start ypbind with the -broadcast option.\n"), 
+      fputs (_("or start ypbind with the -broadcast option.\n"),
 	     stderr);
       exit (1);
     }
@@ -787,13 +787,13 @@ main (int argc, char **argv)
 
   if (!use_broadcast)
     {
-      /* 
-       * If we're using dbus, the config will be loaded later when a network
-       * becomes available.  Otherwise, assume we have a network and load
-       * the config now.
-       */
+      /* If we don't use DBUS, exit with an error if we cannot load the
+	 config. Else load the config, maybe there is a network already
+	 running. */
       if (disable_dbus)
 	load_config_or_exit();
+      else
+	load_config (0);
     }
   else
     add_server (domain, NULL, 0);

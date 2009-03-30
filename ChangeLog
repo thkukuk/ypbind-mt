@@ -2,6 +2,9 @@
 
 	* release version 1.23
 
+	* src/ypbind-mt.c (main): Fix last patch for the case that
+	we don't use NetworkManager and have already a network.
+
 	* etc/ypbind.init: Don't initialise domainname,
 	should be done by network scripts.
 	Don't check for working ypbind if we use NetworkManager.

@@ -1,4 +1,4 @@
-/* Copyright (c) 2006 Thorsten Kukuk
+/* Copyright (c) 2006, 2009 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -96,7 +96,7 @@ go_online (void)
   if (use_broadcast)
     add_server (domain, NULL, 0);
   else
-    load_config_or_exit();
+    load_config (0);
 
   if (portmapper_connect () != 0)
     {
