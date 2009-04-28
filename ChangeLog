@@ -1,3 +1,10 @@
+2009-04-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.23.1
+
+	* src/ypbind-mt.c (main): Fix last patch for the case
+	that we have dbus support disabled by configure option.
+
 2009-03-30  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.23

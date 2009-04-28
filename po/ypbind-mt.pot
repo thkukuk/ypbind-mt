@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2009-03-30 13:00+0200\n"
+"POT-Creation-Date: 2009-04-28 15:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -346,11 +346,11 @@ msgstr ""
 msgid "Could not change to directory %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:871
+#: src/ypbind-mt.c:875
 msgid "Could not block signals."
 msgstr ""
 
-#: src/ypbind-mt.c:916
+#: src/ypbind-mt.c:920
 msgid "svc_run returned."
 msgstr ""
 

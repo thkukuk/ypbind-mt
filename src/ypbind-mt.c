@@ -787,13 +787,17 @@ main (int argc, char **argv)
 
   if (!use_broadcast)
     {
+#ifdef USE_DBUS_NM
       /* If we don't use DBUS, exit with an error if we cannot load the
 	 config. Else load the config, maybe there is a network already
 	 running. */
       if (disable_dbus)
-	load_config_or_exit();
+	load_config_or_exit ();
       else
 	load_config (0);
+#else
+      load_config_or_exit ();
+#endif
     }
   else
     add_server (domain, NULL, 0);

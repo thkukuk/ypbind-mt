@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt 1.20-2\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2009-03-30 13:00+0200\n"
+"POT-Creation-Date: 2009-04-28 15:04+0200\n"
 "PO-Revision-Date: 2006-11-12 16:48+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -349,11 +349,11 @@ msgstr "Kunde inte skapa %s: %s\n"
 msgid "Could not change to directory %s: %s\n"
 msgstr "Kunde inte ändra till katalogen %s: %s\n"
 
-#: src/ypbind-mt.c:871
+#: src/ypbind-mt.c:875
 msgid "Could not block signals."
 msgstr "Kunde inte blockera signaler."
 
-#: src/ypbind-mt.c:916
+#: src/ypbind-mt.c:920
 msgid "svc_run returned."
 msgstr "svc_run återvände."
 
