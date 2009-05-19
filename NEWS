@@ -4,7 +4,7 @@ Copyright (C) 1998-2009 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
-Version 1.30
+Version 1.29.90
 * Don't cache connection to NIS server any longer, create
   new one for every check.
 

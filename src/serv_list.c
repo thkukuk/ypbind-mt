@@ -261,6 +261,12 @@ change_binding (const char *domain, ypbind_binding *binding)
 		" for domain '%s'",
 	        bound_host(&domainlist[i]), domainlist[i].domain);
 	    }
+	  if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES))
+	    {
+	      log2file ("NIS server for domain '%s' set to '%s' ",
+			domainlist[i].domain,
+			bound_host(&domainlist[i]));
+	    }
 
 	  return;
 	}
@@ -878,7 +884,7 @@ ping_all (struct binding *list)
   clnt_call (clnt, YPPROC_DOMAIN_NONACK, (xdrproc_t) NULL, (caddr_t) NULL,
              (xdrproc_t) xdr_bool, (caddr_t) &clnt_res, TIMEOUT00);
 
-  xid_lookup = *((u_int32_t *) (cu->cu_inbuf));
+  memcpy (&xid_lookup, &(cu->cu_inbuf), sizeof (u_int32_t));
   close (sock);
   for (i = 0; i < pings_count; ++i)
     {
@@ -911,6 +917,13 @@ ping_all (struct binding *list)
 		log_msg (LOG_DEBUG,
 			 _("Answer for domain '%s' from server '%s'"),
 			 domain, list->server[list->active].host);
+	      if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES))
+		{
+		  log2file ("NIS server for domain '%s' is '%s'",
+			    domain,
+			    list->server[list->active].host);
+		}
+
 	      found = 1;
 	    }
         }
