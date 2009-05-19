@@ -1,4 +1,4 @@
-/* Copyright (c) 2000, 2002, 2006 Thorsten Kukuk
+/* Copyright (c) 2000, 2002, 2006, 2009 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -22,6 +22,7 @@
 
 #define _GNU_SOURCE
 
+#include <time.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <syslog.h>
@@ -44,6 +45,7 @@ gettid (void)
 #endif
 
 int debug_flag = 0;
+int logfile_flag = 0;
 
 void
 log_msg (int type, const char *fmt,...)
@@ -70,6 +72,62 @@ log_msg (int type, const char *fmt,...)
       vsyslog (type, fmt, ap);
 #endif
     }
+
+  va_end (ap);
+}
+
+static FILE *logfp = NULL;
+static const char *logfilename = "/var/log/ypbind-mt.log";
+
+void
+close_logfile (void)
+{
+  if (logfp == NULL)
+    return;
+
+  fclose (logfp);
+  logfp = NULL;
+}
+
+static int
+open_logfile (void)
+{
+  if (logfp != NULL)
+    close_logfile();
+
+  if ((logfp = fopen (logfilename, "a+")) == NULL)
+    {
+      log_msg (LOG_ERR, "Cannot open log file '%s': %m",
+	       logfilename);
+      return 1;
+    }
+  return 0;
+}
+
+void
+log2file (const char *fmt,...)
+{
+  va_list ap;
+  char date[128];
+  time_t tmp;
+  struct tm *t;
+
+  if (logfp == NULL)
+    {
+      if (open_logfile () != 0)
+	return;
+    }
+
+  tmp = time (NULL);
+  t = localtime (&tmp);
+  strftime (date, sizeof (date), "%F %T", t);
+
+  va_start (ap, fmt);
+
+  fprintf (logfp, "%s (%d): ", date, gettid ());
+  vfprintf (logfp, fmt, ap);
+  fputc ('\n', logfp);
+  fflush (logfp);
 
   va_end (ap);
 }

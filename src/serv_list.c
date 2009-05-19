@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2008 Thorsten Kukuk
+/* Copyright (c) 1998-2009 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -80,7 +80,7 @@ struct binding
   bool_t use_broadcast;
   struct bound_server server[_MAXSERVER];
   struct bound_server ypset;
-  CLIENT *client_handle;
+  struct sockaddr_in sin;
   struct bound_server last; /* last written */
 };
 static inline char *
@@ -231,14 +231,9 @@ change_binding (const char *domain, ypbind_binding *binding)
       if (strcmp (domainlist[i].domain, domain) == 0)
 	{
 	  struct sockaddr_in addr;
-	  struct timeval timeout;
-	  int sock;
 
 	  pthread_rdwr_runlock_np (&domainlock);
 	  pthread_rdwr_wlock_np (&domainlock);
-
-	  if (domainlist[i].client_handle != NULL)
-	    clnt_destroy (domainlist[i].client_handle);
 
 	  domainlist[i].active = -2;
 	  memcpy(&(domainlist[i].ypset.addr),
@@ -249,22 +244,13 @@ change_binding (const char *domain, ypbind_binding *binding)
 		 sizeof (unsigned short int));
 	  domainlist[i].ypset.family = AF_INET;
 
-	  sock = RPC_ANYSOCK;
-	  timeout.tv_sec = 1;
-	  timeout.tv_usec = 0;
-	  memset (&addr, 0, sizeof (struct sockaddr_in));
-	  memcpy (&addr.sin_addr, &domainlist[i].ypset.addr,
-		  sizeof (struct in_addr));
-	  memcpy (&addr.sin_port, &domainlist[i].ypset.port,
-		  sizeof (unsigned short int));
-	  addr.sin_family = domainlist[i].ypset.family;
-
-	  if ((domainlist[i].client_handle =
-	       clntudp_create(&addr, YPPROG, YPVERS, timeout, &sock)) == NULL)
-	    {
-	      domainlist[i].active = -1;
-	      remove_bindingfile (domain);
-	    }
+          memset (&addr, 0, sizeof (struct sockaddr_in));
+          memcpy (&addr.sin_addr, &domainlist[i].ypset.addr,
+                  sizeof (struct in_addr));
+          memcpy (&addr.sin_port, &domainlist[i].ypset.port,
+                  sizeof (unsigned short int));
+          addr.sin_family = domainlist[i].ypset.family;
+	  memcpy (&domainlist[i].sin, &addr, sizeof (struct sockaddr_in));
 	  pthread_rdwr_wunlock_np (&domainlock);
 	  pthread_rdwr_rlock_np (&domainlock);
 	  update_bindingfile (&domainlist[i]);
@@ -391,8 +377,6 @@ clear_server (void)
 		}
 	      if (domainlist[i].ypset.host != NULL)
 		free (domainlist[i].ypset.host);
-	      if (domainlist[i].client_handle != NULL)
-		clnt_destroy (domainlist[i].client_handle);
 	      domainlist[i].active = -1;
 	    }
 	}
@@ -581,9 +565,6 @@ static struct binding *in_use = NULL;
 static bool_t
 eachresult (bool_t *out, struct sockaddr_in *addr)
 {
-  struct timeval timeout;
-  int sock;
-
   if (*out)
     {
       if(debug_flag)
@@ -642,19 +623,7 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
           return 0;
         }
 
-      memcpy(&(in_use->server[0].addr), &addr->sin_addr,
-	     sizeof (struct in_addr));
-      memcpy(&(in_use->server[0].port), &addr->sin_port,
-	     sizeof (unsigned short int));
-
-      sock = RPC_ANYSOCK;
-      timeout.tv_sec = 1;
-      timeout.tv_usec = 0;
-      in_use->client_handle =
-	clntudp_create(addr, YPPROG, YPVERS, timeout, &sock);
-
-      if (in_use->client_handle == NULL)
-	return 0;
+      memcpy (&(in_use->sin), &addr, sizeof (struct sockaddr_in));
 
       in_use->active = 0;
 
@@ -915,13 +884,13 @@ ping_all (struct binding *list)
     {
       if (pings[i]->xid == xid_lookup)
         {
+	  CLIENT *client_handle;
 	  pthread_rdwr_wlock_np (&domainlock);
 
 	  sock = RPC_ANYSOCK;
-	  list->client_handle =
-	    clntudp_create (&(pings[i]->sin),
-			    YPPROG, YPVERS, TIMEOUT50, &sock);
-	  if (list->client_handle == NULL)
+	  client_handle = clntudp_create (&(pings[i]->sin),
+					  YPPROG, YPVERS, TIMEOUT50, &sock);
+	  if (client_handle == NULL)
 	    {
 	      /* NULL should not happen, we have got an answer from the server. */
 	      log_msg (LOG_DEBUG,
@@ -930,6 +899,9 @@ ping_all (struct binding *list)
 	    }
 	  else
 	    {
+	      clnt_destroy (client_handle);
+
+	      memcpy (&(list->sin), &pings[i]->sin, sizeof(struct sockaddr_in));
 	      list->active = pings[i]->server_nr;
 	      pthread_rdwr_wunlock_np (&domainlock);
 	      pthread_rdwr_rlock_np (&domainlock);
@@ -1032,7 +1004,8 @@ ping_all (struct binding *list)
         {
 	  memcpy (&(list->server[i].port), &server_addr.sin_port,
 		  sizeof (unsigned short int));
-          list->client_handle = clnt_handlep;
+	  memcpy (&(list->sin), &server_addr, sizeof (struct sockaddr_in));
+          clnt_destroy (clnt_handlep);
           pthread_rdwr_wlock_np (&domainlock);
           list->active = i;
           pthread_rdwr_wunlock_np (&domainlock);
@@ -1147,36 +1120,49 @@ test_bindings_once (int lastcheck, const char *req_domain)
 
       active = domainlist[i].active;
 
-      /* We should never run into this. For debugging.  */
-      if (domainlist[i].client_handle == NULL && domainlist[i].active != -1)
-	{
-	  log_msg (LOG_ERR, "ALERT: active=%d, but client_handle is NULL!",
-		   domainlist[i].active);
-	  domainlist[i].active = -1;
-	}
-
       if (domainlist[i].active != -1)
 	{
 	  /* The binding is in use, check if it is still valid and
 	     the fastest one. */
 	  if (lastcheck != 0)
 	    {
-	      /* Check only if the current binding is still valid. */
-	      struct timeval time_out;
+	      const struct timeval TIMEOUT50 = {5, 0};
+	      int sock = RPC_ANYSOCK;
+	      CLIENT *client_handle =
+		clntudp_create (&(domainlist[i].sin),
+				YPPROG, YPVERS, TIMEOUT50, &sock);
+	      if (client_handle == NULL)
+		{
+		  if (verbose_flag)
+		    log_msg (LOG_NOTICE,
+			     "NIS server '%s' not responding"
+			     " for domain '%s'",
+			     bound_host(&domainlist[i]),
+			     domainlist[i].domain);
+		  status = RPC_CANTSEND;
+		}
+	      else
+		{
+		  /* Check only if the current binding is still valid. */
+		  struct timeval time_out;
 
-	      time_out.tv_sec = 3;
-	      time_out.tv_usec = 0;
-	      status =
-		clnt_call(domainlist[i].client_handle,
-			  YPPROC_DOMAIN, (xdrproc_t) ypbind_xdr_domainname,
-			  (caddr_t) &domain, (xdrproc_t) xdr_bool,
-			  (caddr_t) &out, time_out);
-		if (verbose_flag && status != RPC_SUCCESS)
-			log_msg (LOG_NOTICE, "NIS server '%s' not responding"
-			" for domain '%s'", bound_host(&domainlist[i]),
-			domainlist[i].domain);
+		  time_out.tv_sec = 3;
+		  time_out.tv_usec = 0;
+		  status =
+		    clnt_call(client_handle, YPPROC_DOMAIN,
+			      (xdrproc_t) ypbind_xdr_domainname,
+			      (caddr_t) &domain,
+			      (xdrproc_t) xdr_bool,
+			      (caddr_t) &out, time_out);
+		  if (verbose_flag && status != RPC_SUCCESS)
+		    log_msg (LOG_NOTICE,
+			     "NIS server '%s' not responding"
+			     " for domain '%s'",
+			     bound_host(&domainlist[i]),
+			     domainlist[i].domain);
+		  clnt_destroy (client_handle);
+		}
 	    }
-
 	  /* time to search a new fastest server, but only if the current
 	     one was not set with ypset. We search in every case if the
 	     above check fails and the current data is not longer valid. */
@@ -1207,17 +1193,6 @@ test_bindings_once (int lastcheck, const char *req_domain)
 				 domain);
 		    }
 		}
-	      /* We can destroy the client_handle since we are the
-		 only thread who uses it. */
-	      /* client_handle can be NULL? */
-	      if (domainlist[i].client_handle == NULL)
-		{
-		  log_msg (LOG_ERR, "ALERT: client_handle=NULL, active=%d, lastcheck=%d, domain=%s",
-			   domainlist[i].active, lastcheck, domain);
-		}
-	      else
-		clnt_destroy (domainlist[i].client_handle);
-	      domainlist[i].client_handle = NULL;
 	      if (domainlist[i].active == -2)
 		{
 		  /* We can give this free, server does not answer any

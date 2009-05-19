@@ -1,3 +1,18 @@
+2009-05-19  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_svc.c: Log if we cannot decode arguments
+	and try to free the current result.
+	* src/ypbind-mt.c: Free transp.
+
+2009-05-18  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c: Don't cache connection to ypserv any longer.
+
+	* src/ypbind-mt.c: Implement -log option.
+	* src/ypbind_server.c: Add calls to write to log file.
+	* src/log_msg.c: Add new function to write to log file.
+	* src/log_msg.h: Add new prototypes for logging functions.
+
 2009-04-28  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.23.1

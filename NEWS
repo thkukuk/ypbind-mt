@@ -4,6 +4,10 @@ Copyright (C) 1998-2009 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 1.30
+* Don't cache connection to NIS server any longer, create
+  new one for every check.
+
 Version 1.23.1
 * Fix compiling without DBUS/NetworkManager support
 

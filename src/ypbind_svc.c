@@ -11,6 +11,7 @@
 #include <memory.h>
 #include <syslog.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <locale.h>
 #include <libintl.h>
@@ -68,6 +69,24 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
   memset ((char *) &argument, 0, sizeof (argument));
   if (!svc_getargs (transp, xdr_argument, (caddr_t) & argument))
     {
+      const struct sockaddr_in *sin =
+	svc_getcaller (rqstp->rq_xprt);
+
+      log_msg (LOG_ERR, "Cannot decode arguments for %d from %s:",
+	       rqstp->rq_proc, inet_ntoa (sin->sin_addr));
+
+      if (logfile_flag && (logfile_flag & LOG_BROKEN_CALLS))
+	{
+	  log2file ("ypbindprog_1: cannot decode arguments for %d from %s:%i",
+		    rqstp->rq_proc,
+		    inet_ntoa (sin->sin_addr),
+		    rqstp->rq_xprt->xp_port);
+	}
+
+      /* try to free already allocated memory during decoding.
+	 bnc#471924 */
+      svc_freeargs (transp, xdr_argument, (caddr_t) &argument);
+
       svcerr_decode (transp);
       return;
     }
@@ -133,6 +152,24 @@ ypbindprog_2 (struct svc_req *rqstp, register SVCXPRT *transp)
   memset ((char *) &argument, 0, sizeof (argument));
   if (!svc_getargs (transp, xdr_argument, (caddr_t) & argument))
     {
+      const struct sockaddr_in *sin =
+	svc_getcaller (rqstp->rq_xprt);
+
+      log_msg (LOG_ERR, "Cannot decode arguments for %d from %s:",
+	       rqstp->rq_proc, inet_ntoa (sin->sin_addr));
+
+      if (logfile_flag && (logfile_flag & LOG_BROKEN_CALLS))
+	{
+	  log2file ("ypbindprog_2: cannot decode arguments for %d from %s:%i",
+		    rqstp->rq_proc,
+		    inet_ntoa (sin->sin_addr),
+		    rqstp->rq_xprt->xp_port);
+	}
+
+      /* try to free already allocated memory during decoding.
+	 bnc#471924 */
+      svc_freeargs (transp, xdr_argument, (caddr_t) &argument);
+
       svcerr_decode (transp);
       return;
     }

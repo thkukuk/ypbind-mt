@@ -459,6 +459,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  close (lock_fd);
 	  unlink (_YPBIND_PIDFILE);
 	  unlink_bindingdir ();
+	  close_logfile ();
 	  exit (0);
 	  break;
 	case SIGHUP:
@@ -577,6 +578,7 @@ portmapper_register (void)
     {
       log_msg (LOG_ERR,
 	       _("Unable to register (YPBINDPROG, YPBINDVERS, udp)."));
+      svc_destroy (transp);
       return 1;
     }
 
@@ -585,6 +587,7 @@ portmapper_register (void)
     {
       log_msg (LOG_ERR,
 	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."));
+      svc_destroy (transp);
       return 1;
     }
 
@@ -594,6 +597,7 @@ portmapper_register (void)
       if (sock < 0)
 	{
 	  log_msg (LOG_ERR, _("Cannot create TCP: %s"), strerror (errno));
+	  svc_destroy (transp);
 	  return 1;
 	}
 
@@ -612,6 +616,8 @@ portmapper_register (void)
       if (result < 0)
 	{
 	  log_msg (LOG_ERR, _("Cannot bind TCP: %s"), strerror (errno));
+	  close (sock);
+	  svc_destroy (transp);
 	  return 1;
 	}
     }
@@ -630,6 +636,7 @@ portmapper_register (void)
 		     IPPROTO_TCP))
     {
       log_msg (LOG_ERR, _("Unable to register (YPBINDPROG, YPBINDVERS, tcp)."));
+      svc_destroy (transp);
       return 1;
     }
 
@@ -638,8 +645,10 @@ portmapper_register (void)
     {
       log_msg (LOG_ERR,
 	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."));
+      svc_destroy (transp);
       return 1;
     }
+  svc_destroy (transp);
   return 0;
 }
 
@@ -715,6 +724,13 @@ main (int argc, char **argv)
 	}
       else if (strcmp ("-c", argv[i]) == 0)
 	configcheck_only = 1;
+      else if (strcmp ("-log", argv[i]) == 0)
+	{
+	  if (i+1 == argc || argv[i+1][0] == '-')
+	    usage (1);
+	  ++i;
+	  logfile_flag = atoi (argv[i]);
+	}
 #ifdef USE_DBUS_NM
       else if (strcmp ("-no-dbus", argv[i]) == 0)
 	disable_dbus = 1;

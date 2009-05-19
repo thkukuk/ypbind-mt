@@ -1,4 +1,4 @@
-/* Copyright (c) 1998, 1999, 2000, 2001, 2006 Thorsten Kukuk, Germany
+/* Copyright (c) 1998, 1999, 2000, 2001, 2006, 2009 Thorsten Kukuk, Germany
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -40,16 +40,32 @@
 
 bool_t
 ypbindproc_oldnull_1_svc (void *argp __attribute__ ((unused)), void *result,
-			  struct svc_req *rqstp __attribute__ ((unused)))
+			  struct svc_req *rqstp)
 {
+  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+    {
+      const struct sockaddr_in *sin =
+	svc_getcaller (rqstp->rq_xprt);
+      log2file ("ypbindproc_oldnull_1_svc from %s:%i",
+		inet_ntoa (sin->sin_addr), rqstp->rq_xprt->xp_port);
+    }
+
   memset (result, 0, sizeof (char *));
   return TRUE;
 }
 
 bool_t
 ypbindproc_null_2_svc (void *argp __attribute__ ((unused)), void *result,
-		       struct svc_req *rqstp __attribute__ ((unused)))
+		       struct svc_req *rqstp)
 {
+  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+    {
+      const struct sockaddr_in *sin =
+	svc_getcaller (rqstp->rq_xprt);
+      log2file ("ypbindproc_null_2_svc from %s:%i",
+		inet_ntoa (sin->sin_addr), rqstp->rq_xprt->xp_port);
+    }
+
   memset (result, 0, sizeof (char *));
   return TRUE;
 }
@@ -89,6 +105,14 @@ ypbindproc_olddomain_1_svc (domainname *argp, ypbind_resp *result,
   if (debug_flag)
     log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s)", *argp);
 
+  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+    {
+      const struct sockaddr_in *sin =
+	svc_getcaller (rqstp->rq_xprt);
+      log2file ("ypbindproc_olddomain_1 (%s) from %s:%i", *argp,
+		inet_ntoa (sin->sin_addr), rqstp->rq_xprt->xp_port);
+    }
+
   return ypbindproc_domain (*argp, result, rqstp);
 }
 
@@ -98,6 +122,14 @@ ypbindproc_domain_2_svc (domainname *argp, ypbind_resp *result,
 {
   if (debug_flag)
     log_msg (LOG_DEBUG, "ypbindproc_domain_2_svc (%s)", *argp);
+
+  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+    {
+      const struct sockaddr_in *sin =
+	svc_getcaller (rqstp->rq_xprt);
+      log2file ("ypbindproc_domain_2 (%s) from %s:%i", *argp,
+		inet_ntoa (sin->sin_addr), rqstp->rq_xprt->xp_port);
+    }
 
   return ypbindproc_domain (*argp, result, rqstp);
 }
@@ -151,6 +183,24 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
     log_msg (LOG_DEBUG, "ypbindproc_oldsetdom_1_svc (%s)",
 	     argp->ypoldsetdom_domain);
 
+  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+    {
+      unsigned short int port;
+
+      const struct sockaddr_in *sin = svc_getcaller (rqstp->rq_xprt);
+
+      memcpy (&port, argp->ypoldsetdom_binding.ypbind_binding_port, sizeof (port));
+
+      log2file ("ypbindproc_olddomain_1 (%s:%u.%u.%u.%u:%d) from %s:%i",
+		*argp->ypoldsetdom_domain,
+		argp->ypoldsetdom_binding.ypbind_binding_addr[0],
+		argp->ypoldsetdom_binding.ypbind_binding_addr[1],
+		argp->ypoldsetdom_binding.ypbind_binding_addr[2],
+		argp->ypoldsetdom_binding.ypbind_binding_addr[3],
+		ntohs (port),
+		inet_ntoa (sin->sin_addr), rqstp->rq_xprt->xp_port);
+    }
+
   memset (result, 0, sizeof (char *));
 
   return ypbindproc_setdom (argp->ypoldsetdom_domain,
@@ -165,6 +215,24 @@ ypbindproc_setdom_2_svc (ypbind_setdom *argp, void *result,
   if (debug_flag)
     log_msg (LOG_DEBUG, "ypbindproc_setdom_2_svc (%s)",
 	     argp->ypsetdom_domain);
+
+  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+    {
+      unsigned short int port;
+
+      const struct sockaddr_in *sin = svc_getcaller (rqstp->rq_xprt);
+
+      memcpy (&port, argp->ypsetdom_binding.ypbind_binding_port, sizeof (port));
+
+      log2file ("ypbindproc_domain_2 (%s:%u.%u.%u.%u:%d) from %s:%i",
+		argp->ypsetdom_domain,
+		argp->ypsetdom_binding.ypbind_binding_addr[0],
+		argp->ypsetdom_binding.ypbind_binding_addr[1],
+		argp->ypsetdom_binding.ypbind_binding_addr[2],
+		argp->ypsetdom_binding.ypbind_binding_addr[3],
+		ntohs (port),
+		inet_ntoa (sin->sin_addr), rqstp->rq_xprt->xp_port);
+    }
 
   memset (result, 0, sizeof (char *));
 
