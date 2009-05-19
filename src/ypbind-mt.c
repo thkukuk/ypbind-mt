@@ -459,6 +459,8 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  close (lock_fd);
 	  unlink (_YPBIND_PIDFILE);
 	  unlink_bindingdir ();
+	  if (logfile_flag)
+	    log2file ("Stopping %s-%s", PACKAGE, VERSION);
 	  close_logfile ();
 	  exit (0);
 	  break;
@@ -917,6 +919,9 @@ main (int argc, char **argv)
   else
     is_online = 1;
 #endif
+
+  if (logfile_flag)
+    log2file ("Starting %s-%s", PACKAGE, VERSION);
 
   portmapper_disconnect ();
   if (portmapper_register () != 0)

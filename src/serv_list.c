@@ -784,6 +784,7 @@ ping_all (struct binding *list)
   int found = -1;
   u_int32_t xid_seed, xid_lookup;
   int sock, dontblock = 1;
+  int old_active = list->active;
   bool_t clnt_res;
   u_long i, pings_count = 0;
   struct cu_data *cu;
@@ -913,13 +914,16 @@ ping_all (struct binding *list)
 	      pthread_rdwr_rlock_np (&domainlock);
 	      update_bindingfile (list);
 	      pthread_rdwr_runlock_np (&domainlock);
+
 	      if (debug_flag)
 		log_msg (LOG_DEBUG,
 			 _("Answer for domain '%s' from server '%s'"),
 			 domain, list->server[list->active].host);
-	      if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES))
+
+	      if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES) &&
+		  old_active != list->active)
 		{
-		  log2file ("NIS server for domain '%s' is '%s'",
+		  log2file ("NIS server for domain '%s' changed to '%s'",
 			    domain,
 			    list->server[list->active].host);
 		}
@@ -955,6 +959,7 @@ ping_all (struct binding *list)
   struct timeval timeout;
   CLIENT *clnt_handlep = NULL;
   int i = 0;
+  int old_active = list->active;
 
   if (list->server[0].host == NULL) /* There is no known server */
     return 0;
@@ -1025,6 +1030,18 @@ ping_all (struct binding *list)
           pthread_rdwr_rlock_np (&domainlock);
           update_bindingfile (list);
           pthread_rdwr_runlock_np (&domainlock);
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG,
+		     _("Answer for domain '%s' from server '%s'"),
+		     domain, list->server[list->active].host);
+	  if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES) &&
+	      old_active != list->active)
+	    {
+	      log2file ("NIS server for domain '%s' changed to '%s'",
+			domain,
+			list->server[list->active].host);
+	    }
+
           return 1;
         }
 
