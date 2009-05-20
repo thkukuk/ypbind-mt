@@ -784,11 +784,11 @@ ping_all (struct binding *list)
   int found = -1;
   u_int32_t xid_seed, xid_lookup;
   int sock, dontblock = 1;
-  int old_active = list->active;
   bool_t clnt_res;
   u_long i, pings_count = 0;
   struct cu_data *cu;
   char *domain = list->domain;
+  int old_active = list->active;
 
   if (list->server[0].host == NULL) /* There is no known server */
     return 0;
@@ -923,9 +923,13 @@ ping_all (struct binding *list)
 	      if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES) &&
 		  old_active != list->active)
 		{
-		  log2file ("NIS server for domain '%s' changed to '%s'",
-			    domain,
-			    list->server[list->active].host);
+		  if (old_active == -1)
+		    log2file ("NIS server for domain '%s' set to '%s'",
+			      domain, list->server[list->active].host);
+		  else
+		    log2file ("NIS server for domain '%s' changed from '%s' to '%s'",
+			      domain, list->server[old_active].host,
+			      list->server[list->active].host);
 		}
 
 	      found = 1;
@@ -1034,12 +1038,17 @@ ping_all (struct binding *list)
 	    log_msg (LOG_DEBUG,
 		     _("Answer for domain '%s' from server '%s'"),
 		     domain, list->server[list->active].host);
+
 	  if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES) &&
 	      old_active != list->active)
 	    {
-	      log2file ("NIS server for domain '%s' changed to '%s'",
-			domain,
-			list->server[list->active].host);
+	      if (old_active == -1)
+		log2file ("NIS server for domain '%s' set to '%s'",
+			  domain, list->server[list->active].host);
+	      else
+		log2file ("NIS server for domain '%s' changed from '%s' to '%s'",
+			  domain, list->server[old_active].host,
+			  list->server[list->active].host);
 	    }
 
           return 1;
@@ -1165,8 +1174,7 @@ test_bindings_once (int lastcheck, const char *req_domain)
 		{
 		  if (verbose_flag)
 		    log_msg (LOG_NOTICE,
-			     "NIS server '%s' not responding"
-			     " for domain '%s'",
+			     "NIS server '%s' for domain '%s' not reachable",
 			     bound_host(&domainlist[i]),
 			     domainlist[i].domain);
 		  status = RPC_CANTSEND;
@@ -1186,8 +1194,7 @@ test_bindings_once (int lastcheck, const char *req_domain)
 			      (caddr_t) &out, time_out);
 		  if (verbose_flag && status != RPC_SUCCESS)
 		    log_msg (LOG_NOTICE,
-			     "NIS server '%s' not responding"
-			     " for domain '%s'",
+			     "NIS server '%s' not responding for domain '%s'",
 			     bound_host(&domainlist[i]),
 			     domainlist[i].domain);
 		  clnt_destroy (client_handle);
@@ -1201,28 +1208,7 @@ test_bindings_once (int lastcheck, const char *req_domain)
 	    {
 	      /* The current binding is not valid or it is time to search
 		 for a new, fast server. */
-	      if (debug_flag && lastcheck != 0)
-		{
-		  /* Current active binding is not longer valid, print
-		     the old binding for debugging. */
-		  if (domainlist[i].use_broadcast)
-		    log_msg (LOG_DEBUG,
-			     _("Server for domain '%s' doesn't answer."),
-			     domain);
-		  else
-		    {
-		      if (domainlist[i].active == -2)
-			log_msg (LOG_DEBUG,
-				 _("Server '%s' for domain '%s' doesn't answer."),
-				 inet_ntoa(domainlist[i].ypset.addr),
-				 domain);
-		      else
-			log_msg (LOG_DEBUG,
-				 _("Server '%s' for domain '%s' doesn't answer."),
-				 domainlist[i].server[domainlist[i].active].host,
-				 domain);
-		    }
-		}
+
 	      if (domainlist[i].active == -2)
 		{
 		  /* We can give this free, server does not answer any
@@ -1231,16 +1217,16 @@ test_bindings_once (int lastcheck, const char *req_domain)
 		    free (domainlist[i].ypset.host);
 		  domainlist[i].ypset.host = NULL;
 		}
-	      domainlist[i].active = -1;
 	      lastcheck = 0; /* If we need a new server before the TTL expires,
 				reset it. */
 	      /* And give the write lock away, search a new host and get
 		 the write lock again. */
 	      pthread_rdwr_wunlock_np (&domainlock);
 	      pthread_mutex_lock (&search_lock);
-	      if (!ping_all (&domainlist[i]) &&
-		  domainlist[i].use_broadcast)
+	      if (domainlist[i].use_broadcast)
 		do_broadcast (&domainlist[i]);
+	      else
+		ping_all (&domainlist[i]);
 	      pthread_mutex_unlock (&search_lock);
 	      pthread_rdwr_wlock_np (&domainlock);
 	    }
@@ -1251,8 +1237,10 @@ test_bindings_once (int lastcheck, const char *req_domain)
 	     server */
 	  pthread_rdwr_wunlock_np (&domainlock);
 	  pthread_mutex_lock (&search_lock);
-	  if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
+	  if (domainlist[i].use_broadcast)
 	    do_broadcast (&domainlist[i]);
+	  else
+	    ping_all (&domainlist[i]);
 	  pthread_mutex_unlock (&search_lock);
 	  pthread_rdwr_wlock_np (&domainlock);
 	}

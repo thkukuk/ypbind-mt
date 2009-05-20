@@ -1,3 +1,10 @@
+2009-05-20  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.29.90
+
+	* src/serv_list.c (test_bindings_once): directly do broadcast
+	after 15 min. to find new fastest server if configured.
+
 2009-05-19  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind_svc.c: Log if we cannot decode arguments
