@@ -3,7 +3,7 @@
                    "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
 
 <!--  \-*\- nroff \-*\- -->
-<!--  Copyright 1998, 1999, 2002, 2004, 2005, 2006 Thorsten Kukuk, Germany -->
+<!--  Copyright 1998, 1999, 2002, 2004, 2005, 2006, 2007 Thorsten Kukuk, Germany -->
 
 <!--  This file is part of ypbind\-mt. -->
 
@@ -63,7 +63,7 @@
     <title>DESCRIPTION</title>
     <para>
       <command>ypbind</command> finds the server for NIS domains and
-      maintains the NIS binding information. The client (normaly the
+      maintains the NIS binding information. The client (normally the
       NIS routines in the standard C library) could get the information
       over RPC from <command>ypbind</command> or read the binding files.
       The binding files resides in the directory
@@ -141,7 +141,7 @@ is running at startup,
 <command>ypbind</command>
 will behave as usual and assumes there is a working network
 connection. If NetworkManager is running on the system, ypbind will only
-search and providde NIS informations, if NetworkManager tells that a network
+search and provide NIS informations, if NetworkManager tells that a network
 connection is available. If NetworkManager establishes a connection,
 <command>ypbind</command>
 will reread all configuration files, registers at the local portmapper and
@@ -185,8 +185,8 @@ will use the old searchlist.</para>
 <option>-ypset</option>,
 but only
 <emphasis remap='B'>root</emphasis>
-on the local machine is allowed to chang the binding. Such requests
-are only allowd from
+on the local machine is allowed to change the binding. Such requests
+are only allowed from
 <emphasis remap='B'>loopback</emphasis>.</para>
   </listitem>
   </varlistentry>
@@ -234,7 +234,7 @@ versions.</para>
 will not check if the binding is alive. This option is for use with
 dialup connections to prevent
 <command>ypbind</command>
-from keeping the connection unnessecarily open or causing autodials.</para>
+from keeping the connection unnecessarily open or causing autodials.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
@@ -251,7 +251,7 @@ and not
   <term><option>-local-only</option></term>
   <listitem>
 <para><command>ypbind</command>
-will only bind to the loopback device and is not reacheable from
+will only bind to the loopback device and is not reachable from
 a remote network.</para>
   </listitem>
   </varlistentry>

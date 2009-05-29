@@ -1231,7 +1231,7 @@ test_bindings_once (int lastcheck, const char *req_domain)
 	      pthread_rdwr_wlock_np (&domainlock);
 	    }
 	}
-      else
+      else /* domainlist[i].active == -1 */
 	{
 	  /* there is no binding for this domain, try to find a new
 	     server */
