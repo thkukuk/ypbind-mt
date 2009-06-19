@@ -1,3 +1,13 @@
+2009-06-19  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.29.91
+
+	* src/Makefile.am: Fix link order.
+	* src/ypbind-mt.c (load_config): Fix counting of
+	broken config lines.
+	* src/ypbind-mt.c (portmapper_register): Don't free transp
+	for tcp.
+
 2009-05-29  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* man/ypbind.8.xml: Fix typos.

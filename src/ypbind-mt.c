@@ -243,8 +243,10 @@ load_config (int check_syntax)
 		++have_entries;
 	      else
 		++bad_entries;
-	      continue;
 	    }
+	  else
+	    ++bad_entries;
+          continue;
 	}
       else if (strncmp (cp, "broadcast", 9) == 0 &&
 	       (isspace ((int)cp[9]) || cp[9] == '\0'))
@@ -650,7 +652,6 @@ portmapper_register (void)
       svc_destroy (transp);
       return 1;
     }
-  svc_destroy (transp);
   return 0;
 }
 

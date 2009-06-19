@@ -9,7 +9,7 @@ localedir = $(datadir)/locale
 WARNFLAGS = @WARNFLAGS@
 AM_CFLAGS = -D_REENTRANT=1 $(WARNFLAGS) -DUSE_BROADCAST=@USE_BROADCAST@ \
 	-DLOCALEDIR=\"$(localedir)\" @DBUS_CFLAGS@ @GLIB_CFLAGS@
-AM_LDFLAGS = ../lib/libcompat.a @LIBINTL@ @SLP_LIBS@ @DBUS_LIBS@ @GLIB_LIBS@
+ypbind_LDADD = ../lib/libcompat.a @LIBINTL@ @SLP_LIBS@ @DBUS_LIBS@ @GLIB_LIBS@
 
 CLEANFILES = *~
 
