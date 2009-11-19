@@ -46,6 +46,10 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Define to 1 if you have the <NetworkManager/NetworkManagerVPN.h> header
+   file. */
+#undef HAVE_NETWORKMANAGER_NETWORKMANAGERVPN_H
+
 /* Define to 1 if you have the <NetworkManager/NetworkManager.h> header file.
    */
 #undef HAVE_NETWORKMANAGER_NETWORKMANAGER_H

@@ -503,7 +503,7 @@ usage (int ret)
     output = stdout;
 
   fputs (_("Usage:\n"), output);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug] [-verbose]\n"), output);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug] [-verbose]\n"), output);
 #ifdef USE_DBUS_NM
   fputs (_("\t  [-no-dbus]\n"), output);
 #endif

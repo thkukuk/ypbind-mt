@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/ypbind-mt.c)
-AM_INIT_AUTOMAKE(ypbind-mt, 1.29.91)
+AM_INIT_AUTOMAKE(ypbind-mt, 1.30)
 AM_CONFIG_HEADER(config.h)
 AC_PREFIX_DEFAULT(/usr)
 
@@ -47,7 +47,8 @@ AC_CHECK_LIB(socket, bind)
 AC_CHECK_LIB(pthread, pthread_create)
 
 AC_ARG_ENABLE([dbus-nm],
-   AC_HELP_STRING([--disable-dbus-nm],[Disable DBUS/NetworkManager support]))
+   AC_HELP_STRING([--enable-dbus-nm],[Enable DBUS/NetworkManager support]),
+	[],[enable_dbus_nm=no])
 if test "$enable_dbus_nm" \!= "no"
 then
   PKG_CHECK_MODULES(DBUS, dbus-glib-1 >= 0.60)
@@ -56,10 +57,10 @@ then
   PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.6)
   AC_SUBST(GLIB_CFLAGS)
   AC_SUBST(GLIB_LIBS)
+  AC_CHECK_HEADERS([NetworkManager/NetworkManager.h])
+  AC_CHECK_HEADERS([NetworkManager/NetworkManagerVPN.h])
   AC_DEFINE(USE_DBUS_NM, 1, [Enable DBUS/NetworkManager support])
 fi
-
-AC_CHECK_HEADERS([NetworkManager/NetworkManager.h])
 
 dnl The difficult part: could we reconfigure NSS or must we use DNS ?
 AC_CHECK_FUNCS(__nss_configure_lookup)
@@ -128,7 +129,7 @@ case "$host_os" in
     echo "***"
     echo "***"
     ;;
-  linux*)
+  linux*|kfreebsd*-gnu*)
     dnl send a ping to all server at the same time:
     USE_BROADCAST=1
     dnl Test, if we have glibc 2.0 or glibc 2.1

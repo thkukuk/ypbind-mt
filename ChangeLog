@@ -1,3 +1,16 @@
+2009-11-19  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.30
+
+	* configure.in: NetworkManager support is disabled by default,
+	USE_BROADCAST is defined as 1 on kfreebsd (Debian #545970)
+
+	* src/ypbind_dbus_nm.c: rename NM_DBUS_SIGNAL_STATE_CHANGE
+	to NM_DBUS_VPN_SIGNAL_STATE_CHANGE.
+	Patch from Karel Klic <kklic@redhat.com>.
+
+	* src/ypbind-mt.c (usage): remove -p option.
+
 2009-06-19  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* release version 1.29.91

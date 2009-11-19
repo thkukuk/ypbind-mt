@@ -34,11 +34,12 @@
 
 #ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 #include <NetworkManager/NetworkManager.h>
+#include <NetworkManager/NetworkManagerVPN.h>
 #else
 #define NM_DBUS_INTERFACE "org.freedesktop.NetworkManager"
 #define NM_DBUS_SERVICE   "org.freedesktop.NetworkManager"
 #define NM_DBUS_PATH      "/org/freedesktop/NetworkManager"
-#define NM_DBUS_SIGNAL_STATE_CHANGE "StateChange"
+#define NM_DBUS_VPN_SIGNAL_STATE_CHANGE "StateChange"
 
 typedef enum NMState {
   NM_STATE_UNKNOWN = 0,
@@ -138,7 +139,7 @@ dbus_filter (DBusConnection *connection,
       handled = DBUS_HANDLER_RESULT_HANDLED;
     }
   else if (dbus_message_is_signal (message, NM_DBUS_INTERFACE,
-                                   NM_DBUS_SIGNAL_STATE_CHANGE))
+                                   NM_DBUS_VPN_SIGNAL_STATE_CHANGE))
     {
       NMState state = NM_STATE_UNKNOWN;
 

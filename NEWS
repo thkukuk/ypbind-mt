@@ -4,6 +4,10 @@ Copyright (C) 1998-2009 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 1.30
+* DBUS/NetworkManager is per default not compiled in any longer
+* Adjust for current NetworkManager
+
 Version 1.29.91
 * Minor bug fixes
 
