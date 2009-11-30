@@ -1,3 +1,11 @@
+2009-11-30  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.31
+
+	* src/serv_list.c (eachresult): Save addr and port of NIS
+	server if we use broadcast.
+	Patch from Olivier Thauvin <nanardon@nanardon.zarb.org>.
+
 2009-11-19  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* release version 1.30

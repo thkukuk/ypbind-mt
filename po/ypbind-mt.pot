@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2009-11-19 12:03+0100\n"
+"POT-Creation-Date: 2009-11-30 10:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,7 +59,7 @@ msgstr ""
 msgid "gethostbyname: Unknown error"
 msgstr ""
 
-#: src/serv_list.c:615 src/serv_list.c:920 src/serv_list.c:1039
+#: src/serv_list.c:615 src/serv_list.c:924 src/serv_list.c:1043
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
@@ -69,55 +69,55 @@ msgstr ""
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr ""
 
-#: src/serv_list.c:626 src/serv_list.c:820
+#: src/serv_list.c:626 src/serv_list.c:824
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr ""
 
-#: src/serv_list.c:659
+#: src/serv_list.c:663
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:694
+#: src/serv_list.c:698
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:808 src/serv_list.c:979
+#: src/serv_list.c:812 src/serv_list.c:983
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:833
+#: src/serv_list.c:837
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr ""
 
-#: src/serv_list.c:904
+#: src/serv_list.c:908
 #, c-format
 msgid "Server '%s' for domain '%s' answered ping but failed to bind"
 msgstr ""
 
-#: src/serv_list.c:998
+#: src/serv_list.c:1002
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:1019
+#: src/serv_list.c:1023
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:1141
+#: src/serv_list.c:1145
 msgid "Pinging all active servers."
 msgstr ""
 
-#: src/serv_list.c:1143
+#: src/serv_list.c:1147
 msgid "Checking for new fastest server."
 msgstr ""
 
-#: src/serv_list.c:1155
+#: src/serv_list.c:1159
 #, c-format
 msgid "Requested domain %s, found %s, ignored."
 msgstr ""

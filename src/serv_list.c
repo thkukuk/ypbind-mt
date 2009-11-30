@@ -629,6 +629,10 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
           return 0;
         }
 
+      memcpy(&(in_use->server[0].addr), &addr->sin_addr,
+	     sizeof (struct in_addr));
+      memcpy(&(in_use->server[0].port), &addr->sin_port,
+	     sizeof (unsigned short int));
       memcpy (&(in_use->sin), &addr, sizeof (struct sockaddr_in));
 
       in_use->active = 0;

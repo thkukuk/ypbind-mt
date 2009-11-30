@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt 1.20-2\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2009-11-19 12:03+0100\n"
+"POT-Creation-Date: 2009-11-30 10:15+0100\n"
 "PO-Revision-Date: 2006-11-12 16:48+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -58,7 +58,7 @@ msgstr "Okänt serverfel"
 msgid "gethostbyname: Unknown error"
 msgstr "gethostbyname: Okänt fel"
 
-#: src/serv_list.c:615 src/serv_list.c:920 src/serv_list.c:1039
+#: src/serv_list.c:615 src/serv_list.c:924 src/serv_list.c:1043
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Svar för domänen \"%s\" från servern \"%s\""
@@ -68,56 +68,56 @@ msgstr "Svar för domänen \"%s\" från servern \"%s\""
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr "Svar för domänen \"%s\" från okänd server \"%s\""
 
-#: src/serv_list.c:626 src/serv_list.c:820
+#: src/serv_list.c:626 src/serv_list.c:824
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr "Svar för domänen \"%s\" från \"%s\" på ogiltiga porten %d."
 
-#: src/serv_list.c:659
+#: src/serv_list.c:663
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr "do_broadcast() för domänen \"%s\" anropas"
 
-#: src/serv_list.c:694
+#: src/serv_list.c:698
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr "lämna do_broadcast() för domänen \"%s\""
 
-#: src/serv_list.c:808 src/serv_list.c:979
+#: src/serv_list.c:812 src/serv_list.c:983
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr "pinga värden \"%s\", domän \"%s\""
 
-#: src/serv_list.c:833
+#: src/serv_list.c:837
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr "värden \"%s\" svarar inte."
 
-#: src/serv_list.c:904
+#: src/serv_list.c:908
 #, c-format
 msgid "Server '%s' for domain '%s' answered ping but failed to bind"
 msgstr ""
 "Servern \"%s\" för domänen \"%s\" svarade på ping men misslyckades att binda"
 
-#: src/serv_list.c:998
+#: src/serv_list.c:1002
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr "clnt_create för servern \"%s\" (domän \"%s\") misslyckades"
 
-#: src/serv_list.c:1019
+#: src/serv_list.c:1023
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr "domänen \"%s\" hanteras inte av \"%s\""
 
-#: src/serv_list.c:1141
+#: src/serv_list.c:1145
 msgid "Pinging all active servers."
 msgstr "Pingar alla aktiva servrar."
 
-#: src/serv_list.c:1143
+#: src/serv_list.c:1147
 msgid "Checking for new fastest server."
 msgstr "Letar efter den snabbaste servern."
 
-#: src/serv_list.c:1155
+#: src/serv_list.c:1159
 #, c-format
 msgid "Requested domain %s, found %s, ignored."
 msgstr "Begärd domän %s, hittade %s, ignoreras."
