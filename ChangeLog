@@ -1,4 +1,9 @@
-2009-11-30  Thorsten Kukuk  <kukuk@suse.de>
+2010-07-07  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* src/ypbind_dbus_nm.c: Fixed reporting Error adding match.
+	Patch from Karel Klic <kklic@redhat.com>.
+
+2009-11-30  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* release version 1.31
 

@@ -51,6 +51,17 @@ typedef enum NMState {
 
 #endif
 
+#define DBUS_MESSAGE_MATCH			\
+  "type='signal',"				\
+  "interface='" DBUS_INTERFACE_DBUS "',"	\
+  "sender='" DBUS_SERVICE_DBUS "'"
+
+#define NM_MESSAGE_MATCH			\
+  "type='signal',"				\
+  "interface='" NM_DBUS_INTERFACE "',"		\
+  "sender='" NM_DBUS_SERVICE "',"		\
+  "path='" NM_DBUS_PATH "'"
+
 #include "ypbind.h"
 #include "log_msg.h"
 #include "local.h"
@@ -276,10 +287,7 @@ dbus_init (void)
   if (!dbus_connection_add_filter (connection, dbus_filter, NULL, NULL))
     goto out;
 
-  dbus_bus_add_match (connection, "type='signal',"
-		      "interface='" DBUS_INTERFACE_DBUS "',"
-		      "sender='" DBUS_SERVICE_DBUS "'",
-		      &error);
+  dbus_bus_add_match (connection, DBUS_MESSAGE_MATCH, &error);
   if (dbus_error_is_set (&error))
     {
       log_msg (LOG_ERR, "Error adding match, %s: %s",
@@ -291,16 +299,17 @@ dbus_init (void)
       goto out;
     }
 
-  dbus_bus_add_match (connection,
-		      "type='signal',"
-		      "interface='" NM_DBUS_INTERFACE "',"
-		      "sender='" NM_DBUS_SERVICE "',"
-		      "path='" NM_DBUS_PATH "'", &error);
+  dbus_bus_add_match (connection, NM_MESSAGE_MATCH, &error);
   if (dbus_error_is_set (&error))
     {
       log_msg (LOG_ERR, "Error adding match, %s: %s",
 	       error.name, error.message);
       dbus_error_free (&error);
+
+      dbus_bus_remove_match (connection, DBUS_MESSAGE_MATCH, &error);
+      if (dbus_error_is_set (&error)) /* ignore the error */
+	dbus_error_free (&error);
+
       dbus_connection_unref (connection);
       connection = NULL;
       goto out;
@@ -314,6 +323,24 @@ dbus_init (void)
       if (!check_for_nm (connection))
 	{
 	  /* NetworkManager not in use.  */
+
+	  /* The matches must be removed here. When dbus_init() is
+	     called repeatedly without removing matches, it starts to
+	     report errors:
+	     Error adding match, org.freedesktop.DBus.Error.LimitsExceeded:
+	     Connection ":1.0" is not allowed to add more match rules
+	   */
+	  dbus_bus_remove_match (connection, DBUS_MESSAGE_MATCH, &error);
+	  if (dbus_error_is_set (&error))
+	    {
+	      /* ignore the error, most likely it is MatchRuleNotFound. */
+	      dbus_error_free (&error);
+	    }
+
+	  dbus_bus_remove_match (connection, NM_MESSAGE_MATCH, &error);
+	  if (dbus_error_is_set (&error))
+	    dbus_error_free (&error);
+
 	  dbus_connection_unref (connection);
 	  is_online = 1;
 	  return 0;
