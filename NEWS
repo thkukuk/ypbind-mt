@@ -1,8 +1,11 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2010 Thorsten Kukuk
+Copyright (C) 1998-2011 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 1.33
+* Better error checking
 
 Version 1.32
 * Fix problems with SLP registration

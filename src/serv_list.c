@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2009 Thorsten Kukuk
+/* Copyright (c) 1998-2009, 2011 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -785,7 +785,7 @@ ping_all (struct binding *list)
   CLIENT *clnt;
   struct findserv_req **pings;
   struct sockaddr_in s_in, *any = NULL;
-  int found = -1;
+  int found = 0;
   u_int32_t xid_seed, xid_lookup;
   int sock, dontblock = 1;
   bool_t clnt_res;
@@ -906,7 +906,8 @@ ping_all (struct binding *list)
 	      /* NULL should not happen, we have got an answer from the server. */
 	      log_msg (LOG_DEBUG,
 		       _("Server '%s' for domain '%s' answered ping but failed to bind"),
-		       list->server[list->active].host, domain);
+		       (list->active >= 0) ? list->server[list->active].host : "-",
+		       domain);
 	    }
 	  else
 	    {

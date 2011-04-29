@@ -1,4 +1,4 @@
-/* Copyright (c) 1998 - 2009 Thorsten Kukuk
+/* Copyright (c) 1998 - 2009, 2011 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -331,7 +331,10 @@ create_pidfile (void)
   lock_fd = open (_YPBIND_PIDFILE, O_CREAT | O_RDWR,
 		  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   if (lock_fd < 0)
-    log_msg (LOG_ERR, _("cannot create pidfile %s"), _YPBIND_PIDFILE);
+    {
+      log_msg (LOG_ERR, _("cannot create pidfile %s"), _YPBIND_PIDFILE);
+      return;
+    }
 
   /* Make sure file gets correctly closed when process finished.  */
   flags = fcntl (lock_fd, F_GETFD, 0);
@@ -864,6 +867,12 @@ main (int argc, char **argv)
 
       umask (0);
       j = open ("/dev/null", O_RDWR);
+      if (j < 0)
+        {
+          log_msg (LOG_ERR, "Cannot open /dev/null: %s\n", strerror (errno));
+          exit (-1);
+        }
+      /* two dups: stdin, stdout, stderr */
       if (dup (j) == -1)
 	{
           log_msg (LOG_ERR, "Cannot dup file handle: %s\n", strerror (errno));
