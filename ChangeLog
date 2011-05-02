@@ -1,4 +1,6 @@
-2011-04-29  Thorsten Kukuk  <kukuk@suse.de>
+2011-04-29  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.33
 
 	* src/ypbind-mt.c (create_pidfile): return if no pidfile
 	could be created.
