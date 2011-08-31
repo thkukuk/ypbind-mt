@@ -13,8 +13,8 @@
 
    You should have received a copy of the GNU General Public
    License along with ypbind-mt; see the file COPYING.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA. */
+   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
+   Boston, MA 02110-1335, USA. */
 
 #define _GNU_SOURCE
 
@@ -629,11 +629,9 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
           return 0;
         }
 
-      memcpy(&(in_use->server[0].addr), &addr->sin_addr,
-	     sizeof (struct in_addr));
-      memcpy(&(in_use->server[0].port), &addr->sin_port,
-	     sizeof (unsigned short int));
-      memcpy (&(in_use->sin), &addr, sizeof (struct sockaddr_in));
+      in_use->server[0].addr = addr->sin_addr;
+      in_use->server[0].port = addr->sin_port;
+      in_use->sin = *addr;
 
       in_use->active = 0;
 

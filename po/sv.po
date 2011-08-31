@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt 1.20-2\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2011-04-29 16:34+0200\n"
+"POT-Creation-Date: 2011-08-31 15:54+0200\n"
 "PO-Revision-Date: 2006-11-12 16:48+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -58,7 +58,7 @@ msgstr "Okänt serverfel"
 msgid "gethostbyname: Unknown error"
 msgstr "gethostbyname: Okänt fel"
 
-#: src/serv_list.c:615 src/serv_list.c:925 src/serv_list.c:1044
+#: src/serv_list.c:615 src/serv_list.c:923 src/serv_list.c:1042
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Svar för domänen \"%s\" från servern \"%s\""
@@ -68,282 +68,282 @@ msgstr "Svar för domänen \"%s\" från servern \"%s\""
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr "Svar för domänen \"%s\" från okänd server \"%s\""
 
-#: src/serv_list.c:626 src/serv_list.c:824
+#: src/serv_list.c:626 src/serv_list.c:822
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr "Svar för domänen \"%s\" från \"%s\" på ogiltiga porten %d."
 
-#: src/serv_list.c:663
+#: src/serv_list.c:661
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr "do_broadcast() för domänen \"%s\" anropas"
 
-#: src/serv_list.c:698
+#: src/serv_list.c:696
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr "lämna do_broadcast() för domänen \"%s\""
 
-#: src/serv_list.c:812 src/serv_list.c:984
+#: src/serv_list.c:810 src/serv_list.c:982
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr "pinga värden \"%s\", domän \"%s\""
 
-#: src/serv_list.c:837
+#: src/serv_list.c:835
 #, c-format
 msgid "host '%s' doesn't answer."
 msgstr "värden \"%s\" svarar inte."
 
-#: src/serv_list.c:908
+#: src/serv_list.c:906
 #, c-format
 msgid "Server '%s' for domain '%s' answered ping but failed to bind"
 msgstr ""
 "Servern \"%s\" för domänen \"%s\" svarade på ping men misslyckades att binda"
 
-#: src/serv_list.c:1003
+#: src/serv_list.c:1001
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr "clnt_create för servern \"%s\" (domän \"%s\") misslyckades"
 
-#: src/serv_list.c:1024
+#: src/serv_list.c:1022
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr "domänen \"%s\" hanteras inte av \"%s\""
 
-#: src/serv_list.c:1146
+#: src/serv_list.c:1144
 msgid "Pinging all active servers."
 msgstr "Pingar alla aktiva servrar."
 
-#: src/serv_list.c:1148
+#: src/serv_list.c:1146
 msgid "Checking for new fastest server."
 msgstr "Letar efter den snabbaste servern."
 
-#: src/serv_list.c:1160
+#: src/serv_list.c:1158
 #, c-format
 msgid "Requested domain %s, found %s, ignored."
 msgstr "Begärd domän %s, hittade %s, ignoreras."
 
-#: src/ypbind-mt.c:161 src/ypbind-mt.c:164
+#: src/ypbind-mt.c:162 src/ypbind-mt.c:165
 msgid "Trying entry:"
 msgstr "Försöker med posten:"
 
-#: src/ypbind-mt.c:183
+#: src/ypbind-mt.c:184
 #, c-format
 msgid "parsed domain '%s' server '%s'"
 msgstr "tolkade domänen \"%s\" server \"%s\""
 
-#: src/ypbind-mt.c:199
+#: src/ypbind-mt.c:200
 #, c-format
 msgid "parsed domain '%s' broadcast"
 msgstr "tolkade domänen \"%s\" broadcast"
 
-#: src/ypbind-mt.c:218
+#: src/ypbind-mt.c:219
 #, c-format
 msgid "parsed domain '%s' slp"
 msgstr "tolkade domänen \"%s\" slp"
 
-#: src/ypbind-mt.c:241
+#: src/ypbind-mt.c:242
 #, c-format
 msgid "parsed ypserver %s"
 msgstr "tolkade ypserver %s"
 
-#: src/ypbind-mt.c:258
+#: src/ypbind-mt.c:259
 msgid "parsed broadcast"
 msgstr "tolkade broadcast"
 
-#: src/ypbind-mt.c:267
+#: src/ypbind-mt.c:268
 #, c-format
 msgid "Entry \"%s\" is not valid!\n"
 msgstr "Posten \"%s\" är inte giltig!\n"
 
-#: src/ypbind-mt.c:271
+#: src/ypbind-mt.c:272
 #, c-format
 msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr "Posten \"%s\" är inte giltig, ignorerar den!"
 
-#: src/ypbind-mt.c:282
+#: src/ypbind-mt.c:283
 #, c-format
 msgid "Bad entries found.\n"
 msgstr "Felaktiga poster hittades.\n"
 
-#: src/ypbind-mt.c:287
+#: src/ypbind-mt.c:288
 #, c-format
 msgid "No entry found.\n"
 msgstr "Ingen post hittades.\n"
 
-#: src/ypbind-mt.c:295
+#: src/ypbind-mt.c:296
 msgid "No entry found."
 msgstr "Ingen post hittades."
 
-#: src/ypbind-mt.c:309
+#: src/ypbind-mt.c:310
 msgid "No NIS server and no -broadcast option specified.\n"
 msgstr "Ingen NIS-server och flaggan -broadcast angavs inte.\n"
 
-#: src/ypbind-mt.c:312
+#: src/ypbind-mt.c:313
 #, c-format
 msgid "Add a NIS server to the %s configuration file,\n"
 msgstr "Lägg till en NIS-server till konfigurationsfilen för %s,\n"
 
-#: src/ypbind-mt.c:314
+#: src/ypbind-mt.c:315
 msgid "or start ypbind with the -broadcast option.\n"
 msgstr "eller starta ypbind med flaggan -broadcast.\n"
 
-#: src/ypbind-mt.c:335
+#: src/ypbind-mt.c:336
 #, c-format
 msgid "cannot create pidfile %s"
 msgstr "kan inte skapa pid-filen %s"
 
-#: src/ypbind-mt.c:365
+#: src/ypbind-mt.c:366
 #, c-format
 msgid "fcntl error: %s"
 msgstr "fcntl-fel: %s"
 
-#: src/ypbind-mt.c:377
+#: src/ypbind-mt.c:378
 #, c-format
 msgid "ypbind-mt already running (pid %d) - exiting"
 msgstr "ypbind-mt kör redan (pid %d) - avslutar"
 
-#: src/ypbind-mt.c:388
+#: src/ypbind-mt.c:389
 msgid "cannot lock pidfile"
 msgstr "kan inte låsa pid-fil"
 
-#: src/ypbind-mt.c:440
+#: src/ypbind-mt.c:441
 #, c-format
 msgid "sigwait failed: ret=%d."
 msgstr "sigwait misslyckades: ret=%d."
 
-#: src/ypbind-mt.c:446
+#: src/ypbind-mt.c:447
 msgid "SIGCHLD arrived, what should I do ?"
 msgstr "SIGCHLD togs emot, vad ska jag göra?"
 
-#: src/ypbind-mt.c:454
+#: src/ypbind-mt.c:455
 #, c-format
 msgid "Signal (%d) for quitting program arrived."
 msgstr "Signalen (%d) för programavslut togs emot."
 
-#: src/ypbind-mt.c:463
+#: src/ypbind-mt.c:464
 msgid "cannot unlock pidfile"
 msgstr "kan inte låsa upp pid-fil"
 
-#: src/ypbind-mt.c:475
+#: src/ypbind-mt.c:476
 msgid "SIGHUP arrived, reloading config file."
 msgstr "SIGHUP togs emot, läser om konfigurationsfilen."
 
-#: src/ypbind-mt.c:488
+#: src/ypbind-mt.c:489
 msgid "Ignoring SIGPIPE."
 msgstr "Ignorerar SIGPIPE."
 
-#: src/ypbind-mt.c:491
+#: src/ypbind-mt.c:492
 #, c-format
 msgid "Unknown signal: %d"
 msgstr "Okänd signal: %d"
 
-#: src/ypbind-mt.c:508
+#: src/ypbind-mt.c:509
 msgid "Usage:\n"
 msgstr "Användning:\n"
 
-#: src/ypbind-mt.c:509
+#: src/ypbind-mt.c:510
 #, fuzzy
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n"
-"\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug] [-"
-"verbose]\n"
+"\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"
+"\t  [-verbose] [-n | -foreground]\n"
 msgstr ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-p port] [-f konfigurationsfil]\n"
 "\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n"
 
-#: src/ypbind-mt.c:511
+#: src/ypbind-mt.c:512
 msgid "\t  [-no-dbus]\n"
 msgstr "\t  [-no-dbus]\n"
 
-#: src/ypbind-mt.c:513
+#: src/ypbind-mt.c:514
 msgid "\typbind -c [-f configfile]\n"
 msgstr "\typbind -c [-f konfigurationsfil]\n"
 
-#: src/ypbind-mt.c:514
+#: src/ypbind-mt.c:515
 msgid "\typbind --version\n"
 msgstr "\typbind --version\n"
 
-#: src/ypbind-mt.c:550
+#: src/ypbind-mt.c:551
 #, c-format
 msgid "Cannot create UDP: %s"
 msgstr "Kan inte skapa UDP: %s"
 
-#: src/ypbind-mt.c:568
+#: src/ypbind-mt.c:569
 #, c-format
 msgid "Cannot bind UDP: %s"
 msgstr "Kan inte binda UDP: %s"
 
-#: src/ypbind-mt.c:578
+#: src/ypbind-mt.c:579
 msgid "Cannot create udp service."
 msgstr "Kan inte skapa udp-tjänst."
 
-#: src/ypbind-mt.c:587
+#: src/ypbind-mt.c:588
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDVERS, udp)."
 
-#: src/ypbind-mt.c:596
+#: src/ypbind-mt.c:597
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDOLDVERS, udp)."
 
-#: src/ypbind-mt.c:606
+#: src/ypbind-mt.c:607
 #, c-format
 msgid "Cannot create TCP: %s"
 msgstr "Kan inte skapa TCP: %s"
 
-#: src/ypbind-mt.c:625
+#: src/ypbind-mt.c:626
 #, c-format
 msgid "Cannot bind TCP: %s"
 msgstr "Kan inte binda TCP: %s"
 
-#: src/ypbind-mt.c:637
+#: src/ypbind-mt.c:638
 msgid "Cannot create tcp service.\n"
 msgstr "Kan inte skapa tcp-tjänst.\n"
 
-#: src/ypbind-mt.c:645
+#: src/ypbind-mt.c:646
 msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDVERS, tcp)."
 
-#: src/ypbind-mt.c:654
+#: src/ypbind-mt.c:655
 msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
 msgstr "Kan inte registrera (YPBINDPROG, YPBINDOLDVERS, tcp)."
 
-#: src/ypbind-mt.c:755
+#: src/ypbind-mt.c:759
 msgid "ERROR: domainname not set.\n"
 msgstr "FEL: domainname inte inställt.\n"
 
-#: src/ypbind-mt.c:760
+#: src/ypbind-mt.c:764
 msgid "domainname not set - aborting.\n"
 msgstr "domainname inte inställt - avbryter.\n"
 
-#: src/ypbind-mt.c:769
+#: src/ypbind-mt.c:773
 #, c-format
 msgid "Config file %s is not ok.\n"
 msgstr "Konfigurationsfilen %s är inte ok.\n"
 
-#: src/ypbind-mt.c:774
+#: src/ypbind-mt.c:778
 #, c-format
 msgid "Config file %s is ok.\n"
 msgstr "Konfigurationsfilen %s är ok.\n"
 
-#: src/ypbind-mt.c:781
+#: src/ypbind-mt.c:785
 msgid "ypbind must be run as root\n"
 msgstr "ypbind måste köras som root\n"
 
-#: src/ypbind-mt.c:789 src/ypbind-mt.c:798
+#: src/ypbind-mt.c:793 src/ypbind-mt.c:802
 #, c-format
 msgid "Could not create %s: %s\n"
 msgstr "Kunde inte skapa %s: %s\n"
 
-#: src/ypbind-mt.c:805
+#: src/ypbind-mt.c:809
 #, c-format
 msgid "Could not change to directory %s: %s\n"
 msgstr "Kunde inte ändra till katalogen %s: %s\n"
 
-#: src/ypbind-mt.c:903
+#: src/ypbind-mt.c:907
 msgid "Could not block signals."
 msgstr "Kunde inte blockera signaler."
 
-#: src/ypbind-mt.c:951
+#: src/ypbind-mt.c:955
 msgid "svc_run returned."
 msgstr "svc_run återvände."
 

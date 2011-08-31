@@ -13,8 +13,8 @@
 
    You should have received a copy of the GNU General Public
    License along with ypbind-mt; see the file COPYING.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA. */
+   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
+   Boston, MA 02110-1335, USA. */
 
 #define _GNU_SOURCE /* for GLIBC */
 #define _POSIX_PTHREAD_SEMANTICS /* for Solaris threads */
@@ -71,6 +71,7 @@ const char *configfile = "/etc/yp.conf";
 int ypset = SET_NO;
 int use_broadcast = 0;
 int broken_server = 0;
+int foreground_flag = 0;
 int ping_interval = 20;
 int local_only = 0;
 int port = -1;
@@ -506,7 +507,7 @@ usage (int ret)
     output = stdout;
 
   fputs (_("Usage:\n"), output);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug] [-verbose]\n"), output);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n\t  [-verbose] [-n | -foreground]\n"), output);
 #ifdef USE_DBUS_NM
   fputs (_("\t  [-no-dbus]\n"), output);
 #endif
@@ -691,6 +692,9 @@ main (int argc, char **argv)
       else if (strcmp ("-d", argv[i]) == 0 ||
 	       strcmp ("-debug", argv[i]) == 0)
         debug_flag = 1;
+      else if (strcmp ("-n", argv[i]) == 0 ||
+	       strcmp ("-foreground", argv[i]) == 0)
+        foreground_flag = 1;
       else if (strcmp ("-v", argv[i]) == 0 ||
 	       strcmp ("-verbose", argv[i]) == 0)
         verbose_flag = 1;
@@ -833,7 +837,7 @@ main (int argc, char **argv)
       log_msg (LOG_DEBUG, "[Welcome to ypbind-mt, version %s]\n", VERSION);
       log_msg (LOG_DEBUG, "ping interval is %d seconds\n", ping_interval);
     }
-  else
+  else if (! foreground_flag)
     {
       int j;
 

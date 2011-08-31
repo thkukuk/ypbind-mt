@@ -21,7 +21,7 @@
 
 <!--  You should have received a copy of the GNU General Public -->
 <!--  License along with ypbind\-mt; see the file COPYING.  If not, -->
-<!--  write to the Free Software Foundation, Inc., 59 Temple Place \- Suite 330, -->
+<!--  write to the Free Software Foundation, Inc., 51 Franklin Street \- Suite 500, -->
 <!--  Boston, MA 02111\-1307, USA. -->
 
 <refentry id='ypbind8'>
@@ -42,6 +42,7 @@
       <arg choice='opt'>-c </arg>
       <group choice='opt'><arg choice='plain'>-d </arg><arg choice='plain'>-debug </arg></group>
       <arg choice='opt'>-verbose </arg>
+      <group choice='opt'><arg choice='plain'>-n </arg><arg choice='plain'>-forground </arg></group>
       <arg choice='opt'>-broadcast </arg>
       <arg choice='opt'>-broken-server </arg>
       <arg choice='opt'>-ypset </arg>
@@ -206,6 +207,14 @@ in debug mode.
 <command>ypbind</command>
 will not put itself into background, and error messages and debug
 output are written to standard error.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-foreground</option></term>
+  <listitem>
+<para>
+<command>ypbind</command>
+will not put itself into backgroun.</para>
   </listitem>
   </varlistentry>
   <varlistentry>

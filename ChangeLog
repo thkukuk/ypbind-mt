@@ -1,3 +1,17 @@
+2011-08-31  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* src/serv_list.c: Fix memcpy usage.
+	Patch by Sebastian Koch <seb@cs.tu-berlin.de>.
+
+	* src/ypbind-mt.c: Add -n/-forground option for systemd.
+	* man/ypbind.8.xml: Document -n/-forground option.
+	Based on patch by Honza Horak <hhorak@redhat.com>.
+
+2011-08-31  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* Adjust FSF address.
+	Patch by Honza Horak <hhorak@redhat.com>
+
 2011-04-29  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* release version 1.33

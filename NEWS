@@ -4,6 +4,9 @@ Copyright (C) 1998-2011 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 1.34
+* Add -forground option
+
 Version 1.33
 * Better error checking
 
