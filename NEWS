@@ -1,8 +1,11 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2011 Thorsten Kukuk
+Copyright (C) 1998-2012 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 1.35
+* Fix problem with bindingfile handling
 
 Version 1.34
 * Add -forground option

@@ -42,12 +42,16 @@
 #define NM_DBUS_VPN_SIGNAL_STATE_CHANGE "StateChange"
 
 typedef enum NMState {
-  NM_STATE_UNKNOWN = 0,
-  NM_STATE_ASLEEP,
-  NM_STATE_CONNECTING,
-  NM_STATE_CONNECTED,
-  NM_STATE_DISCONNECTED
+	NM_STATE_UNKNOWN          = 0,
+	NM_STATE_ASLEEP           = 10,
+	NM_STATE_DISCONNECTED     = 20,
+	NM_STATE_DISCONNECTING    = 30,
+	NM_STATE_CONNECTING       = 40,
+	NM_STATE_CONNECTED_LOCAL  = 50,
+	NM_STATE_CONNECTED_SITE   = 60,
+	NM_STATE_CONNECTED_GLOBAL = 70
 } NMState;
+#define NM_STATE_CONNECTED NM_STATE_CONNECTED_GLOBAL
 
 #endif
 
@@ -133,6 +137,12 @@ dbus_reconnect (gpointer user_data)
   return !status;
 }
 
+static int is_connected_state(NMState state) {
+	return (state == NM_STATE_CONNECTED_LOCAL ||
+		state == NM_STATE_CONNECTED_SITE ||
+		state == NM_STATE_CONNECTED_GLOBAL);
+}
+
 static DBusHandlerResult
 dbus_filter (DBusConnection *connection,
 	     DBusMessage *message, void *user_data  __attribute__((unused)))
@@ -157,7 +167,7 @@ dbus_filter (DBusConnection *connection,
       if (dbus_message_get_args (message, NULL, DBUS_TYPE_UINT32,
                                  &state, DBUS_TYPE_INVALID))
         {
-          if (state == NM_STATE_CONNECTED)
+          if (is_connected_state(state))
 	    go_online ();
           else if (state == NM_STATE_DISCONNECTED)
 	    go_offline ();
@@ -239,7 +249,7 @@ check_online (DBusConnection *connection)
                               DBUS_TYPE_INVALID))
     return -1;
 
-  if (state != NM_STATE_CONNECTED)
+  if (!is_connected_state(state))
     return 0;
 
   return 1;

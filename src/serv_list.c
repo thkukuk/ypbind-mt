@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2009, 2011 Thorsten Kukuk
+/* Copyright (c) 1998-2009, 2011, 2012 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -109,9 +109,13 @@ static void do_broadcast (struct binding *list);
 static int ping_all (struct binding *list);
 
 static void
-remove_bindingfile (const char *domain_name)
+remove_bindingfile (struct binding *entry)
 {
+  const char *domain_name = entry->domain;
   char path[strlen (BINDINGDIR) + strlen (domain_name) + 10];
+
+  /* We want to re-create binding files after binding is OK again */
+  entry->last.host = NULL;
 
   sprintf (path, "%s/%s.1", BINDINGDIR, domain_name);
   unlink (path);
@@ -375,7 +379,7 @@ clear_server (void)
 	{
 	  if (domainlist[i].active != -1)
 	    {
-	      remove_bindingfile (domainlist[i].domain);
+	      remove_bindingfile (&domainlist[i]);
 	      for (j = 0; j < _MAXSERVER; ++j)
 		{
 		  if (domainlist[i].server[j].host != NULL)
@@ -684,7 +688,7 @@ do_broadcast (struct binding *list)
 
   if (status != RPC_SUCCESS)
     {
-      remove_bindingfile (domain);
+      remove_bindingfile (list);
       log_msg (LOG_ERR, "broadcast: %s.", clnt_sperrno (status));
     }
   else
@@ -948,7 +952,7 @@ ping_all (struct binding *list)
   free (pings);
 
   if (!found)
-    remove_bindingfile (list->domain);
+    remove_bindingfile (list);
 
   return found;
 }
@@ -1060,7 +1064,7 @@ ping_all (struct binding *list)
       ++i;
       if (i == _MAXSERVER)
         {
-          remove_bindingfile(list->domain);
+          remove_bindingfile(list);
           return 0;
         }
     }
