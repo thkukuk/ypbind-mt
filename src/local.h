@@ -7,6 +7,7 @@ extern int broken_server;
 extern int port;
 extern int ping_interval;
 extern int use_broadcast;
+extern int localhost_used;
 extern char *domain;
 
 extern void find_domain (const char *domain, ypbind_resp *result);

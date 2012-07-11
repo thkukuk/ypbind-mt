@@ -32,6 +32,9 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus-glib.h>
 
+/* We have our own constant, NM uses directly "StateChanged" string */
+#define NM_DBUS_SIGNAL_STATE_CHANGED "StateChanged"
+
 #ifdef HAVE_NETWORKMANAGER_NETWORKMANAGER_H
 #include <NetworkManager/NetworkManager.h>
 #include <NetworkManager/NetworkManagerVPN.h>
@@ -39,7 +42,6 @@
 #define NM_DBUS_INTERFACE "org.freedesktop.NetworkManager"
 #define NM_DBUS_SERVICE   "org.freedesktop.NetworkManager"
 #define NM_DBUS_PATH      "/org/freedesktop/NetworkManager"
-#define NM_DBUS_VPN_SIGNAL_STATE_CHANGE "StateChange"
 
 typedef enum NMState {
 	NM_STATE_UNKNOWN          = 0,
@@ -90,8 +92,11 @@ go_offline (void)
   if (debug_flag)
     log_msg (LOG_DEBUG, _("Switch to offline mode"));
   is_online = 0;
-  portmapper_disconnect ();
-  clear_server ();
+  if (!localhost_used)
+    {
+      portmapper_disconnect ();
+      clear_server ();
+    }
 }
 
 static void
@@ -160,7 +165,7 @@ dbus_filter (DBusConnection *connection,
       handled = DBUS_HANDLER_RESULT_HANDLED;
     }
   else if (dbus_message_is_signal (message, NM_DBUS_INTERFACE,
-                                   NM_DBUS_VPN_SIGNAL_STATE_CHANGE))
+                                   NM_DBUS_SIGNAL_STATE_CHANGED))
     {
       NMState state = NM_STATE_UNKNOWN;
 

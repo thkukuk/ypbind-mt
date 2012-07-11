@@ -108,6 +108,28 @@ static pthread_mutex_t search_lock = PTHREAD_MUTEX_INITIALIZER;
 static void do_broadcast (struct binding *list);
 static int ping_all (struct binding *list);
 
+/* We have localhost defined in one of the domains.
+ * If so, we don't need to be connected to outer network. */
+void
+check_localhost()
+{
+  int i, s;
+  localhost_used = 0;
+  for (i = 0; i < max_domains; ++i)
+    {
+      for (s = 0; s < _MAXSERVER; ++s)
+        {
+	  if (domainlist[i].server[s].host == NULL)
+	    break;
+          if (strncmp(inet_ntoa(domainlist[i].server[s].addr), "127", 3) == 0)
+            {
+       	      localhost_used = 1;
+      	      return;
+            }
+        }
+    }
+}
+
 static void
 remove_bindingfile (struct binding *entry)
 {
@@ -220,6 +242,7 @@ update_bindingfile (struct binding *entry)
     }
   else
     log_msg (LOG_ERR, "open(%s): %s", path2, strerror (errno));
+  check_localhost();
 }
 
 /* this is called from the RPC thread (ypset). */
@@ -562,6 +585,7 @@ add_server (const char *domain, const char *host, int check_syntax)
 	 If there is none, use the first one. */
       memcpy (&entry->server[active].addr, hent->h_addr_list[0],
 	      hent->h_length);
+      check_localhost();
       res = 1;
     }
 
@@ -1105,7 +1129,7 @@ test_bindings (void *param __attribute__ ((unused)))
   int lastcheck = 0;
 
 #ifdef USE_DBUS_NM
-  if (is_online)
+  if (is_online || localhost_used)
 #endif
     do_binding ();
 
@@ -1125,7 +1149,7 @@ test_bindings (void *param __attribute__ ((unused)))
 	lastcheck = 0;
 
 #if USE_DBUS_NM
-      if (is_online)
+      if (is_online || localhost_used)
 
 #endif
 	lastcheck = test_bindings_once (lastcheck, NULL);

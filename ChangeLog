@@ -1,3 +1,17 @@
+2012-07-11  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.36
+
+	* src/ypbind_dbus_nm.c: Ignore dbus if bound to localhost.
+	* src/local.h: Likewise.
+	* src/serv_list.c: Likewise.
+	* src/ypbind-mt.c: Likewise.
+
+	* src/ypbind_dbus_nm.c (NM_DBUS_SIGNAL_STATE_CHANGED):
+	  Fix StateChanged define/value.
+
+	Based on patches from Honza Horak <hhorak@redhat.com>.
+
 2012-03-23  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.35

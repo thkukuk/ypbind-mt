@@ -74,6 +74,7 @@ int broken_server = 0;
 int foreground_flag = 0;
 int ping_interval = 20;
 int local_only = 0;
+int localhost_used = 1;
 int port = -1;
 static int lock_fd;
 static int pid_is_written = 0;
@@ -945,7 +946,7 @@ main (int argc, char **argv)
     }
 
 #ifdef USE_DBUS_NM
-  if (!is_online)
+  if (!is_online && !localhost_used)
     portmapper_disconnect ();
 #endif
 
