@@ -9,6 +9,7 @@ extern int ping_interval;
 extern int use_broadcast;
 extern int localhost_used;
 extern char *domain;
+extern int rebind_interval;
 
 extern void find_domain (const char *domain, ypbind_resp *result);
 extern void clear_server (void);

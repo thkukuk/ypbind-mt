@@ -51,6 +51,7 @@
       <arg choice='opt'>-f <replaceable>configfile</replaceable></arg>
       <arg choice='opt'>-local-only </arg>
       <arg choice='opt'>-ping-interval <replaceable>ping-interval</replaceable></arg>
+      <arg choice='opt'>-rebind-interval</arg>
       <arg choice='opt'>-no-dbus </arg>
   </cmdsynopsis>
   <cmdsynopsis>
@@ -243,7 +244,7 @@ versions.</para>
 will not check if the binding is alive. This option is for use with
 dialup connections to prevent
 <command>ypbind</command>
-from keeping the connection unnecessarily open or causing autodials.</para>
+from keeping the connection unnecessarily open or causing auto-dials.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
@@ -269,7 +270,16 @@ a remote network.</para>
   <listitem>
 <para>The default value for
 <command>ypbind</command>
-to check, if a NIS server is still reacheable, is 20 seconds.
+to check, if a NIS server is still reachable, is 20 seconds.
+With this options another frequency in seconds can be specified.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-rebind-interval</option></term>
+  <listitem>
+<para>The default value for
+<command>ypbind</command>
+to search for the fastest NIS server is 900 seconds (15 minutes).
 With this options another frequency in seconds can be specified.</para>
   </listitem>
   </varlistentry>

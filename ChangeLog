@@ -1,3 +1,19 @@
+2013-04-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.37
+
+	* src/ypbind-mt.c (sig_handler): Add SIGPIPE to sigs_to_catch.
+	* man/ypbind.8.xml: Fix some typos, document -rebind-interval.
+	* src/local.h: Add rebind_interval.
+	* src/serv_list.c: Fix typos, add rebind_interval variable.
+	* src/ypbind-mt.c (main): Add -rebind_interval option, tell
+	systemd we are ready.
+	* etc/sysconfig.ypbind: Remove most config options, can
+	be specified all in the generic option.
+
+	rebind_interval option and systemd integration are based on
+	patches from Fedora.
+
 2012-07-11  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.36

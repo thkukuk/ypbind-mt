@@ -1,4 +1,4 @@
-/* Copyright (c) 1998 - 2009, 2011 Thorsten Kukuk
+/* Copyright (c) 1998 - 2009, 2011, 2013 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -49,6 +49,9 @@
 #if defined(HAVE_NSS_H)
 #include <nss.h>
 #endif
+#if defined(HAVE_SYSTEMD_SD_DAEMON_H)
+#include <systemd/sd-daemon.h>
+#endif
 
 #include "ypbind.h"
 #include "log_msg.h"
@@ -76,6 +79,7 @@ int ping_interval = 20;
 int local_only = 0;
 int localhost_used = 1;
 int port = -1;
+int rebind_interval = 900; /* 900 = 15min. */
 static int lock_fd;
 static int pid_is_written = 0;
 static pthread_mutex_t mutex_pid = PTHREAD_MUTEX_INITIALIZER;
@@ -432,6 +436,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
   sigaddset (&sigs_to_catch, SIGQUIT);
   sigaddset (&sigs_to_catch, SIGSEGV);
   sigaddset (&sigs_to_catch, SIGHUP);
+  sigaddset (&sigs_to_catch, SIGPIPE);
 
   while (1)
     {
@@ -508,7 +513,7 @@ usage (int ret)
     output = stdout;
 
   fputs (_("Usage:\n"), output);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval] [-debug]\n\t  [-verbose] [-n | -foreground]\n"), output);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval]\n\t  [-r rebind-interval] [-debug] [-verbose] [-n | -foreground]\n"), output);
 #ifdef USE_DBUS_NM
   fputs (_("\t  [-no-dbus]\n"), output);
 #endif
@@ -746,6 +751,16 @@ main (int argc, char **argv)
       else if (strcmp ("-no-dbus", argv[i]) == 0)
 	disable_dbus = 1;
 #endif
+      else if (strcmp ("-rebind-interval", argv[i]) == 0 ||
+	       strcmp ("-r", argv[i]) == 0)
+	{
+	  if (i+1 == argc || argv[i+1][0] == '-')
+	    usage (1);
+	  ++i;
+	  rebind_interval = atoi (argv[i]);
+	  if (rebind_interval < 1)
+	    usage (1);
+	}
       else if (strcmp ("--help", argv[i]) == 0)
         usage (0);
       else
@@ -837,6 +852,7 @@ main (int argc, char **argv)
     {
       log_msg (LOG_DEBUG, "[Welcome to ypbind-mt, version %s]\n", VERSION);
       log_msg (LOG_DEBUG, "ping interval is %d seconds\n", ping_interval);
+      log_msg (LOG_DEBUG, "rebind interval is %d seconds\n", rebind_interval);
     }
   else if (! foreground_flag)
     {
@@ -951,6 +967,30 @@ main (int argc, char **argv)
 #endif
 
   pthread_create (&ping_thread, NULL, &test_bindings, NULL);
+
+#if USE_SD_NOTIFY
+  {
+    /*
+     * If we use systemd as an init process we may want to give it
+     * a message, that ypbind daemon is ready to accept connections.
+     * At this time, sockets for receiving connections are already
+     * created, so we can say we're ready now.
+     */
+    int result;
+    result = sd_notifyf(0, "READY=1\n"
+                           "STATUS=Processing requests...\n"
+                           "MAINPID=%lu", (unsigned long) getpid());
+
+    /*
+     * Return code from sd_notifyf can be ignored, as per sd_notifyf(3).
+     * However, if we use systemd's native unit file, we need to send
+     * this message to let systemd know that daemon is ready.
+     * Thus, we want to know that the call had some issues.
+     */
+    if (result < 0)
+      log_msg (LOG_ERR, _("sd_notifyf failed: %s"), strerror(-result));
+  }
+#endif
 
   svc_run ();
   log_msg (LOG_ERR, _("svc_run returned."));

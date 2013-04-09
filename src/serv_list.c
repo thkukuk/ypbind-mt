@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2009, 2011, 2012 Thorsten Kukuk
+/* Copyright (c) 1998-2009, 2011, 2012, 2013 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -856,7 +856,7 @@ ping_all (struct binding *list)
       if (s_in.sin_port == 0)
 	{
 	  if (verbose_flag && list->active == i)
-		log_msg (LOG_NOTICE, "NIS server '%s' not repsonding "
+		log_msg (LOG_NOTICE, "NIS server '%s' not responding "
 		    "for domain '%s'", list->server[i].host, list->domain);
 
 	  if (debug_flag)
@@ -1145,7 +1145,7 @@ test_bindings (void *param __attribute__ ((unused)))
 	pthread_exit (&success);
 
       lastcheck += ping_interval;
-      if (lastcheck >= 900) /* 900 = 15min. */
+      if (lastcheck >= rebind_interval) /* default 900 = 15min. */
 	lastcheck = 0;
 
 #if USE_DBUS_NM

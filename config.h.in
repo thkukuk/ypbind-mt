@@ -87,6 +87,9 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
+/* Define to 1 if you have the <systemd/sd-daemon.h> header file. */
+#undef HAVE_SYSTEMD_SD_DAEMON_H
+
 /* Define to 1 if you have the <sys/filio.h> header file. */
 #undef HAVE_SYS_FILIO_H
 
@@ -122,6 +125,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
