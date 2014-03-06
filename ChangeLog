@@ -1,3 +1,13 @@
+2014-03-06  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.37.2
+
+	* configure.in: Add support for systemd >= 209
+
+2013-11-06  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.xml: Enhance some options.
+
 2013-04-09  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.37.1

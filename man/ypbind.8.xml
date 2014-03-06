@@ -200,7 +200,7 @@ only checks if the config file has syntax errors and exits.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-debug</option></term>
+  <term><option>-d</option>, <option>-debug</option></term>
   <listitem>
 <para>starts
 <command>ypbind</command>
@@ -211,7 +211,7 @@ output are written to standard error.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-foreground</option></term>
+  <term><option>-n</option>, <option>-foreground</option></term>
   <listitem>
 <para>
 <command>ypbind</command>
@@ -219,7 +219,7 @@ will not put itself into backgroun.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-verbose</option></term>
+  <term><option>-v</option>, <option>-verbose</option></term>
   <listitem>
 <para>Causes
 <command>ypbind</command>
@@ -229,7 +229,7 @@ to syslog(2) any and all changes in the server its bound to.</para>
   <varlistentry>
   <term><option>-broken-server</option></term>
   <listitem>
-<para>lets
+<para>Lets
 <command>ypbind</command>
 accept answers from servers running on an illegal port number. This should
 usually be avoided, but is required by some
@@ -266,7 +266,7 @@ a remote network.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-ping-interval</option> ping-interval</term>
+  <term><option>-i</option>, <option>-ping-interval</option> ping-interval</term>
   <listitem>
 <para>The default value for
 <command>ypbind</command>
@@ -275,7 +275,7 @@ With this options another frequency in seconds can be specified.</para>
   </listitem>
   </varlistentry>
   <varlistentry>
-  <term><option>-rebind-interval</option></term>
+  <term><option>-r</option>, <option>-rebind-interval</option></term>
   <listitem>
 <para>The default value for
 <command>ypbind</command>

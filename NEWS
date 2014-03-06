@@ -1,8 +1,11 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2013 Thorsten Kukuk
+Copyright (C) 1998-2014 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 1.37.2
+* Add support for systemd >= 209
 
 Version 1.37.1
 * Revert sysconfig/ypbind changes
