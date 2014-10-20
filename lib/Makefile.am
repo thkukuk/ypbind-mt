@@ -15,6 +15,6 @@ libcompat_a_SOURCES = dns_hosts.c res_options.h
 libcompat_a_LIBADD = @LIBOBJS@
 
 localedir = $(datadir)/locale
-INCLUDES = -I../intl -DLOCALEDIR=\"$(localedir)\"
+AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\"
 
 CLEANFILES = *~

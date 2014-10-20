@@ -1,3 +1,9 @@
+2014-10-20  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.38
+
+	* configure.ac: Use pkg-config for systemd
+
 2014-03-06  Thorsten Kukuk  <kukuk@suse.de>
 
 	* release version 1.37.2

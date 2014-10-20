@@ -1,14 +1,12 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(src/ypbind-mt.c)
-AM_INIT_AUTOMAKE(ypbind-mt, 1.37.2)
-AM_CONFIG_HEADER(config.h)
-AC_PREFIX_DEFAULT(/usr)
-
+AC_INIT([ypbind-mt], [1.38])
+AC_CONFIG_SRCDIR([src/ypbind-mt.c])
+AM_INIT_AUTOMAKE
+AC_CONFIG_HEADERS(config.h)
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
 
 AC_CANONICAL_HOST
-
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -24,7 +22,7 @@ AC_PROG_RANLIB
 AM_WITH_DMALLOC
 AM_WITH_EFENCE
 
-dnl Check for SLP support for rpasswd/rpasswdd
+dnl Check for SLP support for finding yppserv
 AC_ARG_ENABLE([slp],
    AC_HELP_STRING([--disable-slp],[Disable SLP support]))
 
@@ -45,6 +43,9 @@ dnl Checks for libraries.
 AC_CHECK_LIB(nsl, yp_get_default_domain)
 AC_CHECK_LIB(socket, bind)
 AC_CHECK_LIB(pthread, pthread_create)
+
+PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 209], [USE_SD_NOTIFY=1], [USE_SD_NOTIFY=0])
+AC_SUBST(USE_SD_NOTIFY)
 
 AC_ARG_ENABLE([dbus-nm],
    AC_HELP_STRING([--enable-dbus-nm],[Enable DBUS/NetworkManager support]),
@@ -102,23 +103,6 @@ JH_CHECK_XML_CATALOG([-//OASIS//DTD DocBook XML V4.3//EN],
 JH_CHECK_XML_CATALOG([http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl],
                 [DocBook XSL Stylesheets], [], enable_man=no)
 AM_CONDITIONAL(ENABLE_REGENERATE_MAN, test x$enable_man != xno)
-
-USE_SD_NOTIFY=0
-AC_SUBST(USE_SD_NOTIFY)
-AC_CHECK_LIB(systemd-daemon,sd_notify,LIBSYSTEMD_DAEMON="-lsystemd-daemon",
-       LIBSYSTEMD_DAEMON="")
-if test -z "$LIBSYSTEMD_DAEMON" ; then
-   AC_CHECK_LIB(systemd,sd_notify,LIBSYSTEMD_DAEMON="-lsystemd",
-   LIBSYSTEMD_DAEMON="")
-fi
-if test -n "$LIBSYSTEMD_DAEMON" ; then
-       AC_CHECK_HEADERS(systemd/sd-daemon.h)
-       if test "$ac_cv_header_systemd_sd_daemon_h" = yes; then
-          USE_SD_NOTIFY=1
-        fi
-fi
-AC_SUBST(USE_SD_NOTIFY)
-AC_SUBST(LIBSYSTEMD_DAEMON)
 
 dnl internationalization macros
 AM_GNU_GETTEXT_VERSION

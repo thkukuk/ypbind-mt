@@ -4,6 +4,9 @@ Copyright (C) 1998-2014 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 1.38
+* Use pkg-config in configure script
+
 Version 1.37.2
 * Add support for systemd >= 209
 
