@@ -1,33 +1,29 @@
 
-This directory contains the version 1.21 of the ypbind-mt.
-
-See the file INSTALL to find out how to configure, build, install, and port
-ypbind-mt.  You might also consider reading the WWW pages for Linux NIS (YP)
-at http://www.linux-nis.org/nis/.
-
+This directory contains the version 3.x of ypbind-mt.
 
 ypbind-mt is free software. You can redistribute it and/or modify it
 under the terms of the GNU General Public License version 2 as published
 by the Free Software Foundation. See the file COPYING for copying conditions.
 
-
 ypbind-mt is a complete new implementation of a NIS binding daemon for
 Linux. It has the following features:
 
-	* Supports ypbind protocol V1 and V2.
+	* Supports ypbind protocol V1, V2, V3.
+
+	* IPv6 support (needs ti-rpc! Else use old 2.x version).
 
 	* Uses threads for better response.
 
 	* Supports multiple domain bindings.
 
-	* Supports /var/yp/binding/* file for Linux libc 4/5 and glibc 2.x.
-
 	* Supports a list of known secure NIS server (/etc/yp.conf)
 
-	* Binds to the server which answered as first
 
-	* Listens to DBUS/NetworkManager if network is up and running or not.
+The following features against version 2.x were dropped:
+
+	* Listen to DBUS/NetworkManager.
+	* Use SLP to find a running ypserv
 
 
-Thorsten Kukuk <kukuk@suse.de>, April 15th, 2008
+Thorsten Kukuk <kukuk@suse.de>, October, 2014
 

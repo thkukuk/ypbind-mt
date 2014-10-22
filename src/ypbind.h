@@ -11,10 +11,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
 
-   You should have received a copy of the GNU General Public
-   License along with ypbind-mt; see the file COPYING.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA. */
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifndef __YPBIND_H__
 #define __YPBIND_H__
@@ -92,8 +90,9 @@ typedef struct ypbind_setdom ypbind_setdom;
  */
 
 #define YPBINDPROG    100007
-#define YPBINDOLDVERS 1
-#define YPBINDVERS    2
+#define YPBINDVERS_1  1
+#define YPBINDVERS_2  2
+#define YPBINDVERS_3  3
 
 
 #define YPBINDPROC_OLDNULL 0

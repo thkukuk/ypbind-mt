@@ -1,4 +1,4 @@
-/* Copyright (c) 1998 - 2009, 2011, 2013 Thorsten Kukuk
+/* Copyright (c) 1998 - 2009, 2011, 2013, 2014 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -11,12 +11,9 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
 
-   You should have received a copy of the GNU General Public
-   License along with ypbind-mt; see the file COPYING.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA. */
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
-#define _GNU_SOURCE /* for GLIBC */
 #define _POSIX_PTHREAD_SEMANTICS /* for Solaris threads */
 
 #if defined(HAVE_CONFIG_H)
@@ -40,16 +37,12 @@
 #include <locale.h>
 #include <libintl.h>
 #include <rpc/rpc.h>
-#if defined(HAVE_RPC_SVC_SOC_H)
-#include <rpc/svc_soc.h>
-#endif /* HAVE_RPC_SVC_SOC_H */
-#include <rpcsvc/ypclnt.h>
-#include <rpc/pmap_clnt.h>
+#include <rpc/nettype.h>
+#include <rpc/rpc_com.h>
 #include <pthread.h>
-#if defined(HAVE_NSS_H)
 #include <nss.h>
-#endif
-#if defined(HAVE_SYSTEMD_SD_DAEMON_H)
+#include <paths.h>
+#if USE_SD_NOTIFY
 #include <systemd/sd-daemon.h>
 #endif
 
@@ -59,9 +52,6 @@
 
 #define _(String) gettext (String)
 
-#ifdef HAVE_PATHS_H
-#include <paths.h>
-#endif
 #ifndef _PATH_VARRUN
 #define _PATH_VARRUN "/etc/"
 #endif
@@ -69,7 +59,6 @@
 #define _YPBIND_PIDFILE _PATH_VARRUN"ypbind.pid"
 #endif
 
-char *domain = NULL;
 const char *configfile = "/etc/yp.conf";
 int ypset = SET_NO;
 int use_broadcast = 0;
@@ -80,6 +69,7 @@ int local_only = 0;
 int localhost_used = 1;
 int port = -1;
 int rebind_interval = 900; /* 900 = 15min. */
+char domain[1025];
 static int lock_fd;
 static int pid_is_written = 0;
 static pthread_mutex_t mutex_pid = PTHREAD_MUTEX_INITIALIZER;
@@ -128,25 +118,7 @@ load_config (int check_syntax)
       char tmpserver[81], tmpdomain[YPMAXDOMAIN + 1];
       int count;
       char *tmp, *cp;
-#if defined(HAVE_GETLINE)
       ssize_t n = getline (&buf, &buflen, fp);
-#elif defined (HAVE_GETDELIM)
-      ssize_t n = getdelim (&buf, &buflen, '\n', fp);
-#else
-      ssize_t n;
-
-      if (buf == NULL)
-        {
-          buflen = 8096;
-          buf = malloc (buflen);
-        }
-      buf[0] = '\0';
-      fgets (buf, buflen - 1, fp);
-      if (buf != NULL)
-        n = strlen (buf);
-      else
-        n = 0;
-#endif /* HAVE_GETLINE / HAVE_GETDELIM */
       cp = buf;
 
       if (n < 1)
@@ -175,8 +147,6 @@ load_config (int check_syntax)
 	     domain <domain> server <host|ip>
 	     or
 	     domain <domain> broadcast
-	     or
-	     domain<domain> slp
 	  */
 
 	  if (strstr (cp, "server") != NULL)
@@ -212,28 +182,6 @@ load_config (int check_syntax)
 		  continue;
 		}
 	    }
-#ifdef USE_SLP
-	  if (strstr (cp, "slp") != NULL)
-	    {
-	      count = sscanf (cp, "domain %s slp", tmpdomain);
-	      if (count == 1)
-		{
-		  int i;
-
-		  if (debug_flag)
-		    log_msg (LOG_DEBUG, _("parsed domain '%s' slp"),
-			     tmpdomain);
-		  i = query_slp (tmpdomain);
-
-		  if (i > 0)
-		    have_entries += 1;
-		  else
-		    ++bad_entries;
-
-		  continue;
-		}
-	    }
-#endif
 	}
       else if (strncmp (cp, "ypserver", 8) == 0 && isspace ((int)cp[8]))
 	{
@@ -522,146 +470,144 @@ usage (int ret)
   exit (ret);
 }
 
+
 void
 portmapper_disconnect (void)
 {
-  pmap_unset (YPBINDPROG, YPBINDOLDVERS);
-  pmap_unset (YPBINDPROG, YPBINDVERS);
+  rpcb_unset (YPBINDPROG, YPBINDVERS_1, NULL);
+  rpcb_unset (YPBINDPROG, YPBINDVERS_2, NULL);
+  rpcb_unset (YPBINDPROG, YPBINDVERS_3, NULL);
 }
 
-static int portmapper_udp_port;
-static int portmapper_tcp_port;
-
-int
-portmapper_connect (void)
-{
-  pmap_set (YPBINDPROG, YPBINDVERS, IPPROTO_UDP, portmapper_udp_port);
-  pmap_set (YPBINDPROG, YPBINDOLDVERS, IPPROTO_UDP, portmapper_udp_port);
-  pmap_set (YPBINDPROG, YPBINDVERS, IPPROTO_TCP, portmapper_tcp_port);
-  pmap_set (YPBINDPROG, YPBINDOLDVERS, IPPROTO_TCP, portmapper_tcp_port);
-  return 0;
-}
-
+/* Register at portmapper */
+/* XXX Missing: -local and -port */
 static int
 portmapper_register (void)
 {
-  struct sockaddr_in socket_address;
-  SVCXPRT *transp;
-  int sock, result;
+  struct netconfig *nconf;
+  void *nc_handle;
+  uint32_t inet_tpts = 0, inet6_tpts = 0;
+  uint32_t inet_desired_tpts = 0, inet6_desired_tpts = 0;
+  int loopback_found = 0, udp_found = 0;
+  int connmaxrec = RPC_MAXDATASIZE;
 
-  if (port >= 0 || local_only)
+#if 0 /* XXX */
+  if (!__rpcbind_is_up()) {
+    log_msg (LOG_ERR, "terminating: rpcbind is not running");
+    return 1;
+  }
+#endif
+
+  /* Set non-blocking mode and maximum record size for
+     connection oriented RPC transports. */
+  if (!rpc_control(RPC_SVC_CONNMAXREC_SET, &connmaxrec)) 
+    log_msg (LOG_ERR, "unable to set maximum RPC record size");
+
+  portmapper_disconnect ();
+
+  nc_handle = __rpc_setconf ("netpath");   /* open netconfig file */
+  if (nc_handle == NULL) 
     {
-      sock = socket (AF_INET, SOCK_DGRAM, 0);
-      if (sock < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot create UDP: %s"), strerror (errno));
-	  return 1;
-	}
-
-      memset ((char *) &socket_address, 0, sizeof (socket_address));
-      socket_address.sin_family = AF_INET;
-      if (local_only)
-	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
-      else
-	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-
-      if (port >= 0)
-	socket_address.sin_port = htons (port);
-
-      result = bind (sock, (struct sockaddr *) &socket_address,
-		     sizeof (socket_address));
-      if (result < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot bind UDP: %s"), strerror (errno));
-	  return 1;
-	}
-    }
-  else
-    sock = RPC_ANYSOCK;
-
-  transp = svcudp_create (sock);
-  if (transp == NULL)
-    {
-      log_msg (LOG_ERR, _("Cannot create udp service."));
+      log_msg(LOG_ERR, "could not read /etc/netconfig, exiting..");
       return 1;
     }
-  portmapper_udp_port = transp->xp_port;
+  
+  while ((nconf = __rpc_getconf (nc_handle))) {
+    SVCXPRT *xprt;
 
-  if (!svc_register (transp, YPBINDPROG, YPBINDVERS, ypbindprog_2,
-		     IPPROTO_UDP))
+    if (debug_flag)
+      log_msg (LOG_DEBUG, "Call svc_tp_create for %s", nconf->nc_protofmly);
+    
+    if ((xprt = svc_tp_create(ypbindprog_2,
+			      YPBINDPROG, YPBINDVERS_2, nconf)) == NULL) 
+      {
+	log_msg (LOG_ERR, "terminating: cannot create rpcbind handle");
+	return 1;
+      }
+    
+    /* support ypbind V2 and V1, but only on udp/tcp transports */
+    /* XXX which sense makes this compares? */
+    if (((strcmp(nconf->nc_protofmly, NC_INET) == 0) ||
+	 (strcmp(nconf->nc_protofmly, NC_INET6))) &&
+	((nconf->nc_semantics == NC_TPI_CLTS) ||
+	 (nconf->nc_semantics == NC_TPI_COTS_ORD))) 
+      {
+	
+	if (strcmp(nconf->nc_protofmly, NC_INET))
+	  inet_desired_tpts |= 1 >> nconf->nc_semantics;
+	else
+	  inet6_desired_tpts |= 1 >> nconf->nc_semantics;
+	
+#if 0 /* XXX */	
+	rpcb_unset(YPBINDPROG, YPBINDVERS_2, nconf);
+	if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_2, ypbindprog_2, nconf))
+	  {
+	    log_msg (LOG_INFO,
+		     _("unable to register (YPBINDPROG, YPBINDVERS_2) [%s]"),
+		     nconf->nc_netid);
+	    continue;
+	  }	
+#endif
+
+	/* For NC_INET, register v1 as well; error is fatal */
+	if (strcmp(nconf->nc_protofmly, NC_INET) == 0) 
+	  {
+	    (void) rpcb_unset(YPBINDPROG, YPBINDVERS_1, nconf);
+	    if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_1,
+			 ypbindprog_1, nconf)) 
+	      {
+		log_msg (LOG_ERR,
+			 _("unable to register (YPBINDPROG, YPBINDVERS_1)."));
+		continue;
+	      }
+	    
+	  }
+	
+	if (nconf->nc_semantics == NC_TPI_CLTS)
+	  udp_found++;
+	
+	if (strcmp(nconf->nc_protofmly, NC_INET))
+	  inet_tpts |= 1 >> nconf->nc_semantics;
+	else
+	  inet6_tpts |= 1 >> nconf->nc_semantics;
+      }
+    
+    if (strcmp(nconf->nc_protofmly, NC_LOOPBACK) == 0) {
+      loopback_found++;
+    }
+  }
+  
+  __rpc_endconf (nc_handle);	
+
+  /* Did we manage to register all IPv4 or all IPv6 transports ? */
+  if (inet_tpts != 0 && inet_tpts != inet_desired_tpts)
     {
       log_msg (LOG_ERR,
-	       _("Unable to register (YPBINDPROG, YPBINDVERS, udp)."));
-      svc_destroy (transp);
+	       _("unable to register all %s transports, exiting..."), NC_INET);
       return 1;
-    }
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDOLDVERS, ypbindprog_1,
-		     IPPROTO_UDP))
+    } 
+  else if (inet6_tpts != 0 && inet6_tpts != inet6_desired_tpts) 
     {
       log_msg (LOG_ERR,
-	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."));
-      svc_destroy (transp);
+	       _("unable to register all %s transports, exiting..."), NC_INET6);
       return 1;
-    }
+    }        
 
-  if (port >= 0 || local_only)
-    {
-      sock = socket (AF_INET, SOCK_STREAM, 0);
-      if (sock < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot create TCP: %s"), strerror (errno));
-	  svc_destroy (transp);
-	  return 1;
-	}
-
-      memset (&socket_address, 0, sizeof (socket_address));
-      socket_address.sin_family = AF_INET;
-      if (local_only)
-	socket_address.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
-      else
-	socket_address.sin_addr.s_addr = htonl (INADDR_ANY);
-
-      if (port >= 0)
-	socket_address.sin_port = htons (port);
-
-      result = bind (sock, (struct sockaddr *) &socket_address,
-		     sizeof (socket_address));
-      if (result < 0)
-	{
-	  log_msg (LOG_ERR, _("Cannot bind TCP: %s"), strerror (errno));
-	  close (sock);
-	  svc_destroy (transp);
-	  return 1;
-	}
-    }
-  else
-    sock = RPC_ANYSOCK;
-
-  transp = svctcp_create (sock, 0, 0);
-  if (transp == NULL)
-    {
-      log_msg (LOG_ERR, _("Cannot create tcp service.\n"));
-      return 1;
-    }
-  portmapper_tcp_port = transp->xp_port;
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDVERS, ypbindprog_2,
-		     IPPROTO_TCP))
-    {
-      log_msg (LOG_ERR, _("Unable to register (YPBINDPROG, YPBINDVERS, tcp)."));
-      svc_destroy (transp);
-      return 1;
-    }
-
-  if (!svc_register (transp, YPBINDPROG, YPBINDOLDVERS, ypbindprog_1,
-		     IPPROTO_TCP))
+#if 0 /* XXX doesn't work on Linux? */
+  if (!loopback_found) 
     {
       log_msg (LOG_ERR,
-	       _("Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."));
-      svc_destroy (transp);
+	       _("could not find loopback transports, exiting..."));
+      // return 1;
+    }
+#endif
+  if (!udp_found) 
+    {
+      log_msg (LOG_ERR,
+	       _("could not find inet-clts (udp) transport, exiting..."));
       return 1;
     }
+
   return 0;
 }
 
@@ -767,13 +713,13 @@ main (int argc, char **argv)
 	usage (1);
     }
 
-  if (yp_get_default_domain (&domain) || domain == NULL ||
+  domain[0] = '\0';
+  if (getdomainname (domain, sizeof(domain)) ||
       domain[0] == '\0' || strcmp(domain, "(none)") == 0)
     {
       if (configcheck_only)
 	{
 	  fputs (_("ERROR: domainname not set.\n"), stderr);
-	  domain = "(none)";
 	}
       else
 	{

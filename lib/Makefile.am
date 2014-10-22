@@ -7,8 +7,6 @@
 
 noinst_LIBRARIES = libcompat.a
 
-EXTRA_DIST = clnt_udp.c
-
 AM_CFLAGS = -D_REENTRANT=1 @WARNFLAGS@
 
 libcompat_a_SOURCES = dns_hosts.c res_options.h

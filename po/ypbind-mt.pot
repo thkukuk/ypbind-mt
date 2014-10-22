@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ypbind-mt 1.38\n"
+"Project-Id-Version: ypbind-mt 1.99.3\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2014-10-20 12:16+0200\n"
+"POT-Creation-Date: 2014-10-22 15:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,369 +17,332 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/serv_list.c:443
+#: src/serv_list.c:429
 msgid "Not enough memory !"
 msgstr ""
 
-#: src/serv_list.c:469
+#: src/serv_list.c:455
 msgid "internal error: add_server called with NULL domain."
 msgstr ""
 
-#: src/serv_list.c:484
+#: src/serv_list.c:470
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr ""
 
-#: src/serv_list.c:508
+#: src/serv_list.c:494
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr ""
 
-#: src/serv_list.c:515
+#: src/serv_list.c:501
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr ""
 
-#: src/serv_list.c:545 src/serv_list.c:547
+#: src/serv_list.c:531 src/serv_list.c:533
 msgid "Unknown host:"
 msgstr ""
 
-#: src/serv_list.c:551 src/serv_list.c:553
+#: src/serv_list.c:537 src/serv_list.c:539
 msgid "Host name lookup failure"
 msgstr ""
 
-#: src/serv_list.c:558 src/serv_list.c:561
+#: src/serv_list.c:544 src/serv_list.c:547
 msgid "No address associated with name:"
 msgstr ""
 
-#: src/serv_list.c:565 src/serv_list.c:567
+#: src/serv_list.c:551 src/serv_list.c:553
 msgid "Unknown server error"
 msgstr ""
 
-#: src/serv_list.c:571 src/serv_list.c:573
+#: src/serv_list.c:557 src/serv_list.c:559
 msgid "gethostbyname: Unknown error"
 msgstr ""
 
-#: src/serv_list.c:643 src/serv_list.c:951 src/serv_list.c:1070
+#: src/serv_list.c:629 src/serv_list.c:799
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
 
-#: src/serv_list.c:647
+#: src/serv_list.c:633
 #, c-format
 msgid "Answer for domain '%s' from unknown server '%s'"
 msgstr ""
 
-#: src/serv_list.c:654 src/serv_list.c:850
+#: src/serv_list.c:640
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr ""
 
-#: src/serv_list.c:689
+#: src/serv_list.c:675
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:724
+#: src/serv_list.c:710
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:838 src/serv_list.c:1010
+#: src/serv_list.c:739
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:863
-#, c-format
-msgid "host '%s' doesn't answer."
-msgstr ""
-
-#: src/serv_list.c:934
-#, c-format
-msgid "Server '%s' for domain '%s' answered ping but failed to bind"
-msgstr ""
-
-#: src/serv_list.c:1029
+#: src/serv_list.c:758
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:1050
+#: src/serv_list.c:779
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:1172
+#: src/serv_list.c:900
 msgid "Pinging all active servers."
 msgstr ""
 
-#: src/serv_list.c:1174
+#: src/serv_list.c:902
 msgid "Checking for new fastest server."
 msgstr ""
 
-#: src/serv_list.c:1186
+#: src/serv_list.c:914
 #, c-format
 msgid "Requested domain %s, found %s, ignored."
 msgstr ""
 
-#: src/ypbind-mt.c:167 src/ypbind-mt.c:170
+#: src/ypbind-mt.c:139 src/ypbind-mt.c:142
 msgid "Trying entry:"
 msgstr ""
 
-#: src/ypbind-mt.c:189
+#: src/ypbind-mt.c:159
 #, c-format
 msgid "parsed domain '%s' server '%s'"
 msgstr ""
 
-#: src/ypbind-mt.c:205
+#: src/ypbind-mt.c:175
 #, c-format
 msgid "parsed domain '%s' broadcast"
 msgstr ""
 
-#: src/ypbind-mt.c:224
-#, c-format
-msgid "parsed domain '%s' slp"
-msgstr ""
-
-#: src/ypbind-mt.c:247
+#: src/ypbind-mt.c:195
 #, c-format
 msgid "parsed ypserver %s"
 msgstr ""
 
-#: src/ypbind-mt.c:264
+#: src/ypbind-mt.c:212
 msgid "parsed broadcast"
 msgstr ""
 
-#: src/ypbind-mt.c:273
+#: src/ypbind-mt.c:221
 #, c-format
 msgid "Entry \"%s\" is not valid!\n"
 msgstr ""
 
-#: src/ypbind-mt.c:277
+#: src/ypbind-mt.c:225
 #, c-format
 msgid "Entry \"%s\" is not valid, ignore it!"
 msgstr ""
 
-#: src/ypbind-mt.c:288
+#: src/ypbind-mt.c:236
 #, c-format
 msgid "Bad entries found.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:293
+#: src/ypbind-mt.c:241
 #, c-format
 msgid "No entry found.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:301
+#: src/ypbind-mt.c:249
 msgid "No entry found."
 msgstr ""
 
-#: src/ypbind-mt.c:315
+#: src/ypbind-mt.c:263
 msgid "No NIS server and no -broadcast option specified.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:318
+#: src/ypbind-mt.c:266
 #, c-format
 msgid "Add a NIS server to the %s configuration file,\n"
 msgstr ""
 
-#: src/ypbind-mt.c:320
+#: src/ypbind-mt.c:268
 msgid "or start ypbind with the -broadcast option.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:341
+#: src/ypbind-mt.c:289
 #, c-format
 msgid "cannot create pidfile %s"
 msgstr ""
 
-#: src/ypbind-mt.c:371
+#: src/ypbind-mt.c:319
 #, c-format
 msgid "fcntl error: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:383
+#: src/ypbind-mt.c:331
 #, c-format
 msgid "ypbind-mt already running (pid %d) - exiting"
 msgstr ""
 
-#: src/ypbind-mt.c:394
+#: src/ypbind-mt.c:342
 msgid "cannot lock pidfile"
 msgstr ""
 
-#: src/ypbind-mt.c:447
+#: src/ypbind-mt.c:395
 #, c-format
 msgid "sigwait failed: ret=%d."
 msgstr ""
 
-#: src/ypbind-mt.c:453
+#: src/ypbind-mt.c:401
 msgid "SIGCHLD arrived, what should I do ?"
 msgstr ""
 
-#: src/ypbind-mt.c:461
+#: src/ypbind-mt.c:409
 #, c-format
 msgid "Signal (%d) for quitting program arrived."
 msgstr ""
 
-#: src/ypbind-mt.c:470
+#: src/ypbind-mt.c:418
 msgid "cannot unlock pidfile"
 msgstr ""
 
-#: src/ypbind-mt.c:482
+#: src/ypbind-mt.c:430
 msgid "SIGHUP arrived, reloading config file."
 msgstr ""
 
-#: src/ypbind-mt.c:495
+#: src/ypbind-mt.c:443
 msgid "Ignoring SIGPIPE."
 msgstr ""
 
-#: src/ypbind-mt.c:498
+#: src/ypbind-mt.c:446
 #, c-format
 msgid "Unknown signal: %d"
 msgstr ""
 
-#: src/ypbind-mt.c:515
+#: src/ypbind-mt.c:463
 msgid "Usage:\n"
 msgstr ""
 
-#: src/ypbind-mt.c:516
+#: src/ypbind-mt.c:464
 msgid ""
 "\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n"
 "\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval]\n"
 "\t  [-r rebind-interval] [-debug] [-verbose] [-n | -foreground]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:518
+#: src/ypbind-mt.c:466
 msgid "\t  [-no-dbus]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:520
+#: src/ypbind-mt.c:468
 msgid "\typbind -c [-f configfile]\n"
 msgstr ""
 
-#: src/ypbind-mt.c:521
+#: src/ypbind-mt.c:469
 msgid "\typbind --version\n"
 msgstr ""
 
-#: src/ypbind-mt.c:557
+#: src/ypbind-mt.c:546
 #, c-format
-msgid "Cannot create UDP: %s"
+msgid "unable to register (YPBINDPROG, YPBINDVERS_2) [%s]"
 msgstr ""
 
-#: src/ypbind-mt.c:575
+#: src/ypbind-mt.c:560
+msgid "unable to register (YPBINDPROG, YPBINDVERS_1)."
+msgstr ""
+
+#: src/ypbind-mt.c:586 src/ypbind-mt.c:592
 #, c-format
-msgid "Cannot bind UDP: %s"
+msgid "unable to register all %s transports, exiting..."
 msgstr ""
 
-#: src/ypbind-mt.c:585
-msgid "Cannot create udp service."
+#: src/ypbind-mt.c:600
+msgid "could not find loopback transports, exiting..."
 msgstr ""
 
-#: src/ypbind-mt.c:594
-msgid "Unable to register (YPBINDPROG, YPBINDVERS, udp)."
+#: src/ypbind-mt.c:607
+msgid "could not find inet-clts (udp) transport, exiting..."
 msgstr ""
 
-#: src/ypbind-mt.c:603
-msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, udp)."
-msgstr ""
-
-#: src/ypbind-mt.c:613
-#, c-format
-msgid "Cannot create TCP: %s"
-msgstr ""
-
-#: src/ypbind-mt.c:632
-#, c-format
-msgid "Cannot bind TCP: %s"
-msgstr ""
-
-#: src/ypbind-mt.c:644
-msgid "Cannot create tcp service.\n"
-msgstr ""
-
-#: src/ypbind-mt.c:652
-msgid "Unable to register (YPBINDPROG, YPBINDVERS, tcp)."
-msgstr ""
-
-#: src/ypbind-mt.c:661
-msgid "Unable to register (YPBINDPROG, YPBINDOLDVERS, tcp)."
-msgstr ""
-
-#: src/ypbind-mt.c:775
+#: src/ypbind-mt.c:722
 msgid "ERROR: domainname not set.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:780
+#: src/ypbind-mt.c:726
 msgid "domainname not set - aborting.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:789
+#: src/ypbind-mt.c:735
 #, c-format
 msgid "Config file %s is not ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:794
+#: src/ypbind-mt.c:740
 #, c-format
 msgid "Config file %s is ok.\n"
 msgstr ""
 
-#: src/ypbind-mt.c:801
+#: src/ypbind-mt.c:747
 msgid "ypbind must be run as root\n"
 msgstr ""
 
-#: src/ypbind-mt.c:809 src/ypbind-mt.c:818
+#: src/ypbind-mt.c:755 src/ypbind-mt.c:764
 #, c-format
 msgid "Could not create %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:825
+#: src/ypbind-mt.c:771
 #, c-format
 msgid "Could not change to directory %s: %s\n"
 msgstr ""
 
-#: src/ypbind-mt.c:924
+#: src/ypbind-mt.c:870
 msgid "Could not block signals."
 msgstr ""
 
-#: src/ypbind-mt.c:991
+#: src/ypbind-mt.c:937
 #, c-format
 msgid "sd_notifyf failed: %s"
 msgstr ""
 
-#: src/ypbind-mt.c:996
+#: src/ypbind-mt.c:942
 msgid "svc_run returned."
 msgstr ""
 
-#: src/ypbind_server.c:83 src/ypbind_server.c:143
+#: src/ypbind_server.c:110 src/ypbind_server.c:204
 #, c-format
 msgid "Domain name '%s' has embedded slash -- rejecting."
 msgstr ""
 
-#: src/ypbind_server.c:94
+#: src/ypbind_server.c:121
 msgid "Status: YPBIND_FAIL_VAL"
 msgstr ""
 
-#: src/ypbind_server.c:96
+#: src/ypbind_server.c:123
 msgid "Status: YPBIND_SUCC_VAL"
 msgstr ""
 
-#: src/ypbind_server.c:155
+#: src/ypbind_server.c:222 src/ypbind_server.c:263
 #, c-format
 msgid "User from '%s' try's to change the binding."
 msgstr ""
 
-#: src/ypbind_server.c:164
+#: src/ypbind_server.c:231 src/ypbind_server.c:273
 msgid "Changing the binding is not allowed."
 msgstr ""
 
-#: src/ypbind_server.c:169
+#: src/ypbind_server.c:237 src/ypbind_server.c:279
 msgid "SETDOM request doesn't come from reserved port."
 msgstr ""
 
-#: src/ypbind_svc.c:99 src/ypbind_svc.c:182
+#: src/ypbind_svc.c:112 src/ypbind_svc.c:208
 msgid "unable to free arguments"
 msgstr ""
 
-#: src/ypbind_svc.c:102 src/ypbind_svc.c:185
+#: src/ypbind_svc.c:115 src/ypbind_svc.c:211
 msgid "unable to free results"
 msgstr ""

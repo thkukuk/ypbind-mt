@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2009, 2011, 2012, 2013 Thorsten Kukuk
+/* Copyright (c) 1998-2009, 2011, 2012, 2013, 2014 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -11,12 +11,8 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
 
-   You should have received a copy of the GNU General Public
-   License along with ypbind-mt; see the file COPYING.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA. */
-
-#define _GNU_SOURCE
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 #if defined(HAVE_CONFIG_H)
 #include "config.h"
@@ -34,16 +30,10 @@
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #include <rpc/pmap_prot.h>
-#if defined(HAVE_RPC_CLNT_SOC_H)
-#include <rpc/clnt_soc.h>
-#endif /* HAVE_RPC_CLNT_SOC_H */
 #include <sys/uio.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
-#if defined(HAVE_SYS_FILIO_H)
-#include <sys/filio.h>
-#endif
 
 #include "ypbind.h"
 #include "log_msg.h"
@@ -51,10 +41,6 @@
 #include "pthread_np.h"
 
 extern int verbose_flag;
-
-#if (defined(__sun__) || defined(sun)) && defined(__svr4__)
-typedef uint32_t u_int32_t;
-#endif
 
 #define _(String) gettext (String)
 
@@ -725,263 +711,6 @@ do_broadcast (struct binding *list)
 	     domain);
 }
 
-#if USE_BROADCAST
-
-static struct timeval timeout = { 1, 0 };
-static struct timeval tottimeout = { 1, 0 };
-
-/*
- * Find the mapped port for program,version.
- * Calls the pmap service remotely to do the lookup.
- * Returns 0 if no map exists.
- */
-static u_short
-__pmap_getport (struct sockaddr_in *address, u_long program, u_long version,
-		u_int protocol)
-{
-  u_short rport = 0;
-  int sock = -1;
-  CLIENT *client;
-  struct pmap parms;
-
-  address->sin_port = htons(PMAPPORT);
-
-  client =
-    clntudp_bufcreate (address, PMAPPROG, PMAPVERS, timeout, &sock,
-		       RPCSMALLMSGSIZE, RPCSMALLMSGSIZE);
-  if (client != (CLIENT *)NULL)
-    {
-      parms.pm_prog = program;
-      parms.pm_vers = version;
-      parms.pm_prot = protocol;
-      parms.pm_port = 0;  /* not needed or used */
-      if (CLNT_CALL(client, PMAPPROC_GETPORT, (xdrproc_t) xdr_pmap,
-		    (caddr_t) &parms, (xdrproc_t) xdr_u_short,
-		    (caddr_t) &rport, tottimeout) != RPC_SUCCESS)
-	{
-	  rpc_createerr.cf_stat = RPC_PMAPFAILURE;
-	  clnt_geterr(client, &rpc_createerr.cf_error);
-	}
-      else if (rport == 0)
-	{
-	  rpc_createerr.cf_stat = RPC_PROGNOTREGISTERED;
-	}
-      CLNT_DESTROY(client);
-    }
-  if (sock != -1)
-    close(sock);
-  address->sin_port = 0;
-  return rport;
-}
-
-
-/* Private data kept per client handle, from sunrpc/clnt_udp.c */
-struct cu_data
-  {
-    int cu_sock;
-    bool_t cu_closeit;
-    struct sockaddr_in cu_raddr;
-    int cu_rlen;
-    struct timeval cu_wait;
-    struct timeval cu_total;
-    struct rpc_err cu_error;
-    XDR cu_outxdrs;
-    u_int cu_xdrpos;
-    u_int cu_sendsz;
-    char *cu_outbuf;
-    u_int cu_recvsz;
-    char cu_inbuf[1];
-  };
-
-/* This is the function, which should find the fastest server */
-struct findserv_req
-{
-  u_int32_t xid;
-  u_int server_nr;
-  struct sockaddr_in sin;
-};
-
-/* This function sends a ping to every known ypserver. It returns 0,
-   if no running server is found, 1 else. */
-static int
-ping_all (struct binding *list)
-{
-  const struct timeval TIMEOUT50 = {5, 0};
-  const struct timeval TIMEOUT00 = {0, 0};
-  CLIENT *clnt;
-  struct findserv_req **pings;
-  struct sockaddr_in s_in, *any = NULL;
-  int found = 0;
-  u_int32_t xid_seed, xid_lookup;
-  int sock, dontblock = 1;
-  bool_t clnt_res;
-  u_long i, pings_count = 0;
-  struct cu_data *cu;
-  char *domain = list->domain;
-  int old_active = list->active;
-
-  if (list->server[0].host == NULL) /* There is no known server */
-    return 0;
-
-  pthread_rdwr_wlock_np (&domainlock);
-  list->active = -1;
-  pthread_rdwr_wunlock_np (&domainlock);
-
-  pings = malloc (sizeof (struct findserv_req *) * _MAXSERVER);
-  if (pings == NULL)
-    return 0;
-  xid_seed = (u_int32_t) (time (NULL) ^ getpid ());
-
-  for (i = 0; i < _MAXSERVER && list->server[i].host; ++i)
-    {
-      if (debug_flag)
-	log_msg (LOG_DEBUG, _("ping host '%s', domain '%s'"),
-		 list->server[i].host, list->domain);
-
-      memset (&s_in, 0, sizeof (struct sockaddr_in));
-      memcpy (&s_in.sin_addr, &(list->server[i].addr),
-	      sizeof (struct in_addr));
-      s_in.sin_family = list->server[i].family;
-      s_in.sin_port =
-	htons (__pmap_getport (&s_in, YPPROG, YPVERS, IPPROTO_UDP));
-      if (!broken_server && ntohs (s_in.sin_port) >= IPPORT_RESERVED)
-	{
-          log_msg (LOG_ERR,
-		   _("Answer for domain '%s' from '%s' on illegal port %d."),
-		   list->domain, list->server[i].host,
-		   ntohs (s_in.sin_port));
-	  continue;
-        }
-      list->server[i].port = s_in.sin_port;
-      if (s_in.sin_port == 0)
-	{
-	  if (verbose_flag && list->active == i)
-		log_msg (LOG_NOTICE, "NIS server '%s' not responding "
-		    "for domain '%s'", list->server[i].host, list->domain);
-
-	  if (debug_flag)
-	    log_msg (LOG_DEBUG, _("host '%s' doesn't answer."),
-		     list->server[i].host);
-	  continue;
-	}
-
-      pings[pings_count] = calloc (1, sizeof (struct findserv_req));
-      memcpy (&pings[pings_count]->sin, &s_in, sizeof(struct sockaddr_in));
-      any = &pings[pings_count]->sin;
-      pings[pings_count]->xid = xid_seed;
-      pings[pings_count]->server_nr = i;
-      ++xid_seed;
-      ++pings_count;
-    }
-
-  /* Make sure at least one server was assigned */
-  if (pings_count == 0)
-    {
-      free (pings);
-      return 0;
-    }
-
-  /* Create RPC handle */
-  sock = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-  clnt = clntudp_create (any, YPPROG, YPVERS, TIMEOUT50, &sock);
-  if (clnt == NULL)
-    {
-      close (sock);
-      for (i = 0; i < pings_count; ++i)
-        free (pings[i]);
-      free (pings);
-      return 0;
-    }
-  clnt->cl_auth = authunix_create_default ();
-  cu = (struct cu_data *) clnt->cl_private;
-  clnt_control (clnt, CLSET_TIMEOUT, (char *) &TIMEOUT00);
-  ioctl (sock, FIONBIO, &dontblock);
-
-  /* Send to all servers the YPPROC_DOMAIN_NONACK */
-  for (i = 0; i < pings_count; ++i)
-    {
-      /* clntudp_call() will increment, subtract one */
-      *((u_int32_t *) (cu->cu_outbuf)) = pings[i]->xid - 1;
-      memcpy (&(cu->cu_raddr), &pings[i]->sin, sizeof (struct sockaddr_in));
-      memset(&clnt_res, 0, sizeof (clnt_res));
-      /* Transmit to YPPROC_DOMAIN_NONACK, return immediately. */
-      clnt_call (clnt, YPPROC_DOMAIN_NONACK, (xdrproc_t) ypbind_xdr_domainname,
-		 (caddr_t) &domain, (xdrproc_t) xdr_bool, (caddr_t) &clnt_res,
-		 TIMEOUT00);
-    }
-
-  /* Receive reply from YPPROC_DOMAIN_NONACK asynchronously */
-  memset ((char *) &clnt_res, 0, sizeof (clnt_res));
-  clnt_call (clnt, YPPROC_DOMAIN_NONACK, (xdrproc_t) NULL, (caddr_t) NULL,
-             (xdrproc_t) xdr_bool, (caddr_t) &clnt_res, TIMEOUT00);
-
-  memcpy (&xid_lookup, &(cu->cu_inbuf), sizeof (u_int32_t));
-  close (sock);
-  for (i = 0; i < pings_count; ++i)
-    {
-      if (pings[i]->xid == xid_lookup)
-        {
-	  CLIENT *client_handle;
-	  pthread_rdwr_wlock_np (&domainlock);
-
-	  sock = RPC_ANYSOCK;
-	  client_handle = clntudp_create (&(pings[i]->sin),
-					  YPPROG, YPVERS, TIMEOUT50, &sock);
-	  if (client_handle == NULL)
-	    {
-	      /* NULL should not happen, we have got an answer from the server. */
-	      log_msg (LOG_DEBUG,
-		       _("Server '%s' for domain '%s' answered ping but failed to bind"),
-		       (list->active >= 0) ? list->server[list->active].host : "-",
-		       domain);
-	    }
-	  else
-	    {
-	      clnt_destroy (client_handle);
-
-	      memcpy (&(list->sin), &pings[i]->sin, sizeof(struct sockaddr_in));
-	      list->active = pings[i]->server_nr;
-	      pthread_rdwr_wunlock_np (&domainlock);
-	      pthread_rdwr_rlock_np (&domainlock);
-	      update_bindingfile (list);
-	      pthread_rdwr_runlock_np (&domainlock);
-
-	      if (debug_flag)
-		log_msg (LOG_DEBUG,
-			 _("Answer for domain '%s' from server '%s'"),
-			 domain, list->server[list->active].host);
-
-	      if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES) &&
-		  old_active != list->active)
-		{
-		  if (old_active == -1)
-		    log2file ("NIS server for domain '%s' set to '%s'",
-			      domain, list->server[list->active].host);
-		  else
-		    log2file ("NIS server for domain '%s' changed from '%s' to '%s'",
-			      domain, list->server[old_active].host,
-			      list->server[list->active].host);
-		}
-
-	      found = 1;
-	    }
-        }
-    }
-
-  auth_destroy (clnt->cl_auth);
-  clnt_destroy (clnt);
-
-  for (i = 0; i < pings_count; ++i)
-    free (pings[i]);
-  free (pings);
-
-  if (!found)
-    remove_bindingfile (list);
-
-  return found;
-}
-
-#else /* Don't send a ping to all server at the same time */
 
 static int
 ping_all (struct binding *list)
@@ -1095,7 +824,6 @@ ping_all (struct binding *list)
   return 0;
 }
 
-#endif
 
 void
 do_binding (void)

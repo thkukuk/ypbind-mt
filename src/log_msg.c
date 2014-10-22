@@ -11,16 +11,12 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
 
-   You should have received a copy of the GNU General Public
-   License along with ypbind-mt; see the file COPYING.  If not,
-   write to the Free Software Foundation, Inc., 51 Franklin Street - Suite 500,
-   Boston, MA 02110-1335, USA. */
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, see <http://www.gnu.org/licenses/>.  */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-
-#define _GNU_SOURCE
 
 #include <time.h>
 #include <stdarg.h>
@@ -51,9 +47,6 @@ void
 log_msg (int type, const char *fmt,...)
 {
   va_list ap;
-#ifndef HAVE_VSYSLOG
-  char msg[512];
-#endif
 
   va_start (ap, fmt);
 
@@ -65,12 +58,7 @@ log_msg (int type, const char *fmt,...)
     }
   else
     {
-#ifndef HAVE_VSYSLOG
-      vsnprintf (msg, 512, fmt, ap);
-      syslog (type, "%s", msg);
-#else
       vsyslog (type, fmt, ap);
-#endif
     }
 
   va_end (ap);

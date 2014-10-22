@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <netdb.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_clnt.h>
 #include <string.h>
@@ -69,20 +70,32 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
   memset ((char *) &argument, 0, sizeof (argument));
   if (!svc_getargs (transp, xdr_argument, (caddr_t) & argument))
     {
-      const struct sockaddr_in *sin =
-	svc_getcaller (rqstp->rq_xprt);
+      int error;
+      char host[NI_MAXHOST];
+      char serv[NI_MAXSERV];
+      struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
 
-      log_msg (LOG_ERR, "Cannot decode arguments for %d from %s:",
-	       rqstp->rq_proc, inet_ntoa (sin->sin_addr));
+      struct sockaddr *sap = (struct sockaddr *)(rqhost->buf);
 
-      if (logfile_flag && (logfile_flag & LOG_BROKEN_CALLS))
+      error = getnameinfo (sap, sizeof (struct sockaddr), 
+			   host, sizeof(host), serv, sizeof(serv),
+			   NI_NUMERICHOST | NI_NUMERICSERV);
+      if (error)
 	{
-	  log2file ("ypbindprog_1: cannot decode arguments for %d from %s:%i",
-		    rqstp->rq_proc,
-		    inet_ntoa (sin->sin_addr),
-		    rqstp->rq_xprt->xp_port);
+	  log_msg (LOG_ERR, "ypbindprog_1: getnameinfo(): %s", 
+		   gai_strerror(error));
 	}
-
+      else
+	{
+	  log_msg (LOG_ERR, "Cannot decode arguments for %d from %s:%s",
+		   rqstp->rq_proc, host, serv);
+	  
+	  if (logfile_flag && (logfile_flag & LOG_BROKEN_CALLS))
+	    {
+	      log2file ("ypbindprog_1: cannot decode arguments for %d from %s:%s:%i",
+			rqstp->rq_proc, host, serv, rqstp->rq_xprt->xp_port);
+	    }
+	}
       /* try to free already allocated memory during decoding.
 	 bnc#471924 */
       svc_freeargs (transp, xdr_argument, (caddr_t) &argument);
@@ -152,18 +165,31 @@ ypbindprog_2 (struct svc_req *rqstp, register SVCXPRT *transp)
   memset ((char *) &argument, 0, sizeof (argument));
   if (!svc_getargs (transp, xdr_argument, (caddr_t) & argument))
     {
-      const struct sockaddr_in *sin =
-	svc_getcaller (rqstp->rq_xprt);
+      int error;
+      char host[NI_MAXHOST];
+      char serv[NI_MAXSERV];
+      struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
 
-      log_msg (LOG_ERR, "Cannot decode arguments for %d from %s:",
-	       rqstp->rq_proc, inet_ntoa (sin->sin_addr));
+      struct sockaddr *sap = (struct sockaddr *)(rqhost->buf);
 
-      if (logfile_flag && (logfile_flag & LOG_BROKEN_CALLS))
+      error = getnameinfo (sap, sizeof (struct sockaddr), 
+			   host, sizeof(host), serv, sizeof(serv),
+			   NI_NUMERICHOST | NI_NUMERICSERV);
+      if (error)
 	{
-	  log2file ("ypbindprog_2: cannot decode arguments for %d from %s:%i",
-		    rqstp->rq_proc,
-		    inet_ntoa (sin->sin_addr),
-		    rqstp->rq_xprt->xp_port);
+	  log_msg (LOG_ERR, "ypbindprog_2: getnameinfo(): %s", 
+		   gai_strerror(error));
+	}
+      else
+	{
+	  log_msg (LOG_ERR, "Cannot decode arguments for %d from %s:%s",
+		   rqstp->rq_proc, host, serv);
+	  
+	  if (logfile_flag && (logfile_flag & LOG_BROKEN_CALLS))
+	    {
+	      log2file ("ypbindprog_2: cannot decode arguments for %d from %s:%s:%i",
+			rqstp->rq_proc, host, serv, rqstp->rq_xprt->xp_port);
+	    }
 	}
 
       /* try to free already allocated memory during decoding.

@@ -66,19 +66,6 @@
       </varlistentry>
 
       <varlistentry>
-        <term><emphasis remap='B'>domain</emphasis> <emphasis remap='I'>nisdomain</emphasis> <emphasis remap='B'>slp</emphasis></term>
-        <listitem>
-          <para>
-            Query the local running SLP server for hosts running
-            ypserv and distributing <emphasis remap='I'>nisdomain</emphasis>.
-            This option is only available, if
-            <emphasis remap='B'>ypbind</emphasis> was compiled with SLP
-            support.
-          </para>
-        </listitem>
-      </varlistentry>
-
-      <varlistentry>
         <term><emphasis remap='B'>ypserver</emphasis> <emphasis remap='I'>hostname</emphasis></term>
         <listitem>
           <para>
