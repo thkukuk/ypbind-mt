@@ -44,11 +44,6 @@ extern int verbose_flag;
 
 #define _(String) gettext (String)
 
-#define YPPROG ((u_long)100004)
-#define YPVERS ((u_long)2)
-#define YPPROC_DOMAIN ((u_long)1)
-#define YPPROC_DOMAIN_NONACK ((u_long)2)
-
 #define _MAXSERVER 30
 
 struct bound_server
@@ -139,7 +134,7 @@ update_bindingfile (struct binding *entry)
   /* The calling functions must hold a lock ! */
   unsigned short int sport = port;
   struct iovec iov[2];
-  struct ypbind_resp ybres;
+  struct ypbind2_resp ybres;
   char path1[MAXPATHLEN + 1], path2[MAXPATHLEN + 1];
   int fd, len;
 
@@ -161,10 +156,10 @@ update_bindingfile (struct binding *entry)
           return;
         }
 
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-	      &entry->server[entry->active].addr, sizeof (struct in_addr));
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-	      &entry->server[entry->active].port, sizeof (unsigned short int));
+      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
+	entry->server[entry->active].addr;
+      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
+	entry->server[entry->active].port;
       entry->last= entry->server[entry->active];
     }
   else if (entry->active == -2) /* ypset was used */
@@ -179,10 +174,10 @@ update_bindingfile (struct binding *entry)
 		     entry->domain);
           return;
         }
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-	      &entry->ypset.addr, sizeof (struct in_addr));
-      memcpy (&ybres.ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-	      &entry->ypset.port, sizeof (unsigned short int));
+      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
+	entry->ypset.addr;
+      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
+	entry->ypset.port;
       entry->last= entry->ypset;
     }
   else
@@ -233,7 +228,7 @@ update_bindingfile (struct binding *entry)
 
 /* this is called from the RPC thread (ypset). */
 void
-change_binding (const char *domain, ypbind_binding *binding)
+change_binding (const char *domain, ypbind2_binding *binding)
 {
   int i;
 
@@ -290,7 +285,7 @@ change_binding (const char *domain, ypbind_binding *binding)
 }
 
 void
-find_domain (const char *domain, ypbind_resp *result)
+find_domain (const char *domain, ypbind2_resp *result)
 {
   int i, count = 0;
 
@@ -314,12 +309,10 @@ find_domain (const char *domain, ypbind_resp *result)
   if (domainlist[i].active >= 0)
     {
       result->ypbind_status = YPBIND_SUCC_VAL;
-      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-	      &domainlist[i].server[domainlist[i].active].addr,
-	      sizeof (struct in_addr));
-      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-	      &domainlist[i].server[domainlist[i].active].port,
-	      sizeof (unsigned short int));
+      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
+	domainlist[i].server[domainlist[i].active].addr;
+      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
+	domainlist[i].server[domainlist[i].active].port;
       if (debug_flag)
 	log_msg (LOG_DEBUG, "YPBINDPROC_DOMAIN: server '%s', port %d",
 		 inet_ntoa(domainlist[i].server[domainlist[i].active].addr),
@@ -328,11 +321,10 @@ find_domain (const char *domain, ypbind_resp *result)
   else if (domainlist[i].active == -2)
     {
       result->ypbind_status = YPBIND_SUCC_VAL;
-      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_addr,
-	      &domainlist[i].ypset.addr, sizeof (struct in_addr));
-      memcpy (&result->ypbind_resp_u.ypbind_bindinfo.ypbind_binding_port,
-	      &domainlist[i].ypset.port,
-	      sizeof (unsigned short int));
+      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
+	domainlist[i].ypset.addr;
+      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
+	domainlist[i].ypset.port;
       if (debug_flag)
 	log_msg (LOG_DEBUG,
 		 "YPBINDPROC_DOMAIN: server '%s', port %d",
@@ -691,7 +683,7 @@ do_broadcast (struct binding *list)
   in_use = list; /* global variable for eachresult */
 
   status = clnt_broadcast (YPPROG, YPVERS, YPPROC_DOMAIN_NONACK,
-			   (xdrproc_t) ypbind_xdr_domainname, (void *)&domain,
+			   (xdrproc_t) xdr_domainname, (void *)&domain,
 			   (xdrproc_t) xdr_bool, (void *)&out,
 			   (resultproc_t) eachresult);
 
@@ -764,7 +756,7 @@ ping_all (struct binding *list)
       timeout.tv_sec = 5;
       timeout.tv_usec = 0;
       status = clnt_call(clnt_handlep, YPPROC_DOMAIN,
-                         (xdrproc_t) ypbind_xdr_domainname, (caddr_t) &domain,
+                         (xdrproc_t) xdr_domainname, (caddr_t) &domain,
                          (xdrproc_t) xdr_bool, (caddr_t) &out, timeout);
       if (RPC_SUCCESS != status)
         {
@@ -947,7 +939,7 @@ test_bindings_once (int lastcheck, const char *req_domain)
 		  time_out.tv_usec = 0;
 		  status =
 		    clnt_call(client_handle, YPPROC_DOMAIN,
-			      (xdrproc_t) ypbind_xdr_domainname,
+			      (xdrproc_t) xdr_domainname,
 			      (caddr_t) &domain,
 			      (xdrproc_t) xdr_bool,
 			      (caddr_t) &out, time_out);

@@ -11,11 +11,11 @@ extern int localhost_used;
 extern int rebind_interval;
 extern char domain[];
 
-extern void find_domain (const char *domain, ypbind_resp *result);
+extern void find_domain (const char *domain, ypbind2_resp *result);
 extern void clear_server (void);
 extern int  add_server (const char *__domain, const char *__host,
 			int __check_syntax);
-extern void change_binding (const char *__domain, ypbind_binding *binding);
+extern void change_binding (const char *__domain, ypbind2_binding *binding);
 extern int load_config (int check_syntax);
 
 extern void *test_bindings (void *param);
@@ -33,6 +33,7 @@ extern void do_binding (void);
 
 extern void ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp);
 extern void ypbindprog_2 (struct svc_req *rqstp, register SVCXPRT *transp);
+extern void ypbindprog_3 (struct svc_req *rqstp, register SVCXPRT *transp);
 
 #if !defined (HAVE___NSS_CONFIGURE_LOOKUP)
 /* the res_gethost* functions are not in standard header files */

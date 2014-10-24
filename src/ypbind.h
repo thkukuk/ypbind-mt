@@ -18,6 +18,7 @@
 #define __YPBIND_H__
 
 #include <rpc/rpc.h>
+#include <rpcsvc/yp_prot.h>
 
 #include <pthread.h>
 
@@ -35,91 +36,32 @@ extern int ypset;
 
 typedef char *domainname;
 
-/*
- * Response structure and overall result status codes.  Success and failure
- * represent two separate response message types.
- */
-
-enum ypbind_resptype {
-	YPBIND_SUCC_VAL = 1,
-	YPBIND_FAIL_VAL = 2,
-};
-typedef enum ypbind_resptype ypbind_resptype;
-
-struct ypbind_binding {
-	char ypbind_binding_addr[4];
-	char ypbind_binding_port[2];
-};
-typedef struct ypbind_binding ypbind_binding;
-
-struct ypbind_resp {
-	ypbind_resptype ypbind_status;
-	union {
-		u_int ypbind_error;
-		ypbind_binding ypbind_bindinfo;
-	} ypbind_resp_u;
-};
-typedef struct ypbind_resp ypbind_resp;
-
 /* Detailed failure reason codes for response field ypbind_error*/
 #define YPBIND_ERR_ERR 1
 #define YPBIND_ERR_NOSERV 2
 #define YPBIND_ERR_RESC 3
 
-/*
- * Request data structure for ypbind "Set domain" procedure.
- */
-
-struct ypbind_oldsetdom {
-	char ypoldsetdom_domain[YPMAXDOMAIN];
-	ypbind_binding ypoldsetdom_binding;
-};
-typedef struct ypbind_oldsetdom ypbind_oldsetdom;
-#define ypoldsetdom_addr ypoldsetdom_binding.ypbind_binding_addr
-#define ypoldsetdom_port ypoldsetdom_binding.ypbind_binding_port
-
-struct ypbind_setdom {
-	domainname ypsetdom_domain;
-	ypbind_binding ypsetdom_binding;
-	u_int ypsetdom_vers;
-};
-typedef struct ypbind_setdom ypbind_setdom;
-
-/*
- * NIS binding protocol
- */
-
-#define YPBINDPROG    100007
-#define YPBINDVERS_1  1
-#define YPBINDVERS_2  2
-#define YPBINDVERS_3  3
-
-
 #define YPBINDPROC_OLDNULL 0
 extern  bool_t ypbindproc_oldnull_1_svc(void *, void *, struct svc_req *);
 #define YPBINDPROC_OLDDOMAIN 1
-extern  bool_t ypbindproc_olddomain_1_svc(domainname *, ypbind_resp *, struct svc_req *);
+extern  bool_t ypbindproc_olddomain_1_svc(domainname *, ypbind2_resp *, struct svc_req *);
 #define YPBINDPROC_OLDSETDOM 2
 extern  bool_t ypbindproc_oldsetdom_1_svc(ypbind_oldsetdom *, void *, struct svc_req *);
 extern int ypbindprog_1_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 
 #define YPBINDPROC_NULL 0
-extern  bool_t ypbindproc_null_2_svc(void *, void *, struct svc_req *);
+extern  bool_t ypbindproc_null_2_svc (void *, void *, struct svc_req *);
 #define YPBINDPROC_DOMAIN 1
-extern  bool_t ypbindproc_domain_2_svc(domainname *, ypbind_resp *, struct svc_req *);
+extern  bool_t ypbindproc_domain_2_svc (domainname *, ypbind2_resp *, struct svc_req *);
 #define YPBINDPROC_SETDOM 2
-extern  bool_t ypbindproc_setdom_2_svc(ypbind_setdom *, void *, struct svc_req *);
+extern  bool_t ypbindproc_setdom_2_svc (ypbind2_setdom *, void *, struct svc_req *);
 extern int ypbindprog_2_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
-/* the xdr functions */
-
-extern  bool_t ypbind_xdr_domainname (XDR *, domainname*);
-extern  bool_t ypbind_xdr_resptype (XDR *, ypbind_resptype*);
-extern  bool_t ypbind_xdr_binding (XDR *, ypbind_binding*);
-extern  bool_t ypbind_xdr_resp (XDR *, ypbind_resp*);
-extern  bool_t ypbind_xdr_oldsetdom (XDR *, ypbind_oldsetdom*);
-extern  bool_t ypbind_xdr_setdom (XDR *, ypbind_setdom*);
+extern  bool_t ypbindproc_null_3_svc (void *, void *, struct svc_req *);
+extern  bool_t ypbindproc_domain_3_svc (domainname *, ypbind3_resp *, struct svc_req *);
+extern  bool_t ypbindproc_setdom_3_svc (ypbind3_setdom *, void *, struct svc_req *);
+extern int ypbindprog_3_freeresult (SVCXPRT *, xdrproc_t, caddr_t);
 
 #ifdef __cplusplus
 }

@@ -39,6 +39,7 @@
 #include <rpc/rpc.h>
 #include <rpc/nettype.h>
 #include <rpc/rpc_com.h>
+#include <rpcsvc/yp_prot.h>
 #include <pthread.h>
 #include <nss.h>
 #include <paths.h>
@@ -476,7 +477,7 @@ portmapper_disconnect (void)
 {
   rpcb_unset (YPBINDPROG, YPBINDVERS_1, NULL);
   rpcb_unset (YPBINDPROG, YPBINDVERS_2, NULL);
-  rpcb_unset (YPBINDPROG, YPBINDVERS_3, NULL);
+  rpcb_unset (YPBINDPROG, YPBINDVERS, NULL);
 }
 
 /* Register at portmapper */
@@ -486,9 +487,6 @@ portmapper_register (void)
 {
   struct netconfig *nconf;
   void *nc_handle;
-  uint32_t inet_tpts = 0, inet6_tpts = 0;
-  uint32_t inet_desired_tpts = 0, inet6_desired_tpts = 0;
-  int loopback_found = 0, udp_found = 0;
   int connmaxrec = RPC_MAXDATASIZE;
 
 #if 0 /* XXX */
@@ -500,113 +498,61 @@ portmapper_register (void)
 
   /* Set non-blocking mode and maximum record size for
      connection oriented RPC transports. */
-  if (!rpc_control(RPC_SVC_CONNMAXREC_SET, &connmaxrec)) 
+  if (!rpc_control(RPC_SVC_CONNMAXREC_SET, &connmaxrec))
     log_msg (LOG_ERR, "unable to set maximum RPC record size");
 
   portmapper_disconnect ();
 
   nc_handle = __rpc_setconf ("netpath");   /* open netconfig file */
-  if (nc_handle == NULL) 
+  if (nc_handle == NULL)
     {
       log_msg(LOG_ERR, "could not read /etc/netconfig, exiting..");
       return 1;
     }
-  
-  while ((nconf = __rpc_getconf (nc_handle))) {
-    SVCXPRT *xprt;
 
-    if (debug_flag)
-      log_msg (LOG_DEBUG, "Call svc_tp_create for %s", nconf->nc_protofmly);
-    
-    if ((xprt = svc_tp_create(ypbindprog_2,
-			      YPBINDPROG, YPBINDVERS_2, nconf)) == NULL) 
-      {
-	log_msg (LOG_ERR, "terminating: cannot create rpcbind handle");
-	return 1;
-      }
-    
-    /* support ypbind V2 and V1, but only on udp/tcp transports */
-    /* XXX which sense makes this compares? */
-    if (((strcmp(nconf->nc_protofmly, NC_INET) == 0) ||
-	 (strcmp(nconf->nc_protofmly, NC_INET6))) &&
-	((nconf->nc_semantics == NC_TPI_CLTS) ||
-	 (nconf->nc_semantics == NC_TPI_COTS_ORD))) 
-      {
-	
-	if (strcmp(nconf->nc_protofmly, NC_INET))
-	  inet_desired_tpts |= 1 >> nconf->nc_semantics;
-	else
-	  inet6_desired_tpts |= 1 >> nconf->nc_semantics;
-	
-#if 0 /* XXX */	
-	rpcb_unset(YPBINDPROG, YPBINDVERS_2, nconf);
-	if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_2, ypbindprog_2, nconf))
-	  {
-	    log_msg (LOG_INFO,
-		     _("unable to register (YPBINDPROG, YPBINDVERS_2) [%s]"),
-		     nconf->nc_netid);
-	    continue;
-	  }	
-#endif
+  while ((nconf = __rpc_getconf (nc_handle)))
+    {
+      SVCXPRT *xprt;
 
-	/* For NC_INET, register v1 as well; error is fatal */
-	if (strcmp(nconf->nc_protofmly, NC_INET) == 0) 
-	  {
-	    (void) rpcb_unset(YPBINDPROG, YPBINDVERS_1, nconf);
-	    if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_1,
-			 ypbindprog_1, nconf)) 
-	      {
-		log_msg (LOG_ERR,
-			 _("unable to register (YPBINDPROG, YPBINDVERS_1)."));
-		continue;
-	      }
-	    
-	  }
-	
-	if (nconf->nc_semantics == NC_TPI_CLTS)
-	  udp_found++;
-	
-	if (strcmp(nconf->nc_protofmly, NC_INET))
-	  inet_tpts |= 1 >> nconf->nc_semantics;
-	else
-	  inet6_tpts |= 1 >> nconf->nc_semantics;
-      }
-    
-    if (strcmp(nconf->nc_protofmly, NC_LOOPBACK) == 0) {
-      loopback_found++;
+      if (debug_flag)
+	log_msg (LOG_DEBUG, "Call svc_tp_create for %s", nconf->nc_protofmly);
+
+      if ((xprt = svc_tp_create(ypbindprog_3,
+				YPBINDPROG, YPBINDVERS, nconf)) == NULL)
+	{
+	  log_msg (LOG_ERR, "terminating: cannot create rpcbind handle");
+	  return 1;
+	}
+
+      /* support ypbind V2 and V1, but only on udp/tcp transports */
+      if (strcmp(nconf->nc_protofmly, NC_INET) == 0)
+	{
+	  if (debug_flag)
+	    log_msg (LOG_DEBUG, "Register YPBINDVERS 1 and 2 for %s,%s",
+		     nconf->nc_protofmly, nconf->nc_proto);
+
+	  rpcb_unset(YPBINDPROG, YPBINDVERS_2, nconf);
+	  if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_2, ypbindprog_2, nconf))
+	    {
+	      log_msg (LOG_INFO,
+		       _("unable to register (YPBINDPROG, YPBINDVERS_2) [%s]"),
+		       nconf->nc_netid);
+	      continue;
+	    }
+
+	  rpcb_unset(YPBINDPROG, YPBINDVERS_1, nconf);
+	  if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_1,
+		       ypbindprog_1, nconf))
+	    {
+	      log_msg (LOG_ERR,
+		       _("unable to register (YPBINDPROG, YPBINDVERS_1)."));
+	      continue;
+	    }
+
+	}
     }
-  }
-  
-  __rpc_endconf (nc_handle);	
 
-  /* Did we manage to register all IPv4 or all IPv6 transports ? */
-  if (inet_tpts != 0 && inet_tpts != inet_desired_tpts)
-    {
-      log_msg (LOG_ERR,
-	       _("unable to register all %s transports, exiting..."), NC_INET);
-      return 1;
-    } 
-  else if (inet6_tpts != 0 && inet6_tpts != inet6_desired_tpts) 
-    {
-      log_msg (LOG_ERR,
-	       _("unable to register all %s transports, exiting..."), NC_INET6);
-      return 1;
-    }        
-
-#if 0 /* XXX doesn't work on Linux? */
-  if (!loopback_found) 
-    {
-      log_msg (LOG_ERR,
-	       _("could not find loopback transports, exiting..."));
-      // return 1;
-    }
-#endif
-  if (!udp_found) 
-    {
-      log_msg (LOG_ERR,
-	       _("could not find inet-clts (udp) transport, exiting..."));
-      return 1;
-    }
+  __rpc_endconf (nc_handle);
 
   return 0;
 }

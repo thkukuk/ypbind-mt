@@ -26,9 +26,8 @@ AC_CHECK_LIB(pthread, pthread_create)
 
 PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 209], [USE_SD_NOTIFY=1], [USE_SD_NOTIFY=0])
 AC_SUBST(USE_SD_NOTIFY)
-
-PKG_CHECK_MODULES([TIRPC], [libtirpc], [USE_IPV6=1], [USE_IPV6=0])
-AC_SUBST(USE_IPV6)
+PKG_CHECK_MODULES([NIS], [libnis])
+PKG_CHECK_MODULES([TIRPC], [libtirpc])
 
 
 dnl AC_ARG_ENABLE([dbus-nm],

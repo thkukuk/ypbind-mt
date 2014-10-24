@@ -9,6 +9,7 @@ Version 1.99.3
 * Disable NetworkManager/DBUS support
 * Link against libtirpc
 * Listen to IPv6 connections, too
+* Register as Version 3, too
 
 Version 1.38
 * Use pkg-config in configure script
