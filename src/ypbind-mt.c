@@ -67,7 +67,9 @@ int broken_server = 0;
 int foreground_flag = 0;
 int ping_interval = 20;
 int local_only = 0;
+#ifdef USE_DBUS_NM
 int localhost_used = 1;
+#endif
 int port = -1;
 int rebind_interval = 900; /* 900 = 15min. */
 char domain[1025];

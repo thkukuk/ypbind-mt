@@ -118,7 +118,7 @@ ypbindproc_domain (char *domain_name, ypbind2_resp *result)
     }
 
   test_bindings_once (1, domain_name);
-  find_domain (domain_name, result);
+  find_domain_v2 (domain_name, result);
 
   if (debug_flag)
     {
@@ -239,10 +239,8 @@ ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
       return TRUE;
     }
 
-#if 0 /* XXX */
-  test_bindings_once (1, domain_name);
-  find_domain (domain_name, result);
-#endif
+  test_bindings_once (1, *argp);
+  find_domain_v3 (*argp, result);
 
   if (debug_flag)
     {
@@ -254,6 +252,16 @@ ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
   return TRUE;
 
 }
+
+/*  XXX Implement this! XXX
+ *  We use a trick from SunOS to return an error to the ypset command
+ *  when we are not allowing the domain to be set.  We do a svcerr_noprog()
+ *  to send RPC_PROGUNAVAIL to ypset.  We also return NULL so that
+ *  our caller (ypbindprog_3) won't try to return a result.  This
+ *  hack is necessary because the YPBINDPROC_SETDOM procedure is defined
+ *  in the protocol to return xdr_void, so we don't have a direct way to
+ *  return an error to the client.
+ */
 
 static bool_t
 ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,

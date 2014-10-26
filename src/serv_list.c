@@ -46,39 +46,39 @@ extern int verbose_flag;
 
 #define _MAXSERVER 30
 
-struct bound_server
-{
-  char *host;
-  sa_family_t family;
-  struct in_addr addr;
-  u_short port;
-};
-
 struct binding
 {
   char domain[YPMAXDOMAIN + 1];
   int active; /* index into server, -2 means ypset */
   bool_t use_broadcast;
-  struct bound_server server[_MAXSERVER];
-  struct bound_server ypset;
-  struct sockaddr_in sin;
-  struct bound_server last; /* last written */
+  struct ypbind3_binding *server[_MAXSERVER];
+  struct ypbind3_binding *ypset;
 };
-static inline char *
-bound_host(struct binding *bptr)
+
+static const char *
+get_server_str (struct ypbind3_binding *ypb3)
 {
-  struct bound_server *sptr;
-
-  if (bptr->active >= 0)
-  	sptr = &bptr->server[bptr->active];
-  else if (bptr->active == -2)
-  	sptr = &bptr->ypset;
+  if (ypb3->ypbind_servername != NULL)
+    return ypb3->ypbind_servername;
   else
-  	return "Unknown Host";
+    {
+      static char buf[INET6_ADDRSTRLEN];
 
-  if (sptr->host != NULL)
-  	return(sptr->host);
-  return (inet_ntoa(sptr->addr));
+      return taddr2ipstr (ypb3->ypbind_nconf, ypb3->ypbind_svcaddr,
+			  buf, sizeof (buf));
+    }
+
+}
+
+static const char *
+bound_host (struct binding *bptr)
+{
+  if (bptr->active >= 0)
+    return get_server_str (bptr->server[bptr->active]);
+  else if (bptr->active == -2)
+    return get_server_str (bptr->ypset);
+  else
+    return "Unknown Host";
 }
 
 static struct binding *domainlist = NULL;
@@ -89,6 +89,7 @@ static pthread_mutex_t search_lock = PTHREAD_MUTEX_INITIALIZER;
 static void do_broadcast (struct binding *list);
 static int ping_all (struct binding *list);
 
+#ifdef USE_DBUS_NM
 /* We have localhost defined in one of the domains.
  * If so, we don't need to be connected to outer network. */
 void
@@ -110,6 +111,121 @@ check_localhost()
         }
     }
 }
+#endif
+
+static void
+ypbind3_binding_free (struct ypbind3_binding *ypb)
+{
+  if (ypb == NULL)
+    return;
+  /* XXX netdir_free ((char *)ypb->ypbind_svcaddr, ND_ADDR); */
+  free (ypb->ypbind_servername);
+  freenetconfigent (ypb->ypbind_nconf);
+  free (ypb);
+}
+
+static struct ypbind3_binding *
+ypbind3_binding_dup (struct ypbind3_binding *src)
+{
+#define copy_str(source, dest) \
+  if (source != NULL) \
+    { \
+      dest = strdup (source); \
+      if (dest == NULL) \
+        { \
+          ypbind3_binding_free (dst); \
+          return NULL; \
+	} \
+    }
+
+  struct ypbind3_binding *dst;
+  int i;
+
+  dst = calloc(1, sizeof (struct ypbind3_binding));
+  if (dst == NULL)
+    return NULL;
+
+  dst->ypbind_nconf = calloc (1, sizeof (struct netconfig));
+  if (dst->ypbind_nconf == NULL)
+    {
+      ypbind3_binding_free (dst);
+      return NULL;
+    }
+  dst->ypbind_svcaddr = calloc(1, sizeof (struct netbuf));
+  if (dst->ypbind_svcaddr == NULL)
+    {
+      ypbind3_binding_free (dst);
+      return NULL;
+    }
+  dst->ypbind_hi_vers = src->ypbind_hi_vers;
+  dst->ypbind_lo_vers = src->ypbind_lo_vers;
+  if (src->ypbind_servername)
+    dst->ypbind_servername =
+      strdup(src->ypbind_servername);
+
+  copy_str (src->ypbind_nconf->nc_netid, dst->ypbind_nconf->nc_netid);
+  dst->ypbind_nconf->nc_semantics = src->ypbind_nconf->nc_semantics;
+  dst->ypbind_nconf->nc_flag = src->ypbind_nconf->nc_flag;
+  copy_str (src->ypbind_nconf->nc_protofmly, dst->ypbind_nconf->nc_protofmly);
+  copy_str (src->ypbind_nconf->nc_proto, dst->ypbind_nconf->nc_proto);
+  copy_str (src->ypbind_nconf->nc_device, dst->ypbind_nconf->nc_device);
+  dst->ypbind_nconf->nc_nlookups = src->ypbind_nconf->nc_nlookups;
+
+  dst->ypbind_nconf->nc_lookups = calloc (src->ypbind_nconf->nc_nlookups,
+					  sizeof (char *));
+  if (dst->ypbind_nconf->nc_lookups == NULL)
+    {
+      ypbind3_binding_free (dst);
+      return NULL;
+    }
+  for (i = 0; i < src->ypbind_nconf->nc_nlookups; i++)
+    dst->ypbind_nconf->nc_lookups[i] =
+      src->ypbind_nconf->nc_lookups[i] ?
+      strdup (src->ypbind_nconf->nc_lookups[i]) : NULL;
+
+  for (i = 0; i < 8; i++)
+    dst->ypbind_nconf->nc_unused[i] = src->ypbind_nconf->nc_unused[i];
+
+  dst->ypbind_svcaddr->maxlen = src->ypbind_svcaddr->maxlen;
+  dst->ypbind_svcaddr->len = src->ypbind_svcaddr->len;
+  dst->ypbind_svcaddr->buf = malloc(src->ypbind_svcaddr->maxlen);
+  if (dst->ypbind_svcaddr->buf == NULL)
+    {
+      ypbind3_binding_free (dst);
+      return NULL;
+    }
+  memcpy (dst->ypbind_svcaddr->buf, src->ypbind_svcaddr->buf,
+	  src->ypbind_svcaddr->len);
+
+  return dst;
+}
+
+
+static struct ypbind2_resp
+convert_v3_to_respv2 (struct ypbind3_binding *ypb3)
+{
+  struct sockaddr_in *sin;
+  struct ypbind2_resp resp;
+
+  memset (&resp, '\0', sizeof (resp));
+
+  resp.ypbind_status = YPBIND_SUCC_VAL;
+
+  sin = (struct sockaddr_in *)
+    ypb3->ypbind_svcaddr->buf;
+  if (sin->sin_family == AF_INET)
+    {
+      resp.ypbind2_addr = sin->sin_addr;
+      resp.ypbind2_port = sin->sin_port;
+    }
+  else
+    {
+      resp.ypbind_status = YPBIND_FAIL_VAL;
+      resp.ypbind2_error = YPBIND_ERR_NOSERV;
+    }
+
+  return resp;
+}
 
 static void
 remove_bindingfile (struct binding *entry)
@@ -117,84 +233,52 @@ remove_bindingfile (struct binding *entry)
   const char *domain_name = entry->domain;
   char path[strlen (BINDINGDIR) + strlen (domain_name) + 10];
 
-  /* We want to re-create binding files after binding is OK again */
-  entry->last.host = NULL;
-
   sprintf (path, "%s/%s.1", BINDINGDIR, domain_name);
   unlink (path);
   sprintf (path, "%s/%s.2", BINDINGDIR, domain_name);
+  unlink (path);
+  sprintf (path, "%s/%s.3", BINDINGDIR, domain_name);
   unlink (path);
 }
 
 #define FILE_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
 
+/* XXX Add binding file version 3 */
 static void
 update_bindingfile (struct binding *entry)
 {
   /* The calling functions must hold a lock ! */
   unsigned short int sport = port;
   struct iovec iov[2];
-  struct ypbind2_resp ybres;
-  char path1[MAXPATHLEN + 1], path2[MAXPATHLEN + 1];
+  struct ypbind2_resp ypbres2;
+  char path1[MAXPATHLEN + 1];
+  char path2[MAXPATHLEN + 1];
+  char path3[MAXPATHLEN + 1];
   int fd, len;
 
   sprintf (path1, "%s/%s.1", BINDINGDIR, entry->domain);
   sprintf (path2, "%s/%s.2", BINDINGDIR, entry->domain);
+  sprintf (path3, "%s/%s.3", BINDINGDIR, entry->domain);
 
-  memset(&ybres, 0, sizeof (ybres));
-  ybres.ypbind_status = YPBIND_SUCC_VAL;
   if (entry->active >= 0)
-    {
-      if (entry->last.host &&
-          !memcmp(&entry->server[entry->active].addr, &entry->last.addr,
-		  sizeof(struct in_addr)) &&
-          entry->server[entry->active].port == entry->last.port)
-        {
-	  if (debug_flag)
-	    log_msg (LOG_DEBUG, "Entry for %s unchanged, skipping writeout",
-		     entry->domain);
-          return;
-        }
-
-      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
-	entry->server[entry->active].addr;
-      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
-	entry->server[entry->active].port;
-      entry->last= entry->server[entry->active];
-    }
+      ypbres2 = convert_v3_to_respv2 (entry->server[entry->active]);
   else if (entry->active == -2) /* ypset was used */
-    {
-      if (entry->last.host &&
-          !memcmp(&entry->ypset.addr, &entry->last.addr,
-		  sizeof(struct in_addr)) &&
-          entry->ypset.port == entry->last.port)
-        {
-	  if (debug_flag)
-	    log_msg (LOG_DEBUG, "Entry for %s unchanged, skipping writeout",
-		     entry->domain);
-          return;
-        }
-      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
-	entry->ypset.addr;
-      ybres.ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
-	entry->ypset.port;
-      entry->last= entry->ypset;
-    }
+    ypbres2 = convert_v3_to_respv2 (entry->ypset);
   else
     {
        /* This should not happen. Remove binding files which means,
           libc will query ypbind direct. */
        unlink (path1);
        unlink (path2);
-       entry->last.host = NULL;
+       unlink (path3);
        log_msg (LOG_ERR, "INTERNAL ERROR: update_bindingfile called without valid data!");
        return;
     }
 
   iov[0].iov_base = (caddr_t) &sport;
   iov[0].iov_len = sizeof (sport);
-  iov[1].iov_base = (caddr_t) &ybres;
-  iov[1].iov_len = sizeof ybres;
+  iov[1].iov_base = (caddr_t) &ypbres2;
+  iov[1].iov_len = sizeof ypbres2;
 
   len = iov[0].iov_len + iov[1].iov_len;
 
@@ -203,7 +287,6 @@ update_bindingfile (struct binding *entry)
       if (writev (fd, iov, 2) != len )
         {
           log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
-	  entry->last.host = NULL;
           unlink (path1);
         }
       close (fd);
@@ -216,19 +299,20 @@ update_bindingfile (struct binding *entry)
       if (writev (fd, iov, 2) != len )
         {
           log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
-	   entry->last.host = NULL;
           unlink (path2);
         }
       close (fd);
     }
   else
     log_msg (LOG_ERR, "open(%s): %s", path2, strerror (errno));
+#ifdef USE_DBUS_NM
   check_localhost();
+#endif
 }
 
 /* this is called from the RPC thread (ypset). */
 void
-change_binding (const char *domain, ypbind2_binding *binding)
+change_binding (const char *domain, ypbind3_binding *binding)
 {
   int i;
 
@@ -238,36 +322,23 @@ change_binding (const char *domain, ypbind2_binding *binding)
     {
       if (strcmp (domainlist[i].domain, domain) == 0)
 	{
-	  struct sockaddr_in addr;
-
 	  pthread_rdwr_runlock_np (&domainlock);
 	  pthread_rdwr_wlock_np (&domainlock);
 
+	  domainlist[i].ypset = ypbind3_binding_dup (binding);
 	  domainlist[i].active = -2;
-	  memcpy(&(domainlist[i].ypset.addr),
-		 &(binding->ypbind_binding_addr),
-		 sizeof (struct in_addr));
-	  memcpy(&(domainlist[i].ypset.port),
-		 &(binding->ypbind_binding_port),
-		 sizeof (unsigned short int));
-	  domainlist[i].ypset.family = AF_INET;
 
-          memset (&addr, 0, sizeof (struct sockaddr_in));
-          memcpy (&addr.sin_addr, &domainlist[i].ypset.addr,
-                  sizeof (struct in_addr));
-          memcpy (&addr.sin_port, &domainlist[i].ypset.port,
-                  sizeof (unsigned short int));
-          addr.sin_family = domainlist[i].ypset.family;
-	  memcpy (&domainlist[i].sin, &addr, sizeof (struct sockaddr_in));
 	  pthread_rdwr_wunlock_np (&domainlock);
+
 	  pthread_rdwr_rlock_np (&domainlock);
 	  update_bindingfile (&domainlist[i]);
 	  pthread_rdwr_runlock_np (&domainlock);
+
 	  if (verbose_flag)
 	    {
 	      log_msg (LOG_NOTICE, "NIS server set to '%s'"
-		" for domain '%s'",
-	        bound_host(&domainlist[i]), domainlist[i].domain);
+		       " for domain '%s'",
+		       bound_host(&domainlist[i]), domainlist[i].domain);
 	    }
 	  if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES))
 	    {
@@ -285,7 +356,7 @@ change_binding (const char *domain, ypbind2_binding *binding)
 }
 
 void
-find_domain (const char *domain, ypbind2_resp *result)
+find_domain_v3 (const char *domain, ypbind3_resp *result)
 {
   int i, count = 0;
 
@@ -298,7 +369,7 @@ find_domain (const char *domain, ypbind2_resp *result)
     if (strcmp (domainlist[i].domain, domain) == 0)
       break;
 
-  if ( i >= max_domains)
+  if (i >= max_domains)
     {
       pthread_rdwr_runlock_np (&domainlock);
       return;
@@ -309,27 +380,29 @@ find_domain (const char *domain, ypbind2_resp *result)
   if (domainlist[i].active >= 0)
     {
       result->ypbind_status = YPBIND_SUCC_VAL;
-      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
-	domainlist[i].server[domainlist[i].active].addr;
-      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
-	domainlist[i].server[domainlist[i].active].port;
+      result->ypbind_respbody.ypbind_bindinfo =
+	ypbind3_binding_dup (domainlist[i].server[domainlist[i].active]);
+
+#if 0 /* XXX */
       if (debug_flag)
 	log_msg (LOG_DEBUG, "YPBINDPROC_DOMAIN: server '%s', port %d",
 		 inet_ntoa(domainlist[i].server[domainlist[i].active].addr),
 		 ntohs(domainlist[i].server[domainlist[i].active].port));
+#endif
     }
   else if (domainlist[i].active == -2)
     {
       result->ypbind_status = YPBIND_SUCC_VAL;
-      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_addr =
-	domainlist[i].ypset.addr;
-      result->ypbind_respbody.ypbind_bindinfo.ypbind_binding_port =
-	domainlist[i].ypset.port;
+      result->ypbind_respbody.ypbind_bindinfo =
+	ypbind3_binding_dup (domainlist[i].ypset);
+
+#if 0 /* XXX */
       if (debug_flag)
 	log_msg (LOG_DEBUG,
 		 "YPBINDPROC_DOMAIN: server '%s', port %d",
 		 inet_ntoa(domainlist[i].ypset.addr),
 		 ntohs(domainlist[i].ypset.port));
+#endif
     }
   else
     {
@@ -368,6 +441,29 @@ find_domain (const char *domain, ypbind2_resp *result)
 }
 
 void
+find_domain_v2 (const char *domain, ypbind2_resp *result)
+{
+  struct ypbind3_resp res3;
+
+  memset (&res3, '\0', sizeof (struct ypbind3_resp));
+
+  find_domain_v3 (domain, &res3);
+
+  if (res3.ypbind_status == YPBIND_SUCC_VAL)
+    {
+      *result = convert_v3_to_respv2 (res3.ypbind_respbody.ypbind_bindinfo);
+      ypbind3_binding_free (res3.ypbind_respbody.ypbind_bindinfo);
+    }
+  else
+    {
+      result->ypbind_status = res3.ypbind_status;
+      result->ypbind_respbody.ypbind_error = res3.ypbind_respbody.ypbind_error;
+    }
+
+  return;
+}
+
+void
 clear_server (void)
 {
   int i, j;
@@ -383,11 +479,17 @@ clear_server (void)
 	      remove_bindingfile (&domainlist[i]);
 	      for (j = 0; j < _MAXSERVER; ++j)
 		{
-		  if (domainlist[i].server[j].host != NULL)
-		    free (domainlist[i].server[j].host);
+		  if (domainlist[i].server[j] != NULL)
+		    {
+		      ypbind3_binding_free (domainlist[i].server[j]);
+		      domainlist[i].server[j] = NULL;
+		    }
 		}
-	      if (domainlist[i].ypset.host != NULL)
-		free (domainlist[i].ypset.host);
+	      if (domainlist[i].ypset != NULL)
+		{
+		  ypbind3_binding_free (domainlist[i].ypset);
+		  domainlist[i].ypset = NULL;
+		}
 	      domainlist[i].active = -1;
 	    }
 	}
@@ -422,12 +524,11 @@ get_entry (const char *domain, struct binding **entry)
 	  exit (1);
 	}
       strcpy (domainlist[max_domains - 1].domain, domain);
-      domainlist[max_domains - 1].ypset.host = NULL;
+      domainlist[max_domains - 1].ypset = NULL;
       domainlist[max_domains - 1].active = (-1);
       domainlist[max_domains - 1].use_broadcast = FALSE;
-      domainlist[max_domains - 1].last.host = NULL;
       memset (domainlist[max_domains - 1].server, 0,
-	      (_MAXSERVER * sizeof (struct bound_server)));
+	      (_MAXSERVER * sizeof (struct ypbind3_binding *)));
       *entry = &domainlist[max_domains - 1];
     }
 
@@ -464,18 +565,9 @@ add_server (const char *domain, const char *host, int check_syntax)
     }
   else
     {
-      struct hostent *hent;
-#if defined (HAVE___NSS_CONFIGURE_LOOKUP)
-      struct hostent hostbuf;
-      size_t hstbuflen;
-      char *hsttmpbuf;
-      int herr;
-      int error;
-#endif
-
       /* find empty slot */
       for (active = 0; active < _MAXSERVER; ++active)
-	if (entry->server[active].host == NULL)
+	if (entry->server[active] == NULL)
 	  break;
 
       /* There is no empty slot */
@@ -493,78 +585,14 @@ add_server (const char *domain, const char *host, int check_syntax)
 		 _("add_server() domain: %s, host: %s, slot: %d"),
 		 domain, host, active);
 
-#if defined (HAVE___NSS_CONFIGURE_LOOKUP)
-      hstbuflen = 1024;
-      hsttmpbuf = alloca (hstbuflen);
-      while ((error= gethostbyname_r (host, &hostbuf, hsttmpbuf, hstbuflen,
-				      &hent, &herr)) != 0)
-	if (herr == NETDB_INTERNAL || (error == -1 && errno == ERANGE)
-	    || error == ERANGE)
-	  {
-	    /* Enlarge the buffer.  */
-	    hstbuflen *= 2;
-	    hsttmpbuf = alloca (hstbuflen);
-	  }
-	else
-	  break;
-#elif defined(HAVE_RES_GETHOSTBYNAME)
-      hent = res_gethostbyname (host);
-#elif defined(HAVE__DNS_GETHOSTBYNAME)
-      hent = _dns_gethostbyname (host);
-#else
-      hent = gethostbyname (host);
-#endif
-      if (!hent)
-	{
-	  switch (h_errno)
-	    {
-	    case HOST_NOT_FOUND:
-	      if (check_syntax)
-		fprintf (stderr, "%s %s\n", _("Unknown host:"), host);
-	      else
-		log_msg (LOG_ERR, "%s %s", _("Unknown host:"), host);
-	      break;
-	    case TRY_AGAIN:
-	      if (check_syntax)
-		fprintf (stderr, "%s\n", _("Host name lookup failure"));
-	      else
-		log_msg (LOG_ERR, _("Host name lookup failure"));
-	      break;
-	    case NO_DATA:
-	      if (check_syntax)
-		fprintf (stderr, "%s %s\n",
-			 _("No address associated with name:"), host);
-	      else
-		log_msg (LOG_ERR, "%s %s",
-			 _("No address associated with name:"), host);
-	      break;
-	    case NO_RECOVERY:
-	      if (check_syntax)
-		fprintf (stderr, "%s\n", _("Unknown server error"));
-	      else
-		log_msg (LOG_ERR, _("Unknown server error"));
-	      break;
-	    default:
-	      if (check_syntax)
-		fprintf (stderr, "%s\n", _("gethostbyname: Unknown error"));
-	      else
-		log_msg (LOG_ERR, _("gethostbyname: Unknown error"));
-	      break;
-	    }
-	  goto exit;
-	}
-      if (hent->h_addr_list[0] == NULL)
-	goto exit;
-
+#if 0 /* XXX create ypbind3_binding for host. */
       entry->server[active].host = strdup (host);
       entry->server[active].family = hent->h_addrtype;
-      /* XXX host could have multiple interfaces. We should
-	 try to use the interface on the local network.
-	 If there is none, use the first one. */
-      memcpy (&entry->server[active].addr, hent->h_addr_list[0],
-	      hent->h_length);
+#ifdef USE_DBUS_NM
       check_localhost();
+#endif
       res = 1;
+#endif
     }
 
  exit:
@@ -575,57 +603,22 @@ add_server (const char *domain, const char *host, int check_syntax)
 static struct binding *in_use = NULL;
 
 static bool_t
-eachresult (bool_t *out, struct sockaddr_in *addr)
+eachresult (bool_t *out, struct netbuf *nbuf, struct netconfig *nconf)
 {
   if (*out)
     {
+      struct ypbind3_binding ypb3;
       if(debug_flag)
         {
-#if defined (HAVE___NSS_CONFIGURE_LOOKUP)
-	  struct hostent hostbuf, *host;
-	  size_t hstbuflen;
-	  char *hsttmpbuf;
-	  int herr;
-	  int error;
+	  char hostbuf[MAXHOSTNAMELEN];
 
-	  hstbuflen = 1024;
-	  hsttmpbuf = alloca (hstbuflen);
-	  while ((error = gethostbyaddr_r ((char *) &addr->sin_addr.s_addr,
-					   sizeof (addr->sin_addr.s_addr),
-					   AF_INET, &hostbuf, hsttmpbuf,
-					   hstbuflen, &host, &herr)) < 0)
-	    if (herr == NETDB_INTERNAL || (error == -1 && errno == ERANGE)
-		|| error == ERANGE)
-	      {
-		/* Enlarge the buffer.  */
-		hstbuflen *= 2;
-		hsttmpbuf = alloca (hstbuflen);
-	      }
-	    else
-	      break;
-#else
-          struct hostent *host;
-
-#if defined(HAVE_RES_GETHOSTBYNAME)
-          host = res_gethostbyaddr((char *) &addr->sin_addr.s_addr,
-				   sizeof(addr->sin_addr.s_addr), AF_INET);
-#elif defined (HAVE__DNS_GETHOSTBYNAME)
-          host = _dns_gethostbyaddr((char *) &addr->sin_addr.s_addr,
-				    sizeof(addr->sin_addr.s_addr), AF_INET);
-#else
-          host = gethostbyaddr((char *) &addr->sin_addr.s_addr,
-			       sizeof(addr->sin_addr.s_addr), AF_INET);
-#endif
-#endif /* HAVE___NSS_CONFIGURE_LOOKUP */
-	  if (host != NULL)
-	    log_msg (LOG_DEBUG, _("Answer for domain '%s' from server '%s'"),
-		     in_use->domain, host->h_name);
-	  else
-	    log_msg (LOG_DEBUG,
-		     _("Answer for domain '%s' from unknown server '%s'"),
-		     in_use->domain, inet_ntoa (addr->sin_addr));
+	  log_msg (LOG_DEBUG,
+		   _("Answer for domain '%s' from server '%s'"),
+		   in_use->domain, taddr2host (nconf, nbuf,
+					       hostbuf, sizeof (hostbuf)));
         }
 
+#if 0 /* XXX check how to get the port */
       if (!broken_server && (ntohs(addr->sin_port) >= IPPORT_RESERVED))
 	{
           log_msg (LOG_ERR,
@@ -634,11 +627,14 @@ eachresult (bool_t *out, struct sockaddr_in *addr)
 		   ntohs (addr->sin_port));
           return 0;
         }
+#endif
 
-      in_use->server[0].addr = addr->sin_addr;
-      in_use->server[0].port = addr->sin_port;
-      in_use->sin = *addr;
-
+      ypb3.ypbind_nconf = nconf;
+      ypb3.ypbind_svcaddr = nbuf;
+      ypb3.ypbind_servername = NULL;
+      ypb3.ypbind_hi_vers = YPVERS;
+      ypb3.ypbind_lo_vers = YPVERS;
+      in_use->server[0] = ypbind3_binding_dup (&ypb3);
       in_use->active = 0;
 
       return 1;
@@ -682,11 +678,10 @@ do_broadcast (struct binding *list)
 
   in_use = list; /* global variable for eachresult */
 
-  status = clnt_broadcast (YPPROG, YPVERS, YPPROC_DOMAIN_NONACK,
-			   (xdrproc_t) xdr_domainname, (void *)&domain,
-			   (xdrproc_t) xdr_bool, (void *)&out,
-			   (resultproc_t) eachresult);
-
+  status = rpc_broadcast (YPPROG, YPVERS, YPPROC_DOMAIN_NONACK,
+			  (xdrproc_t) xdr_domainname, (void *)&domain,
+			  (xdrproc_t) xdr_bool, (void *)&out,
+			  (resultproc_t) eachresult, "udp");
 
   if (status != RPC_SUCCESS)
     {
@@ -707,9 +702,6 @@ do_broadcast (struct binding *list)
 static int
 ping_all (struct binding *list)
 {
-  char *domain = list->domain;
-  struct sockaddr_in server_addr;
-  int sock;
   bool_t out;
   enum clnt_stat status;
   struct timeval timeout;
@@ -717,38 +709,41 @@ ping_all (struct binding *list)
   int i = 0;
   int old_active = list->active;
 
-  if (list->server[0].host == NULL) /* There is no known server */
+  if (list->server[0] == NULL) /* There is no known server */
     return 0;
 
   pthread_rdwr_wlock_np (&domainlock);
   list->active = -1;
   pthread_rdwr_wunlock_np (&domainlock);
 
-  while (list->server[i].host != NULL && i < _MAXSERVER)
+  while (list->server[i] != NULL && i < _MAXSERVER)
     {
+      char buf[INET6_ADDRSTRLEN];
+      const char *host;
+
+      if (list->server[i]->ypbind_servername != 0)
+	host = list->server[i]->ypbind_servername;
+      else
+	host = taddr2ipstr (list->server[i]->ypbind_nconf,
+			    list->server[i]->ypbind_svcaddr,
+			    buf, sizeof (buf));
 
       if (debug_flag)
         log_msg (LOG_DEBUG, _("ping host '%s', domain '%s'"),
-                 list->server[i].host, list->domain);
+		 host, list->domain);
 
-
-      memset((char *)&server_addr, 0, sizeof server_addr);
-      server_addr.sin_family = list->server[i].family;
-      server_addr.sin_port = htons(0);
-      sock = RPC_ANYSOCK;
-      memcpy (&server_addr.sin_addr, &list->server[i].addr,
-	      sizeof (struct in_addr));
       timeout.tv_sec = 1;
       timeout.tv_usec = 0;
-      clnt_handlep = clntudp_create (&server_addr, YPPROG, YPVERS,
-				     timeout, &sock);
+
+
+      clnt_handlep = clnt_create (host, YPPROG, YPVERS, "udp");
 
       if (clnt_handlep == NULL)
 	{
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG,
 		     _("clnt_create for server '%s' (domain '%s') failed"),
-		     list->server[i].host, domain);
+		     host, list->domain);
 	  ++i;
 	  continue;
 	}
@@ -760,25 +755,21 @@ ping_all (struct binding *list)
                          (xdrproc_t) xdr_bool, (caddr_t) &out, timeout);
       if (RPC_SUCCESS != status)
         {
-          log_msg (LOG_ERR, "%s", clnt_sperror(clnt_handlep,
-					       list->server[i].host));
-          clnt_destroy(clnt_handlep);
+          log_msg (LOG_ERR, "%s", clnt_sperror (clnt_handlep, host));
+          clnt_destroy (clnt_handlep);
 	  ++i;
 	  continue;
         }
       else if (out != TRUE)
         {
           log_msg (LOG_ERR, _("domain '%s' not served by '%s'"),
-                   domain, list->server[i].host);
-          clnt_destroy(clnt_handlep);
+                   domain, host);
+          clnt_destroy (clnt_handlep);
 	  ++i;
 	  continue;
         }
       else
         {
-	  memcpy (&(list->server[i].port), &server_addr.sin_port,
-		  sizeof (unsigned short int));
-	  memcpy (&(list->sin), &server_addr, sizeof (struct sockaddr_in));
           clnt_destroy (clnt_handlep);
           pthread_rdwr_wlock_np (&domainlock);
           list->active = i;
@@ -789,18 +780,18 @@ ping_all (struct binding *list)
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG,
 		     _("Answer for domain '%s' from server '%s'"),
-		     domain, list->server[list->active].host);
+		     domain, host);
 
 	  if (logfile_flag && (logfile_flag & LOG_SERVER_CHANGES) &&
 	      old_active != list->active)
 	    {
 	      if (old_active == -1)
 		log2file ("NIS server for domain '%s' set to '%s'",
-			  domain, list->server[list->active].host);
+			  domain, host);
 	      else
 		log2file ("NIS server for domain '%s' changed from '%s' to '%s'",
-			  domain, list->server[old_active].host,
-			  list->server[list->active].host);
+			  domain, get_server_str (list->server[old_active]),
+			  host);
 	    }
 
           return 1;
@@ -820,20 +811,20 @@ ping_all (struct binding *list)
 void
 do_binding (void)
 {
-  int i, active;
+  int i;
 
   pthread_mutex_lock (&search_lock);
   for (i = 0; i < max_domains; ++i)
     {
-      active = domainlist[i].active;
+      int active = domainlist[i].active;
 
       if (!ping_all (&domainlist[i]) && domainlist[i].use_broadcast)
 	do_broadcast (&domainlist[i]);
       if (verbose_flag &&
-		domainlist[i].active >= 0 && active != domainlist[i].active)
+	  domainlist[i].active >= 0 && active != domainlist[i].active)
 	{
-		log_msg (LOG_NOTICE, "NIS server is '%s' for domain '%s'",
-		    bound_host(&domainlist[i]), domainlist[i].domain);
+	  log_msg (LOG_NOTICE, "NIS server is '%s' for domain '%s'",
+		   bound_host(&domainlist[i]), domainlist[i].domain);
     	}
     }
   pthread_mutex_unlock (&search_lock);
@@ -912,15 +903,12 @@ test_bindings_once (int lastcheck, const char *req_domain)
 
       if (domainlist[i].active != -1)
 	{
-	  /* The binding is in use, check if it is still valid and
-	     the fastest one. */
+	  /* The binding is in use, check if it is still valid*/
 	  if (lastcheck != 0)
 	    {
-	      const struct timeval TIMEOUT50 = {5, 0};
-	      int sock = RPC_ANYSOCK;
 	      CLIENT *client_handle =
-		clntudp_create (&(domainlist[i].sin),
-				YPPROG, YPVERS, TIMEOUT50, &sock);
+		clnt_create (bound_host (&domainlist[i]),
+			     YPPROG, YPVERS, "udp");
 	      if (client_handle == NULL)
 		{
 		  if (verbose_flag)
@@ -964,9 +952,9 @@ test_bindings_once (int lastcheck, const char *req_domain)
 		{
 		  /* We can give this free, server does not answer any
 		     longer. */
-		  if (domainlist[i].ypset.host != NULL)
-		    free (domainlist[i].ypset.host);
-		  domainlist[i].ypset.host = NULL;
+		  if (domainlist[i].ypset != NULL)
+		    ypbind3_binding_free (domainlist[i].ypset);
+		  domainlist[i].ypset = NULL;
 		}
 	      lastcheck = 0; /* If we need a new server before the TTL expires,
 				reset it. */
