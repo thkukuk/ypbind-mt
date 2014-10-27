@@ -4,22 +4,19 @@
 #define BINDINGDIR "/var/yp/binding"
 
 extern int broken_server;
-extern int port;
 extern int ping_interval;
 extern int use_broadcast;
-extern int rebind_interval;
-extern char domain[];
+extern int ypbind_port;
 
 extern void find_domain_v2 (const char *domain, ypbind2_resp *result);
 extern void find_domain_v3 (const char *domain, ypbind3_resp *result);
 extern void clear_server (void);
-extern int  add_server (const char *__domain, const char *__host,
-			int __check_syntax);
+extern int  add_server (const char *__domain, const char *__host);
 extern void change_binding (const char *__domain, ypbind3_binding *binding);
 extern int load_config (int check_syntax);
 
 extern void *test_bindings (void *param);
-extern int test_bindings_once (int lastcheck, const char *domain);
+extern int check_binding (const char *domain);
 
 #if defined(USE_DBUS_NM)
 extern void *watch_dbus_nm (void *param);

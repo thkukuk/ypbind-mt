@@ -51,8 +51,6 @@
       <arg choice='opt'>-f <replaceable>configfile</replaceable></arg>
       <arg choice='opt'>-local-only </arg>
       <arg choice='opt'>-ping-interval <replaceable>ping-interval</replaceable></arg>
-      <arg choice='opt'>-rebind-interval</arg>
-      <arg choice='opt'>-no-dbus </arg>
   </cmdsynopsis>
   <cmdsynopsis>
     <command>ypbind</command>
@@ -71,23 +69,21 @@
       The binding files resides in the directory
       <filename>/var/yp/binding</filename> and are conventionally named
       <emphasis remap='B'>[domainname].[version]</emphasis>. The supported
-      versions are 1 and 2. There could be several such files since it
+      versions are 1, 2 and 3. There could be several such files since it
       is possible for an NIS client to be bound to more than one domain.
     </para>
 
     <para>
       After a binding has been established, <command>ypbind</command>
-      will send YPPROC_DOMAIN requests to the current NIS server at 20
+      will send YPPROC_DOMAIN requests to the current NIS server at 180 
       seconds intervals. If it doesn't get an response or the NIS server
       reports that he doesn't have this domain any longer,
       <command>ypbind</command> will search for a new NIS server.
-      All 15 minutes <command>ypbind</command> will check to see if the
-      current NIS server is the fastest. If it find a server which answers
-      faster, it will switch to this server. You could tell
-      <command>ypbind</command> to use network broadcasts to find a new
-      server, what is insecure, or you could give it a list of known
-      secure servers. In this case <command>ypbind</command> will send
-      a ping to all servers and binds to first one which answers.
+      You could tell <command>ypbind</command> to use network broadcasts
+      to find a new server, what is insecure, or you could give it a list
+      of known secure servers. In this case <command>ypbind</command> will
+      send a ping to all servers in the order in which they are listed in
+      the config file and use the first one which answers.
     </para>
 
     <para>Unless the option
@@ -272,21 +268,6 @@ a remote network.</para>
 <command>ypbind</command>
 to check, if a NIS server is still reachable, is 20 seconds.
 With this options another frequency in seconds can be specified.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-r</option>, <option>-rebind-interval</option></term>
-  <listitem>
-<para>The default value for
-<command>ypbind</command>
-to search for the fastest NIS server is 900 seconds (15 minutes).
-With this options another frequency in seconds can be specified.</para>
-  </listitem>
-  </varlistentry>
-  <varlistentry>
-  <term><option>-no-dbus</option></term>
-  <listitem>
-<para>Disables DBUS support if compiled in.</para>
   </listitem>
   </varlistentry>
   <varlistentry>

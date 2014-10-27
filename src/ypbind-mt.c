@@ -65,14 +65,13 @@ int ypset = SET_NO;
 int use_broadcast = 0;
 int broken_server = 0;
 int foreground_flag = 0;
-int ping_interval = 20;
+int ping_interval = 180;
 int local_only = 0;
 #ifdef USE_DBUS_NM
 int localhost_used = 1;
 #endif
-int port = -1;
-int rebind_interval = 900; /* 900 = 15min. */
-char domain[1025];
+int ypbind_port = -1;
+static char domain[1025];
 static int lock_fd;
 static int pid_is_written = 0;
 static pthread_mutex_t mutex_pid = PTHREAD_MUTEX_INITIALIZER;
@@ -161,7 +160,7 @@ load_config (int check_syntax)
 		  if (debug_flag)
 		    log_msg (LOG_DEBUG, _("parsed domain '%s' server '%s'"),
 			     tmpdomain, tmpserver);
-		  if (add_server (tmpdomain, tmpserver, check_syntax))
+		  if (add_server (tmpdomain, tmpserver))
 		    ++have_entries;
 		  else
 		    ++bad_entries;
@@ -177,7 +176,7 @@ load_config (int check_syntax)
 		  if (debug_flag)
 		    log_msg (LOG_DEBUG, _("parsed domain '%s' broadcast"),
 			     tmpdomain);
-		  if (add_server (tmpdomain, NULL, check_syntax))
+		  if (add_server (tmpdomain, NULL))
 		    ++have_entries;
 		  else
 		    ++bad_entries;
@@ -196,7 +195,7 @@ load_config (int check_syntax)
 	    {
 	      if (debug_flag)
 		log_msg (LOG_DEBUG, _("parsed ypserver %s"), tmpserver);
-	      if (add_server (domain, tmpserver, check_syntax))
+	      if (add_server (domain, tmpserver))
 		++have_entries;
 	      else
 		++bad_entries;
@@ -213,7 +212,7 @@ load_config (int check_syntax)
 
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG, _("parsed broadcast"));
-	  if (add_server (domain, NULL, check_syntax))
+	  if (add_server (domain, NULL))
 	    ++have_entries;
 	  else
 	    ++bad_entries;
@@ -434,7 +433,7 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  clear_server ();
 
 	  if (use_broadcast)
-	    add_server (domain, NULL, 0);
+	    add_server (domain, NULL);
 	  else
 	    load_config (0);
 
@@ -464,7 +463,7 @@ usage (int ret)
     output = stdout;
 
   fputs (_("Usage:\n"), output);
-  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval]\n\t  [-r rebind-interval] [-debug] [-verbose] [-n | -foreground]\n"), output);
+  fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval]\n\t  [-debug] [-verbose] [-n | -foreground]\n"), output);
 #ifdef USE_DBUS_NM
   fputs (_("\t  [-no-dbus]\n"), output);
 #endif
@@ -621,7 +620,7 @@ main (int argc, char **argv)
 	  if (i+1 == argc || argv[i+1][0] == '-')
 	    usage (1);
 	  ++i;
-	  port = atoi (argv[i]);
+	  ypbind_port = atoi (argv[i]);
 	}
       else if (strcmp ("-ping-interval", argv[i]) == 0 ||
 	       strcmp ("-ping_interval", argv[i]) == 0 ||
@@ -645,16 +644,6 @@ main (int argc, char **argv)
       else if (strcmp ("-no-dbus", argv[i]) == 0)
 	disable_dbus = 1;
 #endif
-      else if (strcmp ("-rebind-interval", argv[i]) == 0 ||
-	       strcmp ("-r", argv[i]) == 0)
-	{
-	  if (i+1 == argc || argv[i+1][0] == '-')
-	    usage (1);
-	  ++i;
-	  rebind_interval = atoi (argv[i]);
-	  if (rebind_interval < 1)
-	    usage (1);
-	}
       else if (strcmp ("--help", argv[i]) == 0)
         usage (0);
       else
@@ -736,7 +725,7 @@ main (int argc, char **argv)
 #endif
     }
   else
-    add_server (domain, NULL, 0);
+    add_server (domain, NULL);
 
   unlink_bindingdir ();
 
@@ -746,7 +735,6 @@ main (int argc, char **argv)
     {
       log_msg (LOG_DEBUG, "[Welcome to ypbind-mt, version %s]\n", VERSION);
       log_msg (LOG_DEBUG, "ping interval is %d seconds\n", ping_interval);
-      log_msg (LOG_DEBUG, "rebind interval is %d seconds\n", rebind_interval);
     }
   else if (! foreground_flag)
     {

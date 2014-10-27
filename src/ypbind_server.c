@@ -38,18 +38,21 @@ bool_t
 ypbindproc_oldnull_1_svc (void *argp __attribute__ ((unused)), void *result,
 			  struct svc_req *rqstp)
 {
-  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+  if (debug_flag)
     {
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
 
       if ((nconf = getnetconfigent (rqstp->rq_xprt->xp_netid)) == NULL)
-	  svcerr_systemerr (rqstp->rq_xprt);
+	svcerr_systemerr (rqstp->rq_xprt);
       else
 	{
-	  char *uaddr = taddr2uaddr (nconf, rqhost);
-	  log2file ("ypbindproc_oldnull_1 from %s", uaddr);
-	  free (uaddr);
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  log_msg (LOG_DEBUG, "ypbindproc_oldnull_1 from %s:%i",
+		   taddr2ipstr (nconf, rqhost,
+				namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
+	  freenetconfigent (nconf);
 	}
     }
 
@@ -61,7 +64,7 @@ bool_t
 ypbindproc_null_2_svc (void *argp __attribute__ ((unused)), void *result,
 		       struct svc_req *rqstp)
 {
-  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+  if (debug_flag)
     {
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
@@ -70,9 +73,12 @@ ypbindproc_null_2_svc (void *argp __attribute__ ((unused)), void *result,
 	  svcerr_systemerr (rqstp->rq_xprt);
       else
 	{
-	  char *uaddr = taddr2uaddr (nconf, rqhost);
-	  log2file ("ypbindproc_null_2 from %s", uaddr);
-	  free (uaddr);
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  log_msg (LOG_DEBUG, "ypbindproc_null_3 from %s:%i",
+		   taddr2ipstr (nconf, rqhost,
+				namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
+	  freenetconfigent (nconf);
 	}
     }
 
@@ -84,7 +90,7 @@ bool_t
 ypbindproc_null_3_svc (void *argp __attribute__ ((unused)), void *result,
 		       struct svc_req *rqstp)
 {
-  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
+  if (debug_flag)
     {
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
@@ -93,9 +99,12 @@ ypbindproc_null_3_svc (void *argp __attribute__ ((unused)), void *result,
 	svcerr_systemerr (rqstp->rq_xprt);
       else
 	{
-	  char *uaddr = taddr2uaddr (nconf, rqhost);
-	  log2file ("ypbindproc_null_3 from %s", uaddr);
-	  free (uaddr);
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  log_msg (LOG_DEBUG, "ypbindproc_null_3 from %s:%i",
+		   taddr2ipstr (nconf, rqhost,
+				namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
+	  freenetconfigent (nconf);
 	}
     }
 
@@ -104,26 +113,29 @@ ypbindproc_null_3_svc (void *argp __attribute__ ((unused)), void *result,
 }
 
 static bool_t
-ypbindproc_domain (char *domain_name, ypbind2_resp *result)
+ypbindproc_domain_v2 (char *domain_name, ypbind2_resp *result)
 {
   memset (result, 0, sizeof (ypbind2_resp));
   result->ypbind_status = YPBIND_FAIL_VAL;
-  result->ypbind_respbody.ypbind_error = YPBIND_ERR_NOSERV;
+  result->ypbind2_error = YPBIND_ERR_NOSERV;
 
   if (strchr (domain_name, '/'))
     {
       log_msg (LOG_ERR, _("Domain name '%s' has embedded slash -- rejecting."),
 	       domain_name);
+      result->ypbind2_error = YPBIND_ERR_NODOMAIN;
       return TRUE;
     }
 
-  test_bindings_once (1, domain_name);
+  if (check_binding (domain_name) != 0)
+    return TRUE; /* No server available for domain domain_name */
   find_domain_v2 (domain_name, result);
 
   if (debug_flag)
     {
       if (result->ypbind_status == YPBIND_FAIL_VAL)
-	log_msg (LOG_DEBUG, _("Status: YPBIND_FAIL_VAL"));
+	log_msg (LOG_DEBUG, _("Status: YPBIND_FAIL_VAL, %s"),
+		 ypbinderr_string (result->ypbind2_error));
       else
 	log_msg (LOG_DEBUG, _("Status: YPBIND_SUCC_VAL"));
     }
@@ -134,67 +146,52 @@ bool_t
 ypbindproc_olddomain_1_svc (domainname *argp, ypbind2_resp *result,
 			    struct svc_req *rqstp)
 {
-  if (debug_flag || logfile_flag)
+  if (debug_flag)
     {
-      char *uaddr = NULL;
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
 
       if ((nconf = getnetconfigent (rqstp->rq_xprt->xp_netid)) == NULL)
-	{
-	  svcerr_systemerr (rqstp->rq_xprt);
-	  uaddr = strdup ("getnetconfigent error");
-	}
+	svcerr_systemerr (rqstp->rq_xprt);
       else
-	uaddr = taddr2uaddr (nconf, rqhost);
-
-      if (debug_flag)
-	log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s,%s)",
-		 *argp, uaddr);
-
-      if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
-	log2file ("ypbindproc_olddomain_1 (%s) from %s",
-		  *argp, uaddr);
-
-      if (uaddr)
-	free (uaddr);
+	{
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s) from %s:%i",
+		   *argp,
+		   taddr2ipstr (nconf, rqhost,
+				namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
+	  freenetconfigent (nconf);
+	}
     }
 
-  return ypbindproc_domain (*argp, result);
+  return ypbindproc_domain_v2 (*argp, result);
 }
 
 bool_t
 ypbindproc_domain_2_svc (domainname *argp, ypbind2_resp *result,
 			 struct svc_req *rqstp)
 {
-  if (debug_flag || logfile_flag)
+  if (debug_flag)
     {
-      char *uaddr = NULL;
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
 
       if ((nconf = getnetconfigent (rqstp->rq_xprt->xp_netid)) == NULL)
-	{
-	  svcerr_systemerr (rqstp->rq_xprt);
-	  uaddr = strdup ("getnetconfigent error");
-	}
+	svcerr_systemerr (rqstp->rq_xprt);
       else
-	uaddr = taddr2uaddr (nconf, rqhost);
-
-      if (debug_flag)
-	log_msg (LOG_DEBUG, "ypbindproc_domain_2_svc (%s,%s)",
-		 *argp, uaddr);
-
-      if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
-	log2file ("ypbindproc_domain_2 (%s) from %s",
-		  *argp, uaddr);
-
-      if (uaddr)
-	free (uaddr);
+	{
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  log_msg (LOG_DEBUG, "ypbindproc_domain_2_svc (%s) from %s:%i",
+		   *argp,
+		   taddr2ipstr (nconf, rqhost,
+				namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
+	  freenetconfigent (nconf);
+	}
     }
 
-
-  return ypbindproc_domain (*argp, result);
+  return ypbindproc_domain_v2 (*argp, result);
 }
 
 
@@ -202,85 +199,109 @@ bool_t
 ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
 			 struct svc_req *rqstp)
 {
-  if (debug_flag || logfile_flag)
+  if (debug_flag)
     {
-      char *uaddr = NULL;
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
 
       if ((nconf = getnetconfigent (rqstp->rq_xprt->xp_netid)) == NULL)
-	{
-	  svcerr_systemerr (rqstp->rq_xprt);
-	  uaddr = strdup ("getnetconfigent error");
-	}
+	svcerr_systemerr (rqstp->rq_xprt);
       else
-	uaddr = taddr2uaddr (nconf, rqhost);
-
-      if (debug_flag)
-	log_msg (LOG_DEBUG, "ypbindproc_domain_3_svc (%s,%s)",
-		 *argp, uaddr);
-
-      if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
-	log2file ("ypbindproc_domain_3 (%s) from %s",
-		  *argp, uaddr);
-
-      if (uaddr)
-	free (uaddr);
+	{
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  log_msg (LOG_DEBUG, "ypbindproc_domain_3_svc (%s) from %s:%i",
+		   *argp,
+		   taddr2ipstr (nconf, rqhost,
+				namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
+	  freenetconfigent (nconf);
+	}
     }
 
   memset (result, 0, sizeof (ypbind3_resp));
   result->ypbind_status = YPBIND_FAIL_VAL;
-  result->ypbind_respbody.ypbind_error = YPBIND_ERR_NOSERV;
+  result->ypbind3_error = YPBIND_ERR_NOSERV;
 
   if (strchr (*argp, '/'))
     {
       log_msg (LOG_ERR, _("Domain name '%s' has embedded slash -- rejecting."),
 	       *argp);
+      result->ypbind3_error = YPBIND_ERR_NODOMAIN;
       return TRUE;
     }
 
-  test_bindings_once (1, *argp);
+  if (check_binding (*argp) != 0)
+    return TRUE; /* No server available for domain *argp */
   find_domain_v3 (*argp, result);
+
+  /* ugly hack, somehow this goes still wrong somewhere */
+  if (result->ypbind3_servername == NULL)
+    result->ypbind3_servername = strdup ("");
 
   if (debug_flag)
     {
       if (result->ypbind_status == YPBIND_FAIL_VAL)
-	log_msg (LOG_DEBUG, _("Status: YPBIND_FAIL_VAL"));
+	log_msg (LOG_DEBUG, _("Status: YPBIND_FAIL_VAL, %s"),
+		 ypbinderr_string (result->ypbind2_error));
       else
-	log_msg (LOG_DEBUG, _("Status: YPBIND_SUCC_VAL"));
+	{
+	  log_msg (LOG_DEBUG, _("Status: YPBIND_SUCC_VAL"));
+#if 0 /* only for debugging */
+	  char namebuf6[INET6_ADDRSTRLEN];
+
+	  if (result->ypbind3_nconf && result->ypbind3_svcaddr)
+	    printf ("ypbind_netbuf:\n\taddr: %s\n\tport: %i\n",
+		    taddr2ipstr (result->ypbind3_nconf,
+				 result->ypbind3_svcaddr,
+				 namebuf6, sizeof namebuf6),
+		    taddr2port (result->ypbind3_nconf, result->ypbind3_svcaddr));
+	  if (result->ypbind3_servername)
+	    printf ("ypbind_servername: %s\n", result->ypbind3_servername);
+	  else
+	    printf ("ypbind_servername: NULL\n");
+	  printf ("ypbind_hi_vers: %u\n", (u_int32_t)result->ypbind3_hi_vers);
+	  printf ("ypbind_lo_vers: %u\n", (u_int32_t)result->ypbind3_lo_vers);
+#endif
+	}
     }
   return TRUE;
 
 }
 
-/*  XXX Implement this! XXX
- *  We use a trick from SunOS to return an error to the ypset command
- *  when we are not allowing the domain to be set.  We do a svcerr_noprog()
- *  to send RPC_PROGUNAVAIL to ypset.  We also return NULL so that
- *  our caller (ypbindprog_3) won't try to return a result.  This
- *  hack is necessary because the YPBINDPROC_SETDOM procedure is defined
- *  in the protocol to return xdr_void, so we don't have a direct way to
- *  return an error to the client.
- */
-
 static bool_t
-ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
-		   struct netbuf *fromhost)
+ypbindproc_setdom_v3 (const char *domain_name, ypbind3_binding *binding,
+		      struct netbuf *fromhost, SVCXPRT *xprt)
 {
-  struct sockaddr *sap = (struct sockaddr *)(fromhost->buf);
+  struct __rpc_sockinfo si;
+  struct netconfig *nconf;
 
   if (strchr (domain_name, '/'))
     {
       log_msg (LOG_ERR, _("Domain name '%s' has embedded slash -- rejecting."),
 	       domain_name);
-      return TRUE;
+      svcerr_noprog (xprt);
+      return FALSE;
     }
 
-  switch(sap->sa_family)
+  if ((nconf = getnetconfigent (xprt->xp_netid)) == NULL)
+    {
+      svcerr_systemerr (xprt);
+      return FALSE;
+    }
+
+  if (!__rpc_nconf2sockinfo (nconf, &si))
+    {
+      freenetconfigent (nconf);
+      svcerr_systemerr (xprt);
+      return FALSE;
+    }
+  freenetconfigent (nconf);
+
+  switch(si.si_af)
     {
     case AF_INET:
       {
-	struct sockaddr_in *sin = (struct sockaddr_in *) sap;
+	struct sockaddr_in *sin = fromhost->buf;
 
 	switch(ypset)
 	  {
@@ -291,15 +312,19 @@ ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
 		  log_msg (LOG_DEBUG,
 			   _("User from '%s' try's to change the binding."),
 			   inet_ntoa (sin->sin_addr));
-		return TRUE;
+		svcerr_noprog (xprt);
+		return FALSE;
 	      }
 	    break;
 	  case SET_YPSET:
 	    break;
 	  case SET_NO:
 	  default:
-	    log_msg (LOG_ERR, _("Changing the binding is not allowed."));
-	    return TRUE;
+	    if (debug_flag)
+	      log_msg (LOG_DEBUG
+		       , _("Changing the binding is not allowed."));
+	    svcerr_noprog (xprt);
+	    return FALSE;
 	  }
 	if (ntohs (sin->sin_port) >= IPPORT_RESERVED)
 	  {
@@ -315,7 +340,7 @@ ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
 	  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
 	static const unsigned char mapped_ipv4_localhost[] =
 	  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xff, 0xff, 0x7f, 0, 0, 1 };
-	struct sockaddr_in6 *sin = (struct sockaddr_in6 *) sap;
+	struct sockaddr_in6 *sin = fromhost->buf;
 
 	switch(ypset)
 	  {
@@ -333,21 +358,25 @@ ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
 			       _("User from '%s' try's to change the binding."),
 			       buf);
 		  }
-		return TRUE;
+		svcerr_noprog (xprt);
+		return FALSE;
 	      }
 	    break;
 	  case SET_YPSET:
 	    break;
 	  case SET_NO:
 	  default:
-	    log_msg (LOG_ERR, _("Changing the binding is not allowed."));
-	    return TRUE;
+	    if (debug_flag)
+	      log_msg (LOG_DEBUG, _("Changing the binding is not allowed."));
+	    svcerr_noprog (xprt);
+	    return FALSE;
 	  }
 	if (ntohs (sin->sin6_port) >= IPPORT_RESERVED)
 	  {
 	    log_msg (LOG_ERR,
 		     _("SETDOM request doesn't come from reserved port."));
-	    return TRUE;
+	    svcerr_noprog (xprt);
+	    return FALSE;
 	  }
       }
       break;
@@ -356,6 +385,21 @@ ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
   change_binding (domain_name, binding);
 
   return TRUE;
+}
+
+
+static bool_t
+ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
+		   struct netbuf *fromhost, SVCXPRT *xprt)
+{
+  bool_t retval;
+  struct ypbind3_binding *ypb3;
+
+  /* XXX Finish move of __host2ypbind3_binding into library */
+
+  retval = ypbindproc_setdom_v3 (domain_name, ypb3, fromhost, xprt);
+
+  return retval;
 }
 
 bool_t
@@ -383,6 +427,7 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
 		    inet_ntoa (argp->ypoldsetdom_binding.ypbind_binding_addr),
 		    port, uaddr);
 	  free (uaddr);
+	  freenetconfigent (nconf);
 	}
     }
 
@@ -390,7 +435,7 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
 
   return ypbindproc_setdom (argp->ypoldsetdom_domain,
 			    &argp->ypoldsetdom_binding,
-			    svc_getrpccaller (rqstp->rq_xprt));
+			    svc_getrpccaller (rqstp->rq_xprt), rqstp->rq_xprt);
 }
 
 bool_t
@@ -398,10 +443,6 @@ ypbindproc_setdom_2_svc (ypbind2_setdom *argp, void *result,
 			 struct svc_req *rqstp)
 {
   if (debug_flag)
-    log_msg (LOG_DEBUG, "ypbindproc_setdom_2_svc (%s)",
-	     argp->ypsetdom_domain);
-
-  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
     {
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
@@ -410,14 +451,13 @@ ypbindproc_setdom_2_svc (ypbind2_setdom *argp, void *result,
 	svcerr_systemerr (rqstp->rq_xprt);
       else
 	{
-	  uint16_t port;
-	  char *uaddr = taddr2uaddr (nconf, rqhost);
-	  port = ntohs (argp->ypsetdom_binding.ypbind_binding_port);
-	  log2file ("ypbindproc_setdom_2 (%s:%s:%d) from %s",
-		    *argp->ypsetdom_domain,
-		    inet_ntoa (argp->ypsetdom_binding.ypbind_binding_addr),
-		    port, uaddr);
-	  free (uaddr);
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  const char *ipaddr = taddr2ipstr (nconf, rqhost, namebuf6, sizeof (namebuf6));
+	  unsigned short port = taddr2port (nconf, rqhost);
+
+	  log_msg (LOG_DEBUG, "ypbindproc_setdom_2 (%s) from %s:%i",
+		   argp->ypsetdom_domain, ipaddr, port);
+	  freenetconfigent (nconf);
 	}
     }
 
@@ -425,7 +465,8 @@ ypbindproc_setdom_2_svc (ypbind2_setdom *argp, void *result,
 
   return ypbindproc_setdom (argp->ypsetdom_domain,
 			    &argp->ypsetdom_binding,
-			    svc_getrpccaller (rqstp->rq_xprt));
+			    svc_getrpccaller (rqstp->rq_xprt),
+			    rqstp->rq_xprt);
 }
 
 bool_t
@@ -433,11 +474,6 @@ ypbindproc_setdom_3_svc (ypbind3_setdom *argp, void *result,
 			 struct svc_req *rqstp)
 {
   if (debug_flag)
-    log_msg (LOG_DEBUG, "ypbindproc_setdom_3_svc (%s)",
-	     argp->ypsetdom_domain);
-
-#if 0 /* XXX */
-  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
     {
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
@@ -446,27 +482,38 @@ ypbindproc_setdom_3_svc (ypbind3_setdom *argp, void *result,
 	svcerr_systemerr (rqstp->rq_xprt);
       else
 	{
-	  uint16_t port;
-	  char *uaddr = taddr2uaddr (nconf, rqhost);
-	  port = ntohs (argp->ypsetdom_binding.ypbind_binding_port);
-	  log2file ("ypbindproc_setdom_3 (%s:%s:%d) from %s",
-		    *argp->ypsetdom_domain,
-		    inet_ntoa (argp->ypsetdom_binding.ypbind_binding_addr),
-		    port, uaddr);
-	  free (uaddr);
+	  char namebuf6[INET6_ADDRSTRLEN];
+	  const char *ipaddr = taddr2ipstr (nconf, rqhost, namebuf6, sizeof (namebuf6));
+	  unsigned short port = taddr2port (nconf, rqhost);
+
+	  log_msg (LOG_DEBUG, "ypbindproc_setdom_3 (%s) from %s:%i",
+		   argp->ypsetdom_domain, ipaddr, port);
+
+#if 0 /* only for debugging */
+
+	  if (argp->ypsetdom3_nconf && argp->ypsetdom3_svcaddr)
+	    printf ("ypbind_netbuf:\n\taddr: %s\n\tport: %i\n",
+		    taddr2ipstr (argp->ypsetdom3_nconf,
+				 argp->ypsetdom3_svcaddr,
+				 namebuf6, sizeof namebuf6),
+		    taddr2port (argp->ypsetdom3_nconf, argp->ypsetdom3_svcaddr));
+	  if (argp->ypsetdom3_servername)
+	    printf ("ypbind_servername: %s\n", argp->ypsetdom3_servername);
+	  else
+	    printf ("ypbind_servername: NULL\n");
+	  printf ("ypbind_hi_vers: %u\n", (u_int32_t)argp->ypsetdom3_hi_vers);
+	  printf ("ypbind_lo_vers: %u\n", (u_int32_t)argp->ypsetdom3_lo_vers);
+#endif
+	  freenetconfigent (nconf);
 	}
     }
-#endif
 
   memset (result, 0, sizeof (char *));
 
-#if 0 /* XXX */
-  return ypbindproc_setdom (argp->ypsetdom_domain,
-			    &argp->ypsetdom_binding,
-			    svc_getrpccaller (rqstp->rq_xprt));
-#else
-  return TRUE;
-#endif
+  return ypbindproc_setdom_v3 (argp->ypsetdom_domain,
+			       argp->ypsetdom_bindinfo,
+			       svc_getrpccaller (rqstp->rq_xprt),
+			       rqstp->rq_xprt);
 }
 
 int
