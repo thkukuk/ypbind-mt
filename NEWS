@@ -4,12 +4,12 @@ Copyright (C) 1998-2014 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
-Version 1.99.3
+Version 1.99.4
 * Remove SLP support
 * Disable NetworkManager/DBUS support
 * Link against libtirpc
 * Listen to IPv6 connections, too
-* Register as Version 3, too
+* Fully support of all version 3 protocols
 
 Version 1.38
 * Use pkg-config in configure script

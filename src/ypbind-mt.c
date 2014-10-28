@@ -65,7 +65,7 @@ int ypset = SET_NO;
 int use_broadcast = 0;
 int broken_server = 0;
 int foreground_flag = 0;
-int ping_interval = 180;
+int ping_interval = 300;
 int local_only = 0;
 #ifdef USE_DBUS_NM
 int localhost_used = 1;
@@ -481,6 +481,39 @@ portmapper_disconnect (void)
   rpcb_unset (YPBINDPROG, YPBINDVERS, NULL);
 }
 
+/*
+ * Quick check to see if rpcbind is up.  Tries to connect over
+ * local transport.
+ */
+static bool_t
+__rpcbind_is_up (void)
+{
+  struct netconfig *nconf;
+  struct sockaddr_un sun;
+  int sock;
+
+  nconf = getnetconfigent ("local");
+  if (nconf == NULL)
+    return FALSE;
+
+  memset (&sun, 0, sizeof sun);
+  sock = socket(AF_LOCAL, SOCK_STREAM, 0);
+  if (sock < 0)
+    return FALSE;
+  sun.sun_family = AF_LOCAL;
+  strncpy(sun.sun_path, _PATH_RPCBINDSOCK, sizeof(sun.sun_path));
+
+  if (connect(sock, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0)
+    {
+      close (sock);
+      return (FALSE);
+    }
+
+  close(sock);
+  return (TRUE);
+}
+
+
 /* Register at portmapper */
 /* XXX Missing: -local and -port */
 static int
@@ -490,12 +523,10 @@ portmapper_register (void)
   void *nc_handle;
   int connmaxrec = RPC_MAXDATASIZE;
 
-#if 0 /* XXX */
   if (!__rpcbind_is_up()) {
     log_msg (LOG_ERR, "terminating: rpcbind is not running");
     return 1;
   }
-#endif
 
   /* Set non-blocking mode and maximum record size for
      connection oriented RPC transports. */
@@ -634,12 +665,7 @@ main (int argc, char **argv)
       else if (strcmp ("-c", argv[i]) == 0)
 	configcheck_only = 1;
       else if (strcmp ("-log", argv[i]) == 0)
-	{
-	  if (i+1 == argc || argv[i+1][0] == '-')
-	    usage (1);
-	  ++i;
-	  logfile_flag = atoi (argv[i]);
-	}
+	logfile_flag = 1;
 #ifdef USE_DBUS_NM
       else if (strcmp ("-no-dbus", argv[i]) == 0)
 	disable_dbus = 1;

@@ -24,7 +24,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <rpc/rpc.h>
 
 #include "ypbind.h"
 #include "log_msg.h"
@@ -382,7 +381,13 @@ ypbindproc_setdom_v3 (const char *domain_name, ypbind3_binding *binding,
       break;
     }
 
-  change_binding (domain_name, binding);
+  if (change_binding (domain_name, binding))
+    {
+      svcerr_systemerr (xprt);
+      return FALSE;
+    }
+  /* Trigger check of new server */
+  check_binding (domain_name);
 
   return TRUE;
 }
@@ -395,9 +400,11 @@ ypbindproc_setdom (const char *domain_name, ypbind2_binding *binding,
   bool_t retval;
   struct ypbind3_binding *ypb3;
 
-  /* XXX Finish move of __host2ypbind3_binding into library */
+  ypb3 = __host2ypbind3_binding (inet_ntoa (binding->ypbind_binding_addr));
 
   retval = ypbindproc_setdom_v3 (domain_name, ypb3, fromhost, xprt);
+
+  __ypbind3_binding_free (ypb3);
 
   return retval;
 }
@@ -407,10 +414,6 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
 			    struct svc_req *rqstp)
 {
   if (debug_flag)
-    log_msg (LOG_DEBUG, "ypbindproc_oldsetdom_1_svc (%s)",
-	     argp->ypoldsetdom_domain);
-
-  if (logfile_flag && (logfile_flag & LOG_RPC_CALLS))
     {
       struct netconfig *nconf;
       struct netbuf *rqhost = svc_getrpccaller(rqstp->rq_xprt);
@@ -419,14 +422,16 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
 	svcerr_systemerr (rqstp->rq_xprt);
       else
 	{
+	  char namebuf6[INET6_ADDRSTRLEN];
 	  uint16_t port;
-	  char *uaddr = taddr2uaddr (nconf, rqhost);
+
 	  port = ntohs(argp->ypoldsetdom_binding.ypbind_binding_port);
-	  log2file ("ypbindproc_oldsetdom_1 (%s:%s:%d) from %s",
+	  log2file ("ypbindproc_oldsetdom_1 (%s:%s:%d) from %s:%i",
 		    *argp->ypoldsetdom_domain,
 		    inet_ntoa (argp->ypoldsetdom_binding.ypbind_binding_addr),
-		    port, uaddr);
-	  free (uaddr);
+		    port, taddr2ipstr (nconf, rqhost,
+				       namebuf6, sizeof (namebuf6)),
+		    taddr2port (nconf, rqhost));
 	  freenetconfigent (nconf);
 	}
     }

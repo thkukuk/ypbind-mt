@@ -75,8 +75,8 @@
 
     <para>
       After a binding has been established, <command>ypbind</command>
-      will send YPPROC_DOMAIN requests to the current NIS server at 180 
-      seconds intervals. If it doesn't get an response or the NIS server
+      will send YPPROC_DOMAIN requests to the current NIS server at 5 
+      minutes intervals. If it doesn't get an response or the NIS server
       reports that he doesn't have this domain any longer,
       <command>ypbind</command> will search for a new NIS server.
       You could tell <command>ypbind</command> to use network broadcasts
