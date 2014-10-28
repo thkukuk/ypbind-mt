@@ -162,20 +162,26 @@ update_bindingfile (struct binding *entry)
   unsigned short int sport = ypbind_port;
   struct iovec iov[2];
   struct ypbind2_resp ypbres2;
+  struct ypbind3_binding *ypb3;
   char path1[MAXPATHLEN + 1];
   char path2[MAXPATHLEN + 1];
   char path3[MAXPATHLEN + 1];
   int fd, len;
   FILE *fp;
 
-  sprintf (path1, "%s/%s.1", BINDINGDIR, entry->domain);
-  sprintf (path2, "%s/%s.2", BINDINGDIR, entry->domain);
-  sprintf (path3, "%s/%s.3", BINDINGDIR, entry->domain);
+  if (debug_flag)
+    log_msg (LOG_DEBUG, "Update binding file for '%s' with '%s'",
+	     entry->domain, bound_host (entry));
+
+  /* XXX check length of path vs MAXPATHLEN */
+  snprintf (path1, MAXPATHLEN, "%s/%s.1", BINDINGDIR, entry->domain);
+  snprintf (path2, MAXPATHLEN, "%s/%s.2", BINDINGDIR, entry->domain);
+  snprintf (path3, MAXPATHLEN, "%s/%s.3", BINDINGDIR, entry->domain);
 
   if (entry->active >= 0)
-      ypbres2 = convert_v3_to_respv2 (entry->server[entry->active]);
+    ypb3 = entry->server[entry->active];
   else if (entry->active == -2) /* ypset/broadcast was used */
-    ypbres2 = convert_v3_to_respv2 (entry->other);
+    ypb3 = entry->other;
   else
     {
        /* This should not happen. Remove binding files which means,
@@ -187,6 +193,7 @@ update_bindingfile (struct binding *entry)
        return;
     }
 
+  ypbres2 = convert_v3_to_respv2 (ypb3);
   iov[0].iov_base = (caddr_t) &sport;
   iov[0].iov_len = sizeof (sport);
   iov[1].iov_base = (caddr_t) &ypbres2;
@@ -225,13 +232,9 @@ update_bindingfile (struct binding *entry)
     {
       XDR xdrs;
       bool_t status;
+
       xdrstdio_create (&xdrs, fp, XDR_ENCODE);
-
-      if (entry->active >= 0)
-	status = xdr_ypbind3_binding (&xdrs, entry->server[entry->active]);
-      else
-	status = xdr_ypbind3_binding (&xdrs, entry->other);
-
+      status = xdr_ypbind3_binding (&xdrs, ypb3);
       if (!status)
 	{
 	  log_msg (LOG_ERR, "write of %s failed!", path3);
@@ -270,12 +273,12 @@ change_binding (const char *domain, ypbind3_binding *binding)
 	  pthread_rdwr_wunlock_np (&domainlock);
 
 	  pthread_rdwr_rlock_np (&domainlock);
-	  update_bindingfile (&domainlist[i]);
-	  pthread_rdwr_runlock_np (&domainlock);
-
 	  if (verbose_flag || debug_flag)
 	    log_msg (LOG_NOTICE, "NIS server for domain '%s' set to '%s'",
 		     domainlist[i].domain, bound_host(&domainlist[i]));
+
+	  update_bindingfile (&domainlist[i]);
+	  pthread_rdwr_runlock_np (&domainlock);
 
 	  return 0;
 	}
@@ -470,41 +473,6 @@ get_entry (const char *domain, struct binding **entry)
   return 0;
 }
 
-static ypbind3_binding *
-host2ypbind3_binding (const char *host)
-{
-  CLIENT *server;
-  ypbind3_binding ypb3, *res;
-  struct netconfig *nconf;
-  struct netbuf nbuf;
-
-  /* connect to server to find out if it exist and runs */
-  if ((server = clnt_create (host, YPPROG, YPVERS, "datagram_n")) == NULL)
-    {
-      log_msg (LOG_ERR, _("Cannot connect to ypserv on host '%s'"), host);
-      return NULL;
-    }
-
-  /* get nconf, netbuf structures */
-  nconf = getnetconfigent (server->cl_netid);
-  clnt_control(server, CLGET_SVC_ADDR, (char *)&nbuf);
-
-  ypb3.ypbind_nconf = nconf;
-  ypb3.ypbind_svcaddr = (struct netbuf *)(&nbuf);
-  ypb3.ypbind_servername = (char *)host;
-  ypb3.ypbind_hi_vers = YPVERS;
-  ypb3.ypbind_lo_vers = YPVERS;
-
-  res = __ypbind3_binding_dup (&ypb3);
-
-  freenetconfigent (nconf);
-
-  clnt_destroy (server);
-
-  return res;
-}
-
-
 int
 add_server (const char *domain, const char *host)
 {
@@ -555,7 +523,7 @@ add_server (const char *domain, const char *host)
 		 _("add_server() domain: %s, host: %s, slot: %d"),
 		 domain, host, active);
 
-      entry->server[active] = host2ypbind3_binding (host);
+      entry->server[active] = __host2ypbind3_binding (host);
 #ifdef USE_DBUS_NM
       check_localhost();
 #endif
@@ -748,10 +716,8 @@ search_ypserver (struct binding *list)
           pthread_rdwr_wlock_np (&domainlock);
           list->active = i;
           pthread_rdwr_wunlock_np (&domainlock);
-          pthread_rdwr_rlock_np (&domainlock);
-          update_bindingfile (list);
-          pthread_rdwr_runlock_np (&domainlock);
 
+          pthread_rdwr_rlock_np (&domainlock);
 	  if (debug_flag && old_active != list->active)
 	    {
 	      if (old_active == -1)
@@ -767,6 +733,9 @@ search_ypserver (struct binding *list)
 	    log_msg (LOG_DEBUG,
 		     _("Answer for domain '%s' from server '%s'"),
 		     list->domain, host);
+
+          update_bindingfile (list);
+          pthread_rdwr_runlock_np (&domainlock);
 
           return 1;
         }
