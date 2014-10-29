@@ -422,8 +422,10 @@ sig_handler (void *v_param  __attribute__ ((unused)))
 	  unlink (_YPBIND_PIDFILE);
 	  unlink_bindingdir ();
 	  if (logfile_flag)
-	    log2file ("Stopping %s-%s", PACKAGE, VERSION);
-	  close_logfile ();
+	    {
+	      log_msg (LOG_DEBUG, "Stopping %s-%s", PACKAGE, VERSION);
+	      close_logfile ();
+	    }
 	  exit (0);
 	  break;
 	case SIGHUP:
@@ -665,7 +667,10 @@ main (int argc, char **argv)
       else if (strcmp ("-c", argv[i]) == 0)
 	configcheck_only = 1;
       else if (strcmp ("-log", argv[i]) == 0)
-	logfile_flag = 1;
+	{
+	  logfile_flag = 1;
+	  debug_flag = 1;
+	}
 #ifdef USE_DBUS_NM
       else if (strcmp ("-no-dbus", argv[i]) == 0)
 	disable_dbus = 1;
@@ -860,7 +865,7 @@ main (int argc, char **argv)
 #endif
 
   if (logfile_flag)
-    log2file ("Starting %s-%s", PACKAGE, VERSION);
+    log_msg (LOG_DEBUG, "Starting %s-%s", PACKAGE, VERSION);
 
   portmapper_disconnect ();
   if (portmapper_register () != 0)

@@ -426,12 +426,12 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
 	  uint16_t port;
 
 	  port = ntohs(argp->ypoldsetdom_binding.ypbind_binding_port);
-	  log2file ("ypbindproc_oldsetdom_1 (%s:%s:%d) from %s:%i",
-		    *argp->ypoldsetdom_domain,
-		    inet_ntoa (argp->ypoldsetdom_binding.ypbind_binding_addr),
-		    port, taddr2ipstr (nconf, rqhost,
-				       namebuf6, sizeof (namebuf6)),
-		    taddr2port (nconf, rqhost));
+	  log_msg (LOG_DEBUG, "ypbindproc_oldsetdom_1 (%s:%s:%d) from %s:%i",
+		   *argp->ypoldsetdom_domain,
+		   inet_ntoa (argp->ypoldsetdom_binding.ypbind_binding_addr),
+		   port, taddr2ipstr (nconf, rqhost,
+				      namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
 	  freenetconfigent (nconf);
 	}
     }

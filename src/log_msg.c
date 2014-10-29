@@ -1,4 +1,4 @@
-/* Copyright (c) 2000, 2002, 2006, 2009 Thorsten Kukuk
+/* Copyright (c) 2000, 2002, 2006, 2009, 2014 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -43,27 +43,6 @@ gettid (void)
 int debug_flag = 0;
 int logfile_flag = 0;
 
-void
-log_msg (int type, const char *fmt,...)
-{
-  va_list ap;
-
-  va_start (ap, fmt);
-
-  if (debug_flag)
-    {
-      fprintf (stderr, "%d: ", gettid ());
-      vfprintf (stderr, fmt, ap);
-      fputc ('\n', stderr);
-    }
-  else
-    {
-      vsyslog (type, fmt, ap);
-    }
-
-  va_end (ap);
-}
-
 static FILE *logfp = NULL;
 static const char *logfilename = "/var/log/ypbind-mt.log";
 
@@ -93,9 +72,8 @@ open_logfile (void)
 }
 
 void
-log2file (const char *fmt,...)
+log2file (const char *string)
 {
-  va_list ap;
   char date[128];
   time_t tmp;
   struct tm *t;
@@ -110,12 +88,26 @@ log2file (const char *fmt,...)
   t = localtime (&tmp);
   strftime (date, sizeof (date), "%F %T", t);
 
-  va_start (ap, fmt);
-
-  fprintf (logfp, "%s (%d): ", date, gettid ());
-  vfprintf (logfp, fmt, ap);
-  fputc ('\n', logfp);
+  fprintf (logfp, "%s (%d): %s \n", date, gettid (), string);
   fflush (logfp);
+}
 
+void
+log_msg (int type, const char *fmt,...)
+{
+  char string[400];
+  va_list ap;
+
+  va_start (ap, fmt);
+  vsnprintf (string, sizeof (string), fmt, ap);
   va_end (ap);
+
+  if (logfile_flag)
+    log2file (string);
+  else if (debug_flag)
+    fprintf (stderr, "%d: %s\n", gettid (), string);
+
+  if (type != LOG_DEBUG)
+    syslog (type, "%s", string);
+
 }
