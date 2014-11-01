@@ -67,7 +67,6 @@ get_server_str (struct ypbind3_binding *ypb3)
       return taddr2ipstr (ypb3->ypbind_nconf, ypb3->ypbind_svcaddr,
 			  buf, sizeof (buf));
     }
-
 }
 
 static const char *

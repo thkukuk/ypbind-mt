@@ -47,7 +47,7 @@ ypbindproc_oldnull_1_svc (void *argp __attribute__ ((unused)), void *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  log_msg (LOG_DEBUG, "ypbindproc_oldnull_1 from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_oldnull_1 from %s port %i",
 		   taddr2ipstr (nconf, rqhost,
 				namebuf6, sizeof (namebuf6)),
 		   taddr2port (nconf, rqhost));
@@ -73,7 +73,7 @@ ypbindproc_null_2_svc (void *argp __attribute__ ((unused)), void *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  log_msg (LOG_DEBUG, "ypbindproc_null_3 from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_null_3 from %s port %i",
 		   taddr2ipstr (nconf, rqhost,
 				namebuf6, sizeof (namebuf6)),
 		   taddr2port (nconf, rqhost));
@@ -99,7 +99,7 @@ ypbindproc_null_3_svc (void *argp __attribute__ ((unused)), void *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  log_msg (LOG_DEBUG, "ypbindproc_null_3 from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_null_3 from %s port %i",
 		   taddr2ipstr (nconf, rqhost,
 				namebuf6, sizeof (namebuf6)),
 		   taddr2port (nconf, rqhost));
@@ -155,7 +155,7 @@ ypbindproc_olddomain_1_svc (domainname *argp, ypbind2_resp *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s) from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_olddomain_1_svc (%s) from %s port %i",
 		   *argp,
 		   taddr2ipstr (nconf, rqhost,
 				namebuf6, sizeof (namebuf6)),
@@ -181,7 +181,7 @@ ypbindproc_domain_2_svc (domainname *argp, ypbind2_resp *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  log_msg (LOG_DEBUG, "ypbindproc_domain_2_svc (%s) from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_domain_2_svc (%s) from %s port %i",
 		   *argp,
 		   taddr2ipstr (nconf, rqhost,
 				namebuf6, sizeof (namebuf6)),
@@ -208,7 +208,7 @@ ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  log_msg (LOG_DEBUG, "ypbindproc_domain_3_svc (%s) from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_domain_3_svc (%s) from %s port %i",
 		   *argp,
 		   taddr2ipstr (nconf, rqhost,
 				namebuf6, sizeof (namebuf6)),
@@ -233,9 +233,11 @@ ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
     return TRUE; /* No server available for domain *argp */
   find_domain_v3 (*argp, result);
 
+#if 0
   /* ugly hack, somehow this goes still wrong somewhere */
   if (result->ypbind3_servername == NULL)
     result->ypbind3_servername = strdup ("");
+#endif
 
   if (debug_flag)
     {
@@ -263,6 +265,8 @@ ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
 #endif
 	}
     }
+  fprintf (stderr, "After debug_flag\n");
+
   return TRUE;
 
 }
@@ -426,7 +430,7 @@ ypbindproc_oldsetdom_1_svc (ypbind_oldsetdom *argp, void *result,
 	  uint16_t port;
 
 	  port = ntohs(argp->ypoldsetdom_binding.ypbind_binding_port);
-	  log_msg (LOG_DEBUG, "ypbindproc_oldsetdom_1 (%s:%s:%d) from %s:%i",
+	  log_msg (LOG_DEBUG, "ypbindproc_oldsetdom_1 (%s:%s:%d) from %s port %i",
 		   *argp->ypoldsetdom_domain,
 		   inet_ntoa (argp->ypoldsetdom_binding.ypbind_binding_addr),
 		   port, taddr2ipstr (nconf, rqhost,
@@ -457,11 +461,11 @@ ypbindproc_setdom_2_svc (ypbind2_setdom *argp, void *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  const char *ipaddr = taddr2ipstr (nconf, rqhost, namebuf6, sizeof (namebuf6));
-	  unsigned short port = taddr2port (nconf, rqhost);
 
-	  log_msg (LOG_DEBUG, "ypbindproc_setdom_2 (%s) from %s:%i",
-		   argp->ypsetdom_domain, ipaddr, port);
+	  log_msg (LOG_DEBUG, "ypbindproc_setdom_2 (%s) from %s port %i",
+		   argp->ypsetdom_domain,
+		   taddr2ipstr (nconf, rqhost, namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
 	  freenetconfigent (nconf);
 	}
     }
@@ -488,14 +492,13 @@ ypbindproc_setdom_3_svc (ypbind3_setdom *argp, void *result,
       else
 	{
 	  char namebuf6[INET6_ADDRSTRLEN];
-	  const char *ipaddr = taddr2ipstr (nconf, rqhost, namebuf6, sizeof (namebuf6));
-	  unsigned short port = taddr2port (nconf, rqhost);
 
-	  log_msg (LOG_DEBUG, "ypbindproc_setdom_3 (%s) from %s:%i",
-		   argp->ypsetdom_domain, ipaddr, port);
+	  log_msg (LOG_DEBUG, "ypbindproc_setdom_3 (%s) from %s port %i",
+		   argp->ypsetdom_domain,
+		   taddr2ipstr (nconf, rqhost, namebuf6, sizeof (namebuf6)),
+		   taddr2port (nconf, rqhost));
 
 #if 0 /* only for debugging */
-
 	  if (argp->ypsetdom3_nconf && argp->ypsetdom3_svcaddr)
 	    printf ("ypbind_netbuf:\n\taddr: %s\n\tport: %i\n",
 		    taddr2ipstr (argp->ypsetdom3_nconf,

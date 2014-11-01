@@ -94,7 +94,7 @@ ypbindprog_1 (struct svc_req *rqstp, register SVCXPRT *transp)
         {
           char namebuf6[INET6_ADDRSTRLEN];
 
-	  log_msg (LOG_ERR, "ypbindprog_1: cannot decode arguments for %d from %s:%i",
+	  log_msg (LOG_ERR, "ypbindprog_1: cannot decode arguments for %d from %s port %i",
 		   rqstp->rq_proc, taddr2ipstr (nconf, rqhost,
 						namebuf6, sizeof (namebuf6)),
 		   rqstp->rq_xprt->xp_port);
@@ -180,7 +180,7 @@ ypbindprog_2 (struct svc_req *rqstp, register SVCXPRT *transp)
         {
           char namebuf6[INET6_ADDRSTRLEN];
 
-	  log_msg (LOG_ERR, "ypbindprog_2: cannot decode arguments for %d from %s:%i",
+	  log_msg (LOG_ERR, "ypbindprog_2: cannot decode arguments for %d from %s port %i",
 		   rqstp->rq_proc, taddr2ipstr (nconf, rqhost,
 						namebuf6, sizeof (namebuf6)),
 		   rqstp->rq_xprt->xp_port);
@@ -266,7 +266,7 @@ ypbindprog_3 (struct svc_req *rqstp, register SVCXPRT *transp)
         {
           char namebuf6[INET6_ADDRSTRLEN];
 
-	  log_msg (LOG_ERR, "ypbindprog_3: cannot decode arguments for %d from %s:%i",
+	  log_msg (LOG_ERR, "ypbindprog_3: cannot decode arguments for %d from %s port %i",
 		   rqstp->rq_proc, taddr2ipstr (nconf, rqhost,
 						namebuf6, sizeof (namebuf6)),
 		   rqstp->rq_xprt->xp_port);

@@ -1,3 +1,11 @@
+2014-11-01  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* src/ypbind_server.c: Change ipaddr/port output in debug output.
+	* src/ypbind_svc.c: Likewise.
+
+	* src/ypbind_server.c (ypbindproc_domain_3_svc): Disable hack,
+	this could lead to a crash.
+
 2014-10-21  Thorsten Kukuk  <kukuk@suse.de>
 
 	* src/ypbind_server.c: Use svc_getrpccaller,
@@ -6,8 +14,6 @@
 	* src/ypbind_svc.c: Use svc_getrpccaller.
 
 2014-10-20  Thorsten Kukuk  <kukuk@suse.de>
-
-	* release version 1.99.1
 
 	* configure.ac: Remove slp support, add tirpc check,
 	disable parallel broadcast on all systems
