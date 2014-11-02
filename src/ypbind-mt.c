@@ -559,14 +559,14 @@ portmapper_register (void)
 	}
 
       /* support ypbind V2 and V1, but only on udp/tcp transports */
-      if (strcmp(nconf->nc_protofmly, NC_INET) == 0)
+      if (strcmp (nconf->nc_protofmly, NC_INET) == 0)
 	{
 	  if (debug_flag)
 	    log_msg (LOG_DEBUG, "Register YPBINDVERS 1 and 2 for %s,%s",
 		     nconf->nc_protofmly, nconf->nc_proto);
 
-	  rpcb_unset(YPBINDPROG, YPBINDVERS_2, nconf);
-	  if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_2, ypbindprog_2, nconf))
+	  rpcb_unset (YPBINDPROG, YPBINDVERS_2, nconf);
+	  if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_2, ypbindprog_2, nconf))
 	    {
 	      log_msg (LOG_INFO,
 		       _("unable to register (YPBINDPROG, YPBINDVERS_2) [%s]"),
@@ -574,9 +574,9 @@ portmapper_register (void)
 	      continue;
 	    }
 
-	  rpcb_unset(YPBINDPROG, YPBINDVERS_1, nconf);
-	  if (!svc_reg(xprt, YPBINDPROG, YPBINDVERS_1,
-		       ypbindprog_1, nconf))
+	  rpcb_unset (YPBINDPROG, YPBINDVERS_1, nconf);
+	  if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_1,
+			ypbindprog_1, nconf))
 	    {
 	      log_msg (LOG_ERR,
 		       _("unable to register (YPBINDPROG, YPBINDVERS_1)."));
