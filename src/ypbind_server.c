@@ -265,8 +265,6 @@ ypbindproc_domain_3_svc (domainname *argp, ypbind3_resp *result,
 #endif
 	}
     }
-  fprintf (stderr, "After debug_flag\n");
-
   return TRUE;
 
 }
