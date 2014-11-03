@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([ypbind-mt], [1.99.5])
+AC_INIT([ypbind-mt], [2.0])
 AC_CONFIG_SRCDIR([src/ypbind-mt.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -12,7 +12,7 @@ dnl Checks for programs.
 AC_PROG_CC
 dnl If we're using gcc, we want warning flags
 #test -n "$GCC" && WARNFLAGS="-Wall"
-test -n "$GCC" && WARNFLAGS="-W -Wall -Wbad-function-cast -Wcast-align -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef -Werror"
+test -n "$GCC" && WARNFLAGS="-W -Wall -Wbad-function-cast -Wcast-align -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wstrict-prototypes -Wundef"
 AC_SUBST(WARNFLAGS)
 AC_ISC_POSIX
 AC_PROG_INSTALL

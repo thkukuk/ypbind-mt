@@ -499,20 +499,20 @@ __rpcbind_is_up (void)
     return FALSE;
 
   memset (&sun, 0, sizeof sun);
-  sock = socket(AF_LOCAL, SOCK_STREAM, 0);
+  sock = socket (AF_LOCAL, SOCK_STREAM, 0);
   if (sock < 0)
     return FALSE;
   sun.sun_family = AF_LOCAL;
-  strncpy(sun.sun_path, _PATH_RPCBINDSOCK, sizeof(sun.sun_path));
+  strncpy (sun.sun_path, _PATH_RPCBINDSOCK, sizeof(sun.sun_path));
 
-  if (connect(sock, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0)
+  if (connect (sock, (struct sockaddr *)&sun, SUN_LEN(&sun)) < 0)
     {
       close (sock);
-      return (FALSE);
+      return FALSE;
     }
 
-  close(sock);
-  return (TRUE);
+  close (sock);
+  return TRUE;
 }
 
 
@@ -545,176 +545,145 @@ portmapper_register (void)
   while ((nconf = __rpc_getconf (nc_handle)))
     {
       SVCXPRT *xprt;
+      struct sockaddr *sa;
+      struct sockaddr_in sin;
+      struct sockaddr_in6 sin6;
+      int sock;
+      sa_family_t family; /* AF_INET, AF_INET6 */
+      int type; /* SOCK_DGRAM (udp), SOCK_STREAM (tcp) */
+      int proto; /* IPPROTO_UDP, IPPROTO_TCP */
 
       if (debug_flag)
 	log_msg (LOG_DEBUG, "Register ypbind for %s,%s",
 		 nconf->nc_protofmly, nconf->nc_proto);
 
-      if (ypbind_port > 0 || local_only)
+      if (strcmp (nconf->nc_protofmly, "inet6") == 0)
+	family = AF_INET6;
+      else if (strcmp (nconf->nc_protofmly, "inet") == 0)
+	family = AF_INET;
+      else
+	continue; /* we don't support nconf->nc_protofmly */
+
+      if (strcmp (nconf->nc_proto, "udp") == 0)
 	{
-	  int sock;
-	  sa_family_t family; /* AF_INET, AF_INET6 */
-	  int type; /* SOCK_DGRAM (udp), SOCK_STREAM (tcp) */
-	  int proto; /* IPPROTO_UDP, IPPROTO_TCP */
+	  type = SOCK_DGRAM;
+	  proto = IPPROTO_UDP;
+	}
+      else if (strcmp (nconf->nc_proto, "tcp") == 0)
+	{
+	  type = SOCK_STREAM;
+	  proto = IPPROTO_TCP;
+	}
+      else
+	continue; /* We don't support nconf->nc_proto */
 
-	  if (strcmp (nconf->nc_protofmly, "inet6") == 0)
-	    family = AF_INET6;
-	  else if (strcmp (nconf->nc_protofmly, "inet") == 0)
-	    family = AF_INET;
-	  else
-	    continue; /* we don't support nconf->nc_protofmly */
+      if ((sock = socket (family, type, proto)) < 0)
+	{
+	  log_msg (LOG_ERR, _("Cannot create socket for %s,%s: %s"),
+		   nconf->nc_protofmly, nconf->nc_proto,
+		   strerror (errno));
+	  continue;
+	}
 
-	  if (strcmp (nconf->nc_proto, "udp") == 0)
-	    {
-	      type = SOCK_DGRAM;
-	      proto = IPPROTO_UDP;
-	    }
-	  else if (strcmp (nconf->nc_proto, "tcp") == 0)
-	    {
-	      type = SOCK_STREAM;
-	      proto = IPPROTO_TCP;
-	    }
-	  else
-	    continue; /* We don't support nconf->nc_proto */
+      if (family == AF_INET6)
+	{
+	  /* Disallow v4-in-v6 to allow host-based access checks */
+	  int i;
 
-	  if ((sock = socket (family, type, proto)) == -1)
-	    continue;
-
-	  if (family == AF_INET6)
-	    {
-	      /* Disallow v4-in-v6 to allow host-based access checks */
-	      int i;
-
-	      if (setsockopt (sock, IPPROTO_IPV6, IPV6_V6ONLY,
-			      &i, sizeof(i)) == -1)
-		{
-		  log_msg (LOG_ERR,
-			   "ERROR: cannot disable v4-in-v6 on %s6 socket",
-			   nconf->nc_proto);
-		  return 1;
-		}
-	    }
-
-	  /* XXX -local_only is missing */
-	  {
-	    struct sockaddr *sa;
-	    struct sockaddr_in sin;
-	    struct sockaddr_in6 sin6;
-
-	    switch (family)
-	      {
-	      case AF_INET:
-		memset (&sin, 0, sizeof(sin));
-                sin.sin_family = family;
-		if (local_only)
-		  sin.sin_addr.s_addr = INADDR_LOOPBACK;
-		if (ypbind_port > 0)
-		  sin.sin_port = htons (ypbind_port);
-                sa = (struct sockaddr *)(void *)&sin;
-                break;
-	      case AF_INET6:
-		memset (&sin6, 0, sizeof (sin6));
-                sin6.sin6_family = family;
-		if (local_only)
-		  sin6.sin6_addr = in6addr_any;
-		if (ypbind_port > 0)
-		  sin6.sin6_port = htons (ypbind_port);
-                sa = (struct sockaddr *)(void *)&sin6;
-                break;
-	      default:
-		log_msg (LOG_ERR, _("Unsupported address family %d"), family);
-		return -1;
-	      }
-	    if (bindresvport_sa (sock, sa) == -1)
-	      {
-		/* XXX fix error mesagge if -local-only option is given */
-		log_msg (LOG_ERR, _("Cannot bind to reserved port %d (%s)"),
-			 ypbind_port,
-			 strerror(errno));
-		return 1;
-	      }
-	  }
-
-	  if (type == SOCK_STREAM)
-	    {
-	      listen (sock, SOMAXCONN);
-	      xprt = svc_vc_create(sock, 0, 0);
-	    }
-	  else
-	    xprt = svc_dg_create(sock, 0, 0);
-
-	  if (xprt == NULL)
-	    {
-	      log_msg (LOG_ERR, "terminating: cannot create rpcbind handle");
-	      return 1;
-	    }
-
-	  rpcb_unset (YPBINDPROG, YPBINDVERS, nconf);
-	  if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS, ypbindprog_3, nconf))
-
+	  if (setsockopt (sock, IPPROTO_IPV6, IPV6_V6ONLY,
+			  &i, sizeof(i)) == -1)
 	    {
 	      log_msg (LOG_ERR,
-		       _("unable to register (YPBINDPROG, 3) for %s, %s."),
-		       nconf->nc_protofmly, nconf->nc_proto);
+		       "ERROR: cannot disable v4-in-v6 on %s6 socket",
+		       nconf->nc_proto);
+	      return 1;
+	    }
+	}
+
+      switch (family)
+	{
+	case AF_INET:
+	  memset (&sin, 0, sizeof(sin));
+	  sin.sin_family = AF_INET;
+	  if (local_only)
+	    sin.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+	  if (ypbind_port > 0)
+	    sin.sin_port = htons (ypbind_port);
+	  sa = (struct sockaddr *)(void *)&sin;
+	  break;
+	case AF_INET6:
+	  memset (&sin6, 0, sizeof (sin6));
+	  sin6.sin6_family = AF_INET6;
+	  if (local_only)
+	    sin6.sin6_addr = in6addr_any;
+	  if (ypbind_port > 0)
+	    sin6.sin6_port = htons (ypbind_port);
+	  sa = (struct sockaddr *)(void *)&sin6;
+	  break;
+	default:
+	  log_msg (LOG_ERR, _("Unsupported address family %d"), family);
+	  return -1;
+	}
+
+      if (bindresvport_sa (sock, sa) == -1)
+	{
+	  if (ypbind_port > 0 && local_only)
+	    log_msg (LOG_ERR, _("Cannot bind to reserved port %d and localhostonly (%s)"),
+		     ypbind_port, strerror (errno));
+	  else if (ypbind_port > 0)
+	    log_msg (LOG_ERR, _("Cannot bind to reserved port %d (%s)"),
+		     ypbind_port, strerror (errno));
+	  else if (local_only)
+	    log_msg (LOG_ERR, _("Cannot bind to localhost only (%s)"),
+		     strerror (errno));
+	  else
+	    log_msg (LOG_ERR, _("bindresvport failed: %s"),
+		     strerror (errno));
+	  return 1;
+	}
+
+      if (type == SOCK_STREAM)
+	{
+	  listen (sock, SOMAXCONN);
+	  xprt = svc_vc_create (sock, 0, 0);
+	}
+      else
+	xprt = svc_dg_create (sock, 0, 0);
+
+      if (xprt == NULL)
+	{
+	  log_msg (LOG_ERR, "terminating: cannot create rpcbind handle");
+	  return 1;
+	}
+
+      rpcb_unset (YPBINDPROG, YPBINDVERS, nconf);
+      if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS, ypbindprog_3, nconf))
+	{
+	  log_msg (LOG_ERR,
+		   _("unable to register (YPBINDPROG, 3) for %s, %s."),
+		   nconf->nc_protofmly, nconf->nc_proto);
+	  continue;
+	}
+
+      if (family == AF_INET)
+	{
+	  rpcb_unset (YPBINDPROG, YPBINDVERS_2, nconf);
+	  if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_2,
+			ypbindprog_2, nconf))
+	    {
+	      log_msg (LOG_INFO,
+		       _("unable to register (YPBINDPROG, 2) [%s]"),
+		       nconf->nc_netid);
 	      continue;
 	    }
 
-	  if (family == AF_INET)
-	    {
-	      rpcb_unset (YPBINDPROG, YPBINDVERS_2, nconf);
-	      if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_2,
-			    ypbindprog_2, nconf))
-		{
-		  log_msg (LOG_INFO,
-			   _("unable to register (YPBINDPROG, 2) [%s]"),
-			   nconf->nc_netid);
-		  continue;
-		}
-
-	      rpcb_unset (YPBINDPROG, YPBINDVERS_1, nconf);
-	      if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_1,
-			    ypbindprog_1, nconf))
-		{
-		  log_msg (LOG_ERR,
-			   _("unable to register (YPBINDPROG, 1)."));
-		  continue;
-		}
-	    }
-	}
-      else
-	{
-	  if ((xprt = svc_tp_create(ypbindprog_3,
-				    YPBINDPROG, YPBINDVERS, nconf)) == NULL)
-	    {
-	      log_msg (LOG_ERR, "terminating: cannot create rpcbind handle");
-	      return 1;
-	    }
-
-	  /* support ypbind V2 and V1, but only on udp/tcp transports */
-	  if (strcmp (nconf->nc_protofmly, NC_INET) == 0)
-	    {
-	      if (debug_flag)
-		log_msg (LOG_DEBUG, "Register YPBINDVERS 1 and 2 for %s,%s",
-			 nconf->nc_protofmly, nconf->nc_proto);
-
-	      rpcb_unset (YPBINDPROG, YPBINDVERS_2, nconf);
-	      if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_2, ypbindprog_2, nconf))
-		{
-		  log_msg (LOG_INFO,
-			   _("unable to register (YPBINDPROG, 2) [%s]"),
-			   nconf->nc_netid);
-		  continue;
-		}
-
-	      rpcb_unset (YPBINDPROG, YPBINDVERS_1, nconf);
-	      if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_1,
+	  rpcb_unset (YPBINDPROG, YPBINDVERS_1, nconf);
+	  if (!svc_reg (xprt, YPBINDPROG, YPBINDVERS_1,
 			ypbindprog_1, nconf))
-		{
-		  log_msg (LOG_ERR,
-			   _("unable to register (YPBINDPROG, 1)."));
-		  continue;
-		}
-
+	    {
+	      log_msg (LOG_ERR,
+		       _("unable to register (YPBINDPROG, 1)."));
+	      continue;
 	    }
 	}
     }
