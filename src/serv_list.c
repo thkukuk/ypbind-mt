@@ -674,9 +674,7 @@ search_ypserver (struct binding *list)
 
       timeout.tv_sec = 1;
       timeout.tv_usec = 0;
-
-
-      clnt_handlep = clnt_create (host, YPPROG, YPVERS, "udp");
+      clnt_handlep = clnt_create_timed (host, YPPROG, YPVERS, "udp", &timeout);
 
       if (clnt_handlep == NULL)
 	{
@@ -690,9 +688,9 @@ search_ypserver (struct binding *list)
 
       timeout.tv_sec = 5;
       timeout.tv_usec = 0;
-      status = clnt_call(clnt_handlep, YPPROC_DOMAIN,
-                         (xdrproc_t) xdr_domainname, &domain,
-                         (xdrproc_t) xdr_bool, (caddr_t) &has_domain, timeout);
+      status = clnt_call (clnt_handlep, YPPROC_DOMAIN,
+			  (xdrproc_t) xdr_domainname, &domain,
+			  (xdrproc_t) xdr_bool, (caddr_t) &has_domain, timeout);
 
       if (status != RPC_SUCCESS)
         {
@@ -838,9 +836,10 @@ check_binding (const char *req_domain)
 
       if (domainlist[i].active != -1)
 	{
+	  const struct timeval TIMEOUT50 = {5, 0};
 	  /* The binding is in use, check if it is still valid*/
-	  CLIENT *client_handle = clnt_create (bound_host (&domainlist[i]),
-					       YPPROG, YPVERS, "udp");
+	  CLIENT *client_handle = clnt_create_timed (bound_host (&domainlist[i]),
+						     YPPROG, YPVERS, "udp", &TIMEOUT50);
 	  if (client_handle == NULL)
 	    {
 	      if (verbose_flag || debug_flag)

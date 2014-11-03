@@ -1,5 +1,7 @@
 2014-11-03  Thorsten Kukuk  <kukuk@thkukuk.de>
 
+	* src/serv_list.c: Replace clnt_create with clnt_create_timed.
+
 	* release version 2.0
 
 	* Implement ypbind v3 protocol and IPv6 support.
