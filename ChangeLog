@@ -1,3 +1,9 @@
+2014-12-01  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* man/ypbind.8.xml: Remove DBUS references.
+	* etc/ypbind.init: Likewise.
+	* etc/sysconfig.ypbind: Likewise.
+
 2014-11-03  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* src/serv_list.c: Replace clnt_create with clnt_create_timed.

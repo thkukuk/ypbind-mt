@@ -48,15 +48,6 @@ YPBIND_BROKEN_SERVER="no"
 #
 YPBIND_VERBOSE="no"
 
-## Type:        yesno
-## Default:     yes
-## ServiceRestart: ypbind
-#
-# You should set this to "no" if you are working with static network
-# interfaces and don't uses NetworkManager. (yes|no)
-#
-YPBIND_DBUS="no"
-
 ## Type:        integer
 ## Default:     ""
 ## ServiceRestart: ypbind

@@ -132,21 +132,6 @@ If the file does not exist or if there are no valid entries,
 <command>ypbind</command>
 exit.</para>
 
-<para>This
-<command>ypbind</command>
-version listens for DBUS messages from NetworkManager. If no NetworkManager
-is running at startup,
-<command>ypbind</command>
-will behave as usual and assumes there is a working network
-connection. If NetworkManager is running on the system, ypbind will only
-search and provide NIS informations, if NetworkManager tells that a network
-connection is available. If NetworkManager establishes a connection,
-<command>ypbind</command>
-will reread all configuration files, registers at the local portmapper and
-try to search NIS servers. If NetworkManager drops a connection,
-<command>ypbind</command>
-will unregister from portmapper.</para>
-
   </refsect1>
 
   <refsect1 id='options'>

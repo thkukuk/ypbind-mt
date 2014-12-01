@@ -4,6 +4,10 @@ Copyright (C) 1998-2014 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 2.1
+* ypbind: shorten some timeouts
+* remove references to old DBUS support
+
 Version 2.0
 * Remove SLP support
 * Disable NetworkManager/DBUS support

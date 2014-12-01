@@ -74,25 +74,21 @@ case "$1" in
 	test "$YPBIND_BROADCAST" = "yes" && OPTIONS="-broadcast $OPTIONS"
 	test "$YPBIND_BROKEN_SERVER" = "yes" && OPTIONS="-broken-server $OPTIONS"
 	test "X$YPBIND_PING_INTERVAL" != "X" && OPTIONS="-ping-interval $YPBIND_PING_INTERVAL $OPTIONS"
-	test "$YPBIND_DBUS" = "no" && OPTIONS="-no-dbus $OPTIONS"
 
 	startproc $YPBIND_BIN $YPBIND_OPTIONS $OPTIONS
 	RETVAL=$?
-	if [ "$YPBIND_DBUS" = "no" ]; then
-	    # Only check if we don't use NetworkManager
-            if [ $? -eq 0 ]; then
-                notfound=1
-                for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
-                    ypwhich &>/dev/null && { notfound=0 ; break; };
-                    echo -n " ."
-                    sleep 1;
-                done
-                if [ $notfound -eq 1 ]; then
-                    echo -n " ${warn}No NIS server found${norm}";
-	        fi
-            else
-                rc_failed
-            fi
+        if [ $? -eq 0 ]; then
+            notfound=1
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+                ypwhich &>/dev/null && { notfound=0 ; break; };
+                echo -n " ."
+                sleep 1;
+            done
+            if [ $notfound -eq 1 ]; then
+                echo -n " ${warn}No NIS server found${norm}";
+	    fi
+        else
+            rc_failed
         fi
 	rc_status -v
 	;;

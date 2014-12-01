@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ypbind-mt 2.0\n"
+"Project-Id-Version: ypbind-mt 2.1\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2014-11-03 10:22+0100\n"
+"POT-Creation-Date: 2014-12-01 16:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,7 +40,7 @@ msgstr ""
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr ""
 
-#: src/serv_list.c:550 src/serv_list.c:733
+#: src/serv_list.c:550 src/serv_list.c:731
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
@@ -65,22 +65,22 @@ msgstr ""
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:685
+#: src/serv_list.c:683
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:706
+#: src/serv_list.c:704
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:821
+#: src/serv_list.c:819
 #, c-format
 msgid "Ping active server for '%s'"
 msgstr ""
 
-#: src/serv_list.c:823
+#: src/serv_list.c:821
 msgid "Ping active servers for all domains."
 msgstr ""
 
@@ -306,7 +306,7 @@ msgstr ""
 msgid "svc_run returned."
 msgstr ""
 
-#: src/ypbind_server.c:123 src/ypbind_server.c:226 src/ypbind_server.c:283
+#: src/ypbind_server.c:123 src/ypbind_server.c:226 src/ypbind_server.c:281
 #, c-format
 msgid "Domain name '%s' has embedded slash -- rejecting."
 msgstr ""
@@ -320,16 +320,16 @@ msgstr ""
 msgid "Status: YPBIND_SUCC_VAL"
 msgstr ""
 
-#: src/ypbind_server.c:316 src/ypbind_server.c:361
+#: src/ypbind_server.c:314 src/ypbind_server.c:359
 #, c-format
 msgid "User from '%s' try's to change the binding."
 msgstr ""
 
-#: src/ypbind_server.c:328 src/ypbind_server.c:373
+#: src/ypbind_server.c:326 src/ypbind_server.c:371
 msgid "Changing the binding is not allowed."
 msgstr ""
 
-#: src/ypbind_server.c:335 src/ypbind_server.c:380
+#: src/ypbind_server.c:333 src/ypbind_server.c:378
 msgid "SETDOM request doesn't come from reserved port."
 msgstr ""
 
