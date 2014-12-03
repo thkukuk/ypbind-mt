@@ -1,5 +1,7 @@
 2014-12-01  Thorsten Kukuk  <kukuk@thkukuk.de>
 
+	* release version 2.1
+
 	* man/ypbind.8.xml: Remove DBUS references.
 	* etc/ypbind.init: Likewise.
 	* etc/sysconfig.ypbind: Likewise.
