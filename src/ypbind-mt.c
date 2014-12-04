@@ -67,9 +67,6 @@ int broken_server = 0;
 int foreground_flag = 0;
 int ping_interval = 300;
 int local_only = 0;
-#ifdef USE_DBUS_NM
-int localhost_used = 1;
-#endif
 int ypbind_port = -1;
 static char domain[1025];
 static int lock_fd;
@@ -466,9 +463,6 @@ usage (int ret)
 
   fputs (_("Usage:\n"), output);
   fputs (_("\typbind [-broadcast | -ypset | -ypsetme] [-f configfile]\n\t  [-no-ping] [-broken-server] [-local-only] [-i ping-interval]\n\t  [-debug] [-verbose] [-n | -foreground]\n"), output);
-#ifdef USE_DBUS_NM
-  fputs (_("\t  [-no-dbus]\n"), output);
-#endif
   fputs (_("\typbind -c [-f configfile]\n"), output);
   fputs (_("\typbind --version\n"), output);
   exit (ret);
@@ -698,10 +692,6 @@ main (int argc, char **argv)
   int i;
   sigset_t sigs_to_block;
   pthread_t sig_thread, ping_thread;
-#ifdef USE_DBUS_NM
-  pthread_t dbus_thread;
-  int disable_dbus = 0;
-#endif
   struct stat st;
   int configcheck_only = 0;
 
@@ -772,10 +762,6 @@ main (int argc, char **argv)
 	  logfile_flag = 1;
 	  debug_flag = 1;
 	}
-#ifdef USE_DBUS_NM
-      else if (strcmp ("-no-dbus", argv[i]) == 0)
-	disable_dbus = 1;
-#endif
       else if (strcmp ("--help", argv[i]) == 0)
         usage (0);
       else
@@ -843,19 +829,7 @@ main (int argc, char **argv)
     }
 
   if (!use_broadcast)
-    {
-#ifdef USE_DBUS_NM
-      /* If we don't use DBUS, exit with an error if we cannot load the
-	 config. Else load the config, maybe there is a network already
-	 running. */
-      if (disable_dbus)
-	load_config_or_exit ();
-      else
-	load_config (0);
-#else
-      load_config_or_exit ();
-#endif
-    }
+    load_config_or_exit ();
   else
     add_server (domain, NULL);
 
@@ -949,22 +923,6 @@ main (int argc, char **argv)
     }
   pthread_mutex_unlock(&mutex_pid);
 
-#ifdef USE_DBUS_NM
-  if (!disable_dbus)
-    {
-      pthread_create (&dbus_thread, NULL, &watch_dbus_nm, NULL);
-      /* wait until signal thread has created the pid file */
-      pthread_mutex_lock(&mutex_dbus);
-      while (dbus_is_initialized < 1)
-	{
-	  pthread_cond_wait(&cond_dbus, &mutex_dbus);
-	}
-      pthread_mutex_unlock(&mutex_dbus);
-    }
-  else
-    is_online = 1;
-#endif
-
   if (logfile_flag)
     log_msg (LOG_DEBUG, "Starting %s-%s", PACKAGE, VERSION);
 
@@ -974,11 +932,6 @@ main (int argc, char **argv)
       portmapper_disconnect ();
       exit (1);
     }
-
-#ifdef USE_DBUS_NM
-  if (!is_online && !localhost_used)
-    portmapper_disconnect ();
-#endif
 
   pthread_create (&ping_thread, NULL, &test_bindings, NULL);
 

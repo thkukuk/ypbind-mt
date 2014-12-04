@@ -21,4 +21,4 @@ noinst_HEADERS = ypbind.h log_msg.h local.h pthread_np.h
 
 ypbind_SOURCES = ypbind-mt.c ypbind_svc.c \
 	 	 ypbind_server.c log_msg.c serv_list.c \
-		 pthread_np.c ypbind_dbus_nm.c
+		 pthread_np.c
