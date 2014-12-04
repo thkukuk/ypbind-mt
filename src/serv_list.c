@@ -186,36 +186,46 @@ update_bindingfile (struct binding *entry)
     }
 
   ypbres2 = convert_v3_to_respv2 (ypb3);
-  iov[0].iov_base = (caddr_t) &sport;
-  iov[0].iov_len = sizeof (sport);
-  iov[1].iov_base = (caddr_t) &ypbres2;
-  iov[1].iov_len = sizeof ypbres2;
-
-  len = iov[0].iov_len + iov[1].iov_len;
-
-  if ((fd = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+  if (ypbres2.ypbind_status == YPBIND_SUCC_VAL)
     {
-      if (writev (fd, iov, 2) != len )
-        {
-          log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
-          unlink (path1);
-        }
-      close (fd);
+      iov[0].iov_base = (caddr_t) &sport;
+      iov[0].iov_len = sizeof (sport);
+      iov[1].iov_base = (caddr_t) &ypbres2;
+      iov[1].iov_len = sizeof ypbres2;
+
+      len = iov[0].iov_len + iov[1].iov_len;
+
+      if ((fd = open(path1, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+	{
+	  if (writev (fd, iov, 2) != len )
+	    {
+	      log_msg (LOG_ERR, "writev (%s): %s", path1, strerror (errno));
+	      unlink (path1);
+	    }
+	  close (fd);
+	}
+      else
+	log_msg (LOG_ERR, "open (%s): %s", path1, strerror (errno));
+
+      if ((fd = open(path2, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
+	{
+	  if (writev (fd, iov, 2) != len )
+	    {
+	      log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
+	      unlink (path2);
+	    }
+	  close (fd);
+	}
+      else
+	log_msg (LOG_ERR, "open (%s): %s", path2, strerror (errno));
     }
   else
-    log_msg (LOG_ERR, "open (%s): %s", path1, strerror (errno));
-
-  if ((fd = open(path2, O_CREAT | O_RDWR | O_TRUNC, FILE_MODE )) != -1)
     {
-      if (writev (fd, iov, 2) != len )
-        {
-          log_msg (LOG_ERR, "writev (%s): %s", path2, strerror (errno));
-          unlink (path2);
-        }
-      close (fd);
+      /* Ok, we don't have a IPv4 address, make sure old stuff
+	 is really gone. */
+      unlink (path1);
+      unlink (path2);
     }
-  else
-    log_msg (LOG_ERR, "open (%s): %s", path2, strerror (errno));
 
   /* Write binding information for version 3 protocol */
   if ((fp = fopen (path3, "wce")) == NULL)

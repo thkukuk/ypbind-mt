@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt 2.2\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2014-12-04 14:55+0100\n"
+"POT-Creation-Date: 2014-12-04 15:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,70 +17,70 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/serv_list.c:462
+#: src/serv_list.c:472
 msgid "Not enough memory !"
 msgstr ""
 
-#: src/serv_list.c:487
+#: src/serv_list.c:497
 msgid "internal error: add_server called with NULL domain."
 msgstr ""
 
-#: src/serv_list.c:502
+#: src/serv_list.c:512
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr ""
 
-#: src/serv_list.c:517
+#: src/serv_list.c:527
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr ""
 
-#: src/serv_list.c:524
+#: src/serv_list.c:534
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr ""
 
-#: src/serv_list.c:549 src/serv_list.c:750
+#: src/serv_list.c:559 src/serv_list.c:760
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
 
-#: src/serv_list.c:559
+#: src/serv_list.c:569
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr ""
 
-#: src/serv_list.c:597
+#: src/serv_list.c:607
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:636
+#: src/serv_list.c:646
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:687
+#: src/serv_list.c:697
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:698
+#: src/serv_list.c:708
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr ""
 
-#: src/serv_list.c:721
+#: src/serv_list.c:731
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr ""
 
-#: src/serv_list.c:830
+#: src/serv_list.c:840
 #, c-format
 msgid "Ping active server for '%s'"
 msgstr ""
 
-#: src/serv_list.c:832
+#: src/serv_list.c:842
 msgid "Ping active servers for all domains."
 msgstr ""
 
