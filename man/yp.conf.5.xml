@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<!--  \-*\- nroff \-*\- -->
+<!--  Copyright 1998, 1999, 2002, 2006 Thorsten Kukuk &lt;kukuk@suse.de&gt; -->
+
+<!--  This file is part of ypbind\-mt. -->
+
+<!--  ypbind\-mt is free software; you can redistribute it and/or -->
+<!--  modify it under the terms of the GNU General Public License as -->
+<!--  published by the Free Software Foundation; either version 2 of the -->
+<!--  License, or (at your option) any later version. -->
+
+<!--  ypbind\-mt is distributed in the hope that it will be useful, -->
+<!--  but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU -->
+<!--  General Public License for more details. -->
+
+<!--  You should have received a copy of the GNU General Public -->
+<!--  License along with ypbind\-mt; see the file COPYING.  If not, -->
+<!--  write to the Free Software Foundation, Inc., 51 Franklin Street \- Suite 500, -->
+<!--  Boston, MA 02111\-1307, USA. -->
+
+<refentry id='ypconf5'>
+  <refmeta>
+    <refentrytitle>yp.conf</refentrytitle>
+    <manvolnum>5</manvolnum>
+    <refmiscinfo class='sectdesc'>ypbind-mt</refmiscinfo>
+  </refmeta>
+
+  <refnamediv id='name'>
+    <refname>yp.conf</refname>
+    <refpurpose>NIS binding configuration file</refpurpose>
+  </refnamediv>
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      The file <filename>/etc/yp.conf</filename> is read from
+      <citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+      at startup or when receiving signal SIGHUP. The entries are
+      used for the initial binding. Valid entries are
+    </para>
+
+    <variablelist>
+      <varlistentry>
+        <term> <emphasis remap='B'>domain</emphasis> <emphasis remap='I'>nisdomain</emphasis> <emphasis remap='B'>server</emphasis> <emphasis remap='I'>hostname</emphasis> </term>
+        <listitem>
+          <para>
+            Use server <emphasis remap='I'>hostname</emphasis> for the
+            domain <emphasis remap='I'>nisdomain</emphasis>. You could
+            have more then one entry of this type for a single domain.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><emphasis remap='B'>domain</emphasis> <emphasis remap='I'>nisdomain</emphasis> <emphasis remap='B'>broadcast</emphasis></term>
+        <listitem>
+          <para>
+            Use broadcast on the local net for domain
+            <emphasis remap='I'>nisdomain</emphasis>.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><emphasis remap='B'>ypserver</emphasis> <emphasis remap='I'>hostname</emphasis></term>
+        <listitem>
+          <para>
+            Use server <emphasis remap='I'>hostname</emphasis>
+            for the local domain.
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><emphasis remap='B'>broadcast</emphasis></term>
+        <listitem>
+          <para>
+            If no other server is given or all of them are not reachable,
+            try a broadcast call for the default domain to find a server.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      If for a specific domain the broadcast option and fixed server
+      are given, <emphasis remap='B'>ypbind-mt</emphasis> tries at
+      first the given servers before falling back to broadcasting
+      for a running server.
+    </para>
+  </refsect1>
+
+  <refsect1 id='see_also'>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry><refentrytitle>ypbind</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+    </para>
+  </refsect1>
+
+  <refsect1 id='author'>
+    <title>AUTHOR</title>
+    <para>
+      <emphasis remap='B'>ypbind-mt</emphasis>
+      was written by Thorsten Kukuk &lt;kukuk@thkukuk.de&gt;.
+    </para>
+  </refsect1>
+</refentry>

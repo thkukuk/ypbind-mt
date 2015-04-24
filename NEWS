@@ -1,0 +1,201 @@
+ypbind-mt NEWS -- history of user-visible changes.
+
+Copyright (C) 1998-2014 Thorsten Kukuk
+
+Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 2.2
+* Fix handling if servers are not reacheable or ports have changed
+
+Version 2.1
+* ypbind: shorten some timeouts
+* remove references to old DBUS support
+
+Version 2.0
+* Remove SLP support
+* Disable NetworkManager/DBUS support
+* Link against libtirpc
+* Listen to IPv6 connections, too
+* Fully support ypbind version 3 protocol
+
+Version 1.38
+* Use pkg-config in configure script
+
+Version 1.37.2
+* Add support for systemd >= 209
+
+Version 1.37.1
+* Revert sysconfig/ypbind changes
+
+Version 1.37
+* Some bug fixes
+* New -rebind_interval option
+* Systemd support integrated
+* Simplify sysconfig/ypbind
+
+Version 1.36
+* Adjust for updated NetworkManager
+
+Version 1.35
+* Fix problem with bindingfile handling
+
+Version 1.34
+* Add -forground option
+
+Version 1.33
+* Better error checking
+
+Version 1.32
+* Fix problems with SLP registration
+
+Version 1.31
+* Fix broadcast option
+
+Version 1.30
+* DBUS/NetworkManager is per default not compiled in any longer
+* Adjust for current NetworkManager
+
+Version 1.29.91
+* Minor bug fixes
+
+Version 1.29.90
+* Don't cache connection to NIS server any longer, create
+  new one for every check.
+
+Version 1.23.1
+* Fix compiling without DBUS/NetworkManager support
+
+Version 1.23
+* Improvements for NetworkManager support
+
+Version 1.22
+* Only write binding files if they really changed
+
+Version 1.21
+* Add -verbose option
+* Fix typo in option handling
+
+Version 1.20.5
+* Small bug fix
+
+Version 1.20.4
+* Small bug fixes
+* Add swedish translation
+
+Version 1.20.3
+* Add checks if NetworkManager headers are installed
+
+Version 1.20.2
+* Fix ignore SIGPIPE patch
+* Assume network is available if no DBUS is running
+
+Version 1.20.1
+* Ignore SIGPIPE
+
+Version 1.20
+* Add DBUS/NetworkManager support
+
+Version 1.19.1
+* Fix crash if debug mode is enabled
+
+Version 1.19
+* Fix some races when searching for hosts running ypserv
+
+Version 1.18
+* Add -ping-interval option
+* Document all ypbind options in ypbind.8
+
+Version 1.17.3
+* Fix SLP URL parsing
+
+ersion 1.17.2
+* Change SLP server URL to service:ypserv
+
+Version 1.17.1
+* Fix compilation on IA64
+
+Version 1.17
+* Add SLP support
+* Minor bug fixes
+
+Version 1.16
+* Make ypbind more robust
+
+Version 1.15
+* Allow -local-only and -p at the same time
+
+Version 1.14
+* Update binding file if ypset was called
+
+Version 1.13
+* Fix possible memory corruption if broadcast is used in /etc/yp.conf
+
+Version 1.12
+* Add new "broadcast" option to /etc/yp.conf
+
+Version 1.11
+* Use new gettext, autoconf and automake
+* Fix deadlock if a host in /etc/yp.conf does not exists
+* Rewrote the yp.conf syntax check option to find more errors
+* If fixed server and broadcast is given, try at first given servers
+  and use broadcast as fallback
+
+Version 1.10
+* New gettext version to fix locale problems
+
+Version 1.9
+* Fix problems with locking
+* Fix problems with domain bounding errors
+* Create pid file with pid of signal handler thread
+* Fix protocol V1 domainname handling
+
+Version 1.8
+* Makefile fixes
+* Protocol V1 fixes
+* Minor bug fixes
+
+Version 1.7
+* Fix missing syslog format string
+* Don't use malloc.h, will fail on *BSD systems
+
+Version 1.6
+* Use glibc 2.1.2 interface for reentrant functions
+* Fix naming of options
+* Give away controlling tty
+
+Version 1.5
+* Ignore pidfile, if there is no file locking over NFS
+* Check all 15 minutes if the current binding is the fastest
+
+Version 1.4
+* Add fixes for 64bit machines
+* Fix compiler warnings
+
+Version 1.3
+* Add -c option for checking config file for syntax errors
+* Bug fixes
+
+Version 1.2
+* Save current host list if ypset is used. Now we use the old
+  configuration if the ypset host goes down
+* If ypproc_domain is called, search a new server if domain is unbound
+* Fix a lot of bugs
+
+Version 1.1
+* With Linux Kernel 2.1.90 or later, use file locking for the pid file
+* Port it to Solaris 2.6/2.5.1/2.5
+* Port it to Linux with libc5
+
+Version 1.0
+* First public release
+* Fix some more bugs
+* Send ping to all server and use this one which answered at first
+
+Version 0.91
+* Second beta release
+* ypset now works
+* Fix a lot of bugs
+
+Version 0.90
+* First beta release
+

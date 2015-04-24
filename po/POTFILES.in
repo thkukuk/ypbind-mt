@@ -1,0 +1,8 @@
+# List of source files containing translatable strings.
+# Copyright (C) 1998 Thorsten Kukuk
+
+# Source files
+src/serv_list.c
+src/ypbind-mt.c
+src/ypbind_server.c
+src/ypbind_svc.c

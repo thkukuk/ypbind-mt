@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                   "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd">
+
+<!--  \-*\- nroff \-*\- -->
+<!--  Copyright 1998, 1999, 2002, 2004, 2005, 2006, 2007 Thorsten Kukuk, Germany -->
+
+<!--  This file is part of ypbind\-mt. -->
+
+<!--  Author: Thorsten Kukuk &lt;kukuk@thkukuk.de&gt; -->
+
+<!--  ypbind\-mt is free software; you can redistribute it and/or -->
+<!--  modify it under the terms of the GNU General Public License as -->
+<!--  published by the Free Software Foundation; either version 2 of the -->
+<!--  License, or (at your option) any later version. -->
+
+<!--  ypbind\-mt is distributed in the hope that it will be useful, -->
+<!--  but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU -->
+<!--  General Public License for more details. -->
+
+<!--  You should have received a copy of the GNU General Public -->
+<!--  License along with ypbind\-mt; see the file COPYING.  If not, -->
+<!--  write to the Free Software Foundation, Inc., 51 Franklin Street \- Suite 500, -->
+<!--  Boston, MA 02111\-1307, USA. -->
+
+<refentry id='ypbind8'>
+  <refmeta>
+    <refentrytitle>ypbind</refentrytitle>
+    <manvolnum>8</manvolnum>
+    <refmiscinfo class='sectdesc'>ypbind-mt</refmiscinfo>
+  </refmeta>
+
+  <refnamediv id='name'>
+    <refname>ypbind</refname>
+    <refpurpose>NIS binding process</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv id='synopsis'>
+  <cmdsynopsis>
+    <command>ypbind</command>
+      <arg choice='opt'>-c </arg>
+      <group choice='opt'><arg choice='plain'>-d </arg><arg choice='plain'>-debug </arg></group>
+      <arg choice='opt'>-verbose </arg>
+      <group choice='opt'><arg choice='plain'>-n </arg><arg choice='plain'>-forground </arg></group>
+      <arg choice='opt'>-broadcast </arg>
+      <arg choice='opt'>-broken-server </arg>
+      <arg choice='opt'>-ypset </arg>
+      <arg choice='opt'>-ypsetme </arg>
+      <arg choice='opt'>-no-ping </arg>
+      <arg choice='opt'>-f <replaceable>configfile</replaceable></arg>
+      <arg choice='opt'>-local-only </arg>
+      <arg choice='opt'>-ping-interval <replaceable>ping-interval</replaceable></arg>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>ypbind</command>
+      <arg choice='plain'>--version </arg>
+    </cmdsynopsis>
+  </refsynopsisdiv>
+
+
+  <refsect1 id='description'>
+    <title>DESCRIPTION</title>
+    <para>
+      <command>ypbind</command> finds the server for NIS domains and
+      maintains the NIS binding information. The client (normally the
+      NIS routines in the standard C library) could get the information
+      over RPC from <command>ypbind</command> or read the binding files.
+      The binding files resides in the directory
+      <filename>/var/yp/binding</filename> and are conventionally named
+      <emphasis remap='B'>[domainname].[version]</emphasis>. The supported
+      versions are 1, 2 and 3. There could be several such files since it
+      is possible for an NIS client to be bound to more than one domain.
+    </para>
+
+    <para>
+      After a binding has been established, <command>ypbind</command>
+      will send YPPROC_DOMAIN requests to the current NIS server at 5 
+      minutes intervals. If it doesn't get an response or the NIS server
+      reports that he doesn't have this domain any longer,
+      <command>ypbind</command> will search for a new NIS server.
+      You could tell <command>ypbind</command> to use network broadcasts
+      to find a new server, what is insecure, or you could give it a list
+      of known secure servers. In this case <command>ypbind</command> will
+      send a ping to all servers in the order in which they are listed in
+      the config file and use the first one which answers.
+    </para>
+
+    <para>Unless the option
+<option>-debug</option>
+is used, ypbind detaches itself from the controlling terminal and puts
+itself into background.
+<command>ypbind</command>
+uses
+<citerefentry><refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum></citerefentry>
+for logging errors and warnings.
+At startup or when receiving signal SIGHUP,
+<command>ypbind</command>
+parses the file
+<filename>/etc/yp.conf</filename>
+and tries to use the entries for its initial binding.</para>
+
+<para>A broadcast entry in the configuration file will overwrite a ypserver/server
+entry and a ypserver/server entry broadcast. If all given server are down,
+<command>ypbind</command>
+will
+<emphasis remap='B'>not</emphasis>
+switch to use broadcast.
+<command>ypbind</command>
+will try at first
+<filename>/etc/hosts</filename>
+and then
+<emphasis remap='B'>DNS</emphasis>
+for resolving the hosts names from
+<filename>/etc/yp.conf</filename>.
+If
+<command>ypbind</command>
+couldn't reconfigure the search order, it will use only
+<emphasis remap='B'>DNS</emphasis>.
+If
+<emphasis remap='B'>DNS</emphasis>
+isn't available, you could only use IP-addresses in
+<filename>/etc/hosts</filename>.
+<command>ypbind</command>
+could only reconfigure the search order with glibc 2.x.
+If the
+<option>-broadcast</option>
+option is specified,
+<command>ypbind</command>
+will ignore the configuration file.
+If the file does not exist or if there are no valid entries,
+<command>ypbind</command>
+exit.</para>
+
+  </refsect1>
+
+  <refsect1 id='options'>
+    <title>OPTIONS</title>
+    <variablelist>
+      <varlistentry>
+        <term><option>-broadcast</option></term>
+        <listitem>
+          <para>
+            Send a broadcast to request the information needed to
+            bind to a specific NIS server. With this option,
+            <filename>/etc/yp.conf</filename> will be ignored.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+  <term><option>-ypset</option></term>
+  <listitem>
+<para>Allow
+<emphasis remap='B'>root</emphasis>
+from any remote machine to change the binding for a domain via the
+<citerefentry><refentrytitle>ypset</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+command. By default, no one can change the binding. This option is really
+insecure. If you change a binding for a domain, all the current known
+servers for this domain will be forgotten. If the new server goes down,
+<command>ypbind</command>
+will use the old searchlist.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-ypsetme</option></term>
+  <listitem>
+<para>The same as
+<option>-ypset</option>,
+but only
+<emphasis remap='B'>root</emphasis>
+on the local machine is allowed to change the binding. Such requests
+are only allowed from
+<emphasis remap='B'>loopback</emphasis>.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-c</option></term>
+  <listitem>
+<para><command>ypbind</command>
+only checks if the config file has syntax errors and exits.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-d</option>, <option>-debug</option></term>
+  <listitem>
+<para>starts
+<command>ypbind</command>
+in debug mode.
+<command>ypbind</command>
+will not put itself into background, and error messages and debug
+output are written to standard error.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-n</option>, <option>-foreground</option></term>
+  <listitem>
+<para>
+<command>ypbind</command>
+will not put itself into backgroun.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-v</option>, <option>-verbose</option></term>
+  <listitem>
+<para>Causes
+<command>ypbind</command>
+to syslog(2) any and all changes in the server its bound to.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-broken-server</option></term>
+  <listitem>
+<para>Lets
+<command>ypbind</command>
+accept answers from servers running on an illegal port number. This should
+usually be avoided, but is required by some
+<citerefentry><refentrytitle>ypserv</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+versions.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-no-ping</option></term>
+  <listitem>
+<para><command>ypbind</command>
+will not check if the binding is alive. This option is for use with
+dialup connections to prevent
+<command>ypbind</command>
+from keeping the connection unnecessarily open or causing auto-dials.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-f</option> configfile</term>
+  <listitem>
+<para><command>ypbind</command>
+will use
+<emphasis remap='B'>configfile</emphasis>
+and not
+<filename>/etc/yp.conf</filename></para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-local-only</option></term>
+  <listitem>
+<para><command>ypbind</command>
+will only bind to the loopback device and is not reachable from
+a remote network.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>-i</option>, <option>-ping-interval</option> ping-interval</term>
+  <listitem>
+<para>The default value for
+<command>ypbind</command>
+to check, if a NIS server is still reachable, is 20 seconds.
+With this options another frequency in seconds can be specified.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><option>--version</option></term>
+  <listitem>
+<para>Prints the version number</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+
+</refsect1>
+
+<refsect1 id='files'><title>FILES</title>
+<variablelist remap='TP'>
+  <varlistentry>
+  <term><filename>/etc/yp.conf</filename></term>
+  <listitem>
+<para>configuration file.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><filename>/var/yp/binding/[domainname].[version]</filename></term>
+  <listitem>
+<para>binding file containing information about each NIS domain.</para>
+  </listitem>
+  </varlistentry>
+  <varlistentry>
+  <term><filename>/var/run/ypbind.pid</filename></term>
+  <listitem>
+<para>contains the process id of the currently running
+<command>ypbind</command>
+master process.</para>
+  </listitem>
+  </varlistentry>
+</variablelist>
+
+</refsect1>
+
+  <refsect1 id='see_also'>
+    <title>SEE ALSO</title>
+    <para>
+      <citerefentry><refentrytitle>syslog</refentrytitle><manvolnum>3</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>domainname</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>yp.conf</refentrytitle><manvolnum>5</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypdomainname</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypwhich</refentrytitle><manvolnum>1</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypserv</refentrytitle><manvolnum>8</manvolnum></citerefentry>,
+      <citerefentry><refentrytitle>ypset</refentrytitle><manvolnum>8</manvolnum></citerefentry>
+    </para>
+  </refsect1>
+
+  <refsect1 id='author'>
+    <title>AUTHOR</title>
+      <para>
+        <emphasis remap='B'>ypbind-mt</emphasis> was written by
+        Thorsten Kukuk &lt;kukuk@thkukuk.de&gt;.
+      </para>
+  </refsect1>
+</refentry>

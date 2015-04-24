@@ -1,0 +1,817 @@
+2014-12-04  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 2.2
+
+	* src/serv_list.c: Fix problem that not reacheable servers will
+	not be added to list, compare yp server address and port if
+	that has changed.
+
+2014-12-01  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 2.1
+
+	* man/ypbind.8.xml: Remove DBUS references.
+	* etc/ypbind.init: Likewise.
+	* etc/sysconfig.ypbind: Likewise.
+
+2014-11-03  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* src/serv_list.c: Replace clnt_create with clnt_create_timed.
+
+	* release version 2.0
+
+	* Implement ypbind v3 protocol and IPv6 support.
+
+2014-11-01  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* src/ypbind_server.c: Change ipaddr/port output in debug output.
+	* src/ypbind_svc.c: Likewise.
+
+	* src/ypbind_server.c (ypbindproc_domain_3_svc): Disable hack,
+	this could lead to a crash.
+
+2014-10-21  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_server.c: Use svc_getrpccaller,
+	check for IPv6 localhost addresses.
+
+	* src/ypbind_svc.c: Use svc_getrpccaller.
+
+2014-10-20  Thorsten Kukuk  <kukuk@suse.de>
+
+	* configure.ac: Remove slp support, add tirpc check,
+	disable parallel broadcast on all systems
+	* src/Makefile.am: Remove SLP references, add tirpc support
+	* man/yp.conf.5.xml: Remove SLP references
+	* etc/ypbind.init: Likewise
+	* src/ypbind_slp.c: Removed
+	* src/ypbind-mt.c: Rewrote to use ti-rpc interfaces if available
+
+2014-10-20  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.38
+
+	* configure.ac: Use pkg-config for systemd
+
+2014-03-06  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.37.2
+
+	* configure.in: Add support for systemd >= 209
+
+2013-11-06  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.xml: Enhance some options.
+
+2013-04-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.37.1
+
+	* etc/sysconfig.ypbind: Revert last change, set DBUS to no
+	by default.
+
+2013-04-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.37
+
+	* src/ypbind-mt.c (sig_handler): Add SIGPIPE to sigs_to_catch.
+	* man/ypbind.8.xml: Fix some typos, document -rebind-interval.
+	* src/local.h: Add rebind_interval.
+	* src/serv_list.c: Fix typos, add rebind_interval variable.
+	* src/ypbind-mt.c (main): Add -rebind_interval option, tell
+	systemd we are ready.
+	* etc/sysconfig.ypbind: Remove most config options, can
+	be specified all in the generic option.
+
+	rebind_interval option and systemd integration are based on
+	patches from Fedora.
+
+2012-07-11  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.36
+
+	* src/ypbind_dbus_nm.c: Ignore dbus if bound to localhost.
+	* src/local.h: Likewise.
+	* src/serv_list.c: Likewise.
+	* src/ypbind-mt.c: Likewise.
+
+	* src/ypbind_dbus_nm.c (NM_DBUS_SIGNAL_STATE_CHANGED):
+	  Fix StateChanged define/value.
+
+	Based on patches from Honza Horak <hhorak@redhat.com>.
+
+2012-03-23  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.35
+
+	* src/ypbind_dbus_nm.c: Adjust to new NetworkManager [bnc#698030].
+	Patch by Jeff Mahoney <jeffm@suse.com>.
+
+	* src/serv_list.c (remove_bindingfile): make sure
+	last.host is NULL.
+	Based on patch from Honza Horak <hhorak@redhat.com>.
+
+2011-08-31  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.34
+
+	* src/serv_list.c: Fix memcpy usage.
+	Patch by Sebastian Koch <seb@cs.tu-berlin.de>.
+
+	* src/ypbind-mt.c: Add -n/-forground option for systemd.
+	* man/ypbind.8.xml: Document -n/-forground option.
+	Based on patch by Honza Horak <hhorak@redhat.com>.
+
+2011-08-31  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* Adjust FSF address.
+	Patch by Honza Horak <hhorak@redhat.com>
+
+2011-04-29  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.33
+
+	* src/ypbind-mt.c (create_pidfile): return if no pidfile
+	could be created.
+	(main): Check if /dev/null could be opened.
+	* src/serv_list.c (ping_all): Initialize found with 0.
+	(ping_all): Check if we are inside the array.
+	Based on patches from Honza Horak <hhorak@redhat.com>.
+
+2010-07-07  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.32
+
+	* src/ypbind_dbus_nm.c: Fixed reporting Error adding match.
+	Patch from Karel Klic <kklic@redhat.com>.
+
+2009-11-30  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.31
+
+	* src/serv_list.c (eachresult): Save addr and port of NIS
+	server if we use broadcast.
+	Patch from Olivier Thauvin <nanardon@nanardon.zarb.org>.
+
+2009-11-19  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.30
+
+	* configure.in: NetworkManager support is disabled by default,
+	USE_BROADCAST is defined as 1 on kfreebsd (Debian #545970)
+
+	* src/ypbind_dbus_nm.c: rename NM_DBUS_SIGNAL_STATE_CHANGE
+	to NM_DBUS_VPN_SIGNAL_STATE_CHANGE.
+	Patch from Karel Klic <kklic@redhat.com>.
+
+	* src/ypbind-mt.c (usage): remove -p option.
+
+2009-06-19  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 1.29.91
+
+	* src/Makefile.am: Fix link order.
+	* src/ypbind-mt.c (load_config): Fix counting of
+	broken config lines.
+	* src/ypbind-mt.c (portmapper_register): Don't free transp
+	for tcp.
+
+2009-05-29  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* man/ypbind.8.xml: Fix typos.
+	Reported by Mark Brown <broonie@sirena.org.uk>.
+
+2009-05-20  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.29.90
+
+	* src/serv_list.c (test_bindings_once): directly do broadcast
+	after 15 min. to find new fastest server if configured.
+
+2009-05-19  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_svc.c: Log if we cannot decode arguments
+	and try to free the current result.
+	* src/ypbind-mt.c: Free transp.
+
+2009-05-18  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c: Don't cache connection to ypserv any longer.
+
+	* src/ypbind-mt.c: Implement -log option.
+	* src/ypbind_server.c: Add calls to write to log file.
+	* src/log_msg.c: Add new function to write to log file.
+	* src/log_msg.h: Add new prototypes for logging functions.
+
+2009-04-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.23.1
+
+	* src/ypbind-mt.c (main): Fix last patch for the case
+	that we have dbus support disabled by configure option.
+
+2009-03-30  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.23
+
+	* src/ypbind-mt.c (main): Fix last patch for the case that
+	we don't use NetworkManager and have already a network.
+
+	* etc/ypbind.init: Don't initialise domainname,
+	should be done by network scripts.
+	Don't check for working ypbind if we use NetworkManager.
+
+2009-03-30  Chris Burghart  <burghart@ucar.edu>
+
+	* src/ypbind_dbus_nm.c: Use always go_online().
+	* src/ypbind-mt.c: Add load_config_or_exit().
+
+2008-08-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.22
+
+	* src/serv_list.c: Only write binding file if there were
+	really changes. Based on patch from
+	Eric Sandeen <sandeen@redhat.com>.
+
+2008-08-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* etc/ypbind.init: Adjust init script to new openSUSE policy
+
+2008-04-15  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.21
+
+	* etc/sysconfig.ypbind: New file.
+	* etc/ypbind.init: Add dbus, ping-interval and verbose option,
+	check for rpcbind and portmap.
+
+	* src/serv_list.c: If verbose flag is given, print status
+	changes about current bindings. Patch from
+	Steve Dickson <steved@redhat.com>.
+	* src/ypbind-mt.c: Likewise.
+	* man/ypbind.8.xml: Likewise.
+
+	* src/ypbind-mt.c (main): fix -ping_interval
+	option check (reported from Jeff Bastian <jbastian@redhat.com>),
+	check return value of dup().
+
+2007-03-01  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.5
+
+	* src/serv_list.c (add_server): Fix array access above
+	array bounds [bnc #247312].
+
+2007-02-19  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.4
+
+2007-02-14  Thorsten Kukuk  <kukuk@suse.de>
+
+	* po/sv.po: Add swedish translation from
+	Daniel Nylander <info@danielnylander.se>.
+
+2006-10-20  Timo Hoenig  <thoenig@suse.de>
+
+	* src/ypbind_dbus_nm.c: Do not close shared connection
+	to the D-Bus system bus.
+
+2006-10-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.3
+
+	* configure.in: Check for NetworkManager/NetworkManager.h
+
+	* src/ypbind_dbus_nm.c: Define NetworkManager values ourself if
+	no header file is present.
+
+2006-10-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.2
+
+	* man/ypbind.8.xml: New, generate ypbind.8 from XML source.
+	* man/yp.conf.5.xml: New, generate yp.conf.5 from XML source.
+
+	* src/ypbind_dbus_nm.c (dbus_init): In error case, assume we
+	are online (Reported by Mark Brown <broonie@sirena.org.uk>).
+
+2006-09-19  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (main): Fix compiling without DBUS support.
+	Reported by Peter Breitenlohner <peb@mppmu.mpg.de>.
+
+2006-09-15  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20.1
+
+	* src/ypbind-mt.c: Fix last patch to ignore SIGPIPE.
+
+2006-09-13  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.20
+
+	* man/ypbind.8.in: Document -no-dbus option.
+
+	* src/ypbind-mt.c: Add -no-dbus option.
+	Ignore SIGPIPE, patch from Mark Brown <broonie@sirena.org.uk>.
+
+	* src/serv_list.c: Fix grammar issues. Patch from
+	Mark Brown <broonie@sirena.org.uk>.
+
+2006-08-29  Thorsten Kukuk <kukuk@suse.de>
+
+	* src/ypbind_dbus_nm.c (watch_dbus_nm): Tell main thread that
+	dubs connection is initialized.
+	* src/ypbind-mt.c (main): Wait that dbus connection is
+	initialized.
+	* src/local.h: Add prototypes.
+
+2006-08-17  Thorsten Kukuk  <kukuk@suse.de>
+
+	* configure.in: Check for dbus/glib2.
+
+	* src/Makefile.am: Add ypbind_dbus_nm.c.
+
+	* src/ypbind_dbus_nm.c: Add dbus/NetworkManager support.
+	* src/ypbind-mt.c: Likewise.
+	* src/serv_list.c: Likewise.
+	* src/local.h: Likewise.
+
+2005-11-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Fix another typo.
+
+2005-07-12  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Fix typo.
+	* man/yp.conf.5.in: Likewise.
+	(Reported by Saleem A. <saleem@vmware.com>)
+
+2005-07-03  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.19.1
+
+	* src/serv_list.c (test_bindings_once): Fix debug output.
+
+2005-06-29  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.19
+
+	* src/serv_list.c (test_bindings_once): run the whole test with
+	write lock.
+	(find_domain): Rewrite for better error handling.
+
+2005-05-30  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (sig_handler): Check sigwait result for
+	errors.
+
+2005-05-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (ping_all): Add check for the case that the
+	server answers, but refuses to allow a connection.
+	(test_bindings_once): Add check if server is not known but
+	should be for debugging.
+
+2004-10-15  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.18
+
+	* man/ypbind.8.in: Document all options.
+
+	* src/ypbind-mt.c (main): Add -ping-interval option.
+
+2004-08-11  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Lot of spelling improvements.
+
+2004-04-29  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.17.3
+
+2004-04-13  Mark Brown  <broonie@sirena.org.uk>
+
+	* src/ypbind_slp.c (query_slp): Improve extraction of the server
+	hostname from URLs returned by the SLP library.
+
+2004-02-14  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.17.2
+
+	* src/ypbind_slp.c (query_slp): Use service:ypserv as server url.
+
+2004-02-13  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.17.1
+
+	* configure.in: Fix CFLAGS
+
+	* release version 1.17
+
+	* etc/ypbind.init: Rework to match latest LSB changes.
+
+	* src/ypbind-mt.c (load_config): Fix parsing of domain statements.
+	Add new rule for SLP usage.
+
+	* src/ypbind_slp.c (query_slp): New: use SLP to find ypserver.
+
+	* src/serv_list.c (ping_all): Check if ypserv runs on a illegal
+	port.
+
+	* man/yp.conf.5.in: Document SLP support.
+
+	* configure.in: Check for SLP support.
+
+2004-01-14  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.16
+
+	* src/serv_list.c (test_binding): Split into test_binding()
+	and test_binding_once().
+
+	* src/local.h: Add prototype for test_binding_once().
+
+	* src/ypbind_server.c (ypbindproc_domain): Call test_binding_once.
+	Based on patch from Jeff Bastian <jmbastia@ti.com>.
+
+2004-01-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.15
+
+	* man/ypbind.8: Document -local-only option.
+
+	* src/ypbind-mt.c (main): Don't ignore -p on local bind.
+	(Reported by Jim Carter <jimc@math.ucla.edu>).
+
+	* acinclude.m4: Fix for automake 1.8.
+
+2003-12-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* man/ypbind.8.in: Fix typo.
+
+2003-08-24  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.14
+
+	* src/serv_list.c (change_binding): Update binding files,
+	reported by David Nicklay <dnicklay@web.turner.com>.
+
+2003-06-10  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.13
+
+	* src/Makefile.am: Use AM_CFLAGS instead of CFLAGS.
+	* lib/Makefile.am: Likewise.
+
+	* src/serv_list.c (do_broadcast): Lock list members while we wait
+	for broadcast result.
+
+2002-05-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.12
+
+	* etc/yp.conf: Add broadcast option to comments.
+
+	* man/yp.conf.5.in: Document new broadcast option.
+
+	* src/ypbind-mt.c (load_config): Add "broadcast" option to yp.conf.
+
+2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.11
+
+	* man/yp.conf.5.in: Describe new behaviour if broadcast and
+	specific servers are given.
+
+	* src/serv_list.c: Try at first given server before fallback to
+	broadcasting.
+	(do_broadcast): Add debug messages
+
+	* src/log_msg.c: define _GNU_SOURCE to get all glibc prototypes.
+
+	* src/serv_list.c (add_server): Print to stderr if we make
+	a syntax check only.
+
+	* src/local.h: Add new argument for add_server prototype.
+
+	* src/ypbind-mt.c: Rework syntax check for yp.conf
+	(main): Call add_server with argument to check syntax only.
+	(main): Add -local_only option (bind only to loopback address).
+	Based on patch from Eskil Heyn Olsen <eskil@neoteris.com>.
+
+	* man/yp.conf.5.in: Remove libc5 hints.
+
+	* man/ypbind.8.in: Remove -p option.
+
+	* man/Makefile.am: Fix rules to build manual pages.
+
+	* configure.in: Create man/ypbind.8, man/yp.conf.5.
+
+2002-04-04  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (SUBDIRS): Add m4.
+	(SUBDIRS): Remove intl.
+	(ACLOCAL_AMFLAGS): New variable.
+	(EXTRA_DIST): Add config.rpath.
+	* configure.in (AC_OUTPUT): Add m4/Makefile.
+	(AC_OUTPUT): Remove intl/Makefile.
+
+2002-04-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/Makefile.am: Replace INTLLIBS with LIBINTL
+	* acinclude.m4 (AM_WITH_EFENCE): Call AC_DEFINE for WITH_EFENCE
+	with all three arguments.
+
+	* configure.in: Replace LIBOBJS with AC_LIBOBJ, add all three
+	arguments to HAVE_SOCKLEN_T AC_DEFINE.
+
+2002-04-03  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/local.h: Add new prototype for add_server.
+
+	* src/serv_list.c (add_server): Add more debug messages in error
+	case, remove dead code.
+	* src/serv_list.c (add_server): Don't deadlock if host is not
+	found (based on patch from Alex Larsson <alexl@redhat.com>).
+
+2001-10-30  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.10
+
+	* Update to gettext 0.10.40
+
+	* man/ypbind.8.in: Fix typo, reported by
+	  Petter Reinholdtsen <petter.reinholdtsen@usit.uio.no>
+
+2001-10-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.9
+
+	* src/ypbind_xdr.c (ypbind_xdr_olddomainname): Removed.
+
+	* src/ypbind.h: Get ride of olddomainname type.
+
+	* src/ypbind_server.c (ypbindproc_olddomain_1_svc): Change
+	  arguments to avoid RPC string pointer problems.
+
+	* src/ypbind_svc.c (ypbindprog_1): Use type domainname
+	  instead of olddomainname.
+
+	* configure.in: Remove quotes from AC_MSG_RESULT arguments
+
+2001-10-10  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c: sig_handler now creates the pidfile, main
+	  thread waits until pid file is created.
+
+2001-10-09  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (update_bindingfile): Make more robust, don't
+          truncate old files before we have all data.
+
+2001-08-14  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (main): Call setlocale for LC_CTYPE, too.
+
+2001-08-13  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (find_domain): Fix comment, get read lock back if
+	  we try a second time to find a active server.
+	  (test_bindings): Don't search for fastest server if current one
+	  is valid and set with ypset.
+	  (test_bindings): Don't invalidate old data before we have new data.
+
+2001-03-11  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.8
+
+	* po/Makefile.in.in: Add DESTDIR support.
+
+	* configure.in: Don't set CFLAGS, bump version number to 1.8,
+	  remove USE_PIDFILE variable.
+
+	* ypbind-mt.spec: removed.
+
+	* etc/ypbind.init: Update to a LSB ready version, still needs
+	  SuSEs /etc/rc.status.
+
+	* config.sub: Update to newest version.
+	* config.guess: Likewise.
+
+	* src/Makefile.am: Remove USE_PIDFILE.
+
+	* src/ypbind-mt.c: Remove USE_PIDFILE ifdefs, it is always set.
+
+	* intl/Makefile.in (mostlyclean): Remove libintl.h.
+
+	* intl/libgettext.h: Change #if to #ifdef for autoconf defines.
+
+	* src/log_msg.c: Use caller supplied syslog priority
+
+2000-11-24  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_svc.c (ypbindprog_1): domainname argument is a pointer.
+
+	* src/serv_list.c (ping_all): Remove bogus break (patch by Miquel
+	  von Smoorenburg).
+
+2000-09-25  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.7
+
+	* configure.in: Check for vsyslog
+
+	* src/log_msg.c (log_msg): Fix missing syslog format string
+
+1999-11-21  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c: Use stdlib.h, not malloc.h. Some Unix have
+          a broken malloc.h to tell the developer to use stdlib.h.
+	* src/ypbind-mt.c: Likewise.
+	* src/ypbind_svc.c: Likewise.
+
+1999-10-05  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.6
+
+1999-08-27  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind_server.c: Mark unused parameters as unused.
+
+	* src/ypbind-mt.c (sig_handler): Mark parameter as unused.
+
+	* src/serv_list.c: Fix uninitialized variable, fix compiler
+	  warnings.
+
+1999-08-04  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c: gethostbyname_r/gethostbyaddr_r return code has
+	  changed in final POSIX standard.
+
+1999-06-01  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (main): lose controlling tty when daemonizing.
+	  allow -no_ping, -no-ping, -broken_server and -broken-server.
+	* man/ypbind.8.in: Use -no-ping and -broken-server.
+
+1999-05-18  Thorsten Kukuk  <kukuk@suse.de>
+
+	* release version 1.5
+
+	* man/ypbind.8.in: Update entry of searching new server.
+
+	* src/serv_list.c (test_bindings): Check every 15min. if we have
+	  the fastest NIS server.
+
+1999-05-03  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/ypbind-mt.c (create_pidfile): If no locking is available,
+	  don't exit. Hope the user knows what he is doing.
+
+1999-05-01  Thorsten Kukuk  <kukuk@suse.de>
+
+	* etc/ypbind.init: Change default values for checkconfig.
+	  Patch from Darrell Fuhriman <darrell@grumblesmurf.net>.
+
+1999-02-28  Thorsten Kukuk  <kukuk@suse.de>
+
+	* src/serv_list.c (find_domain): Print messages only,
+	  if debug flag is set.
+
+1998-11-11  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.4
+
+	* lib/clnt_udp.c: Include string.h, add prototype for
+	  _rpc_dtablesize.
+	* src/ypbind-mt.c: Use size_t for buflen, fix compiler warnings.
+	Based on patches from Loic Prylli <Loic.Prylli@ens-lyon.fr>
+
+	* src/ypbind_server.c: Fix compiler warnings.
+
+1998-10-09  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* src/ypbind-mt.c (load_config): Check for more valid separators.
+
+1998-07-01  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.3
+
+	* man/ypbind.8.in: Add description of -c parameter.
+
+	* src/ypbind-mt.c (load_config): Add error message.
+	(main): Better check for binding dir, add check option for yp.conf.
+
+1998-06-07  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* etc/ypbind.init: Remove binding dir entries after killing ypbind.
+
+1998-05-24  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Add efence support, fix for gettext 0.10.35,
+	  Fix check for broken kernel versions (2.1.1xx isn't broken).
+
+	* acinclude.m4: New, macros for efence.
+
+1998-04-28  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* src/serv_list.c (add_server): Check if h_addr_list[0] is != NULL.
+	  Reportet by Arnim Frithjof Brestrich <brest@rumms.uni-mannheim.de>.
+
+1998-04-20  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Add dmalloc support.
+
+	* acconfig.h: Add WITH_DMALLOC.
+
+	* man/yp.conf.5.in: Fix Typo.
+
+	* ypbind-mt.spec: Install yp.conf.5.
+
+1998-04-19  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.2
+
+	* src/serv_list.c (find_domain): If doamin is unbound, try to
+	find a new server.
+
+1998-04-18  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Create man/sedscript.
+
+1998-04-17  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* man/ypbind.8.in: Fix some more comments.
+
+	* man/yp.conf.5.in: New.
+
+	* src/serv_list.c: Save current status if ypset is used.
+
+1998-04-02  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* src/serv_list.c: Fix typos.
+
+1998-04-01  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: check for socklen_t in <sys/socket.h>.
+
+	* acconfig.h: Add #undef HAVE_SOCKLEN_T.
+
+	* lib/clnt_udp.c: Define socklen_t if not defined, fix multi-cast
+	  replay.
+
+	* man/ypbind.8.in: Fix some comments.
+
+	* src/serv_list.c: Code cleanup, use less memory.
+
+1998-03-30  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.1
+
+	* src/serv_list.c: Add support for _dns_gethostbyname.
+
+	* configure.in: Check for res_gethostbyname and _dns_gethostbyname.
+
+	* lib/dummy.c: Remove.
+
+	* lib/dns_hosts.c: New, from ypserv 1.3.0.
+	* lib/res_options.h: New, from ypserv 1.3.0.
+
+	* man/ypbind.8.in: Fix some stuff.
+
+1998-03-27  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Set USE_BROADCAST under Linux
+
+	* src/Makefile.am Set USE_BROADCAST from configure script
+
+	* src/serv_list.c (ping_all): Add a second version, which don't
+	  try to send a ping to all server at the same time.
+
+1998-03-26  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* configure.in: Check for Linux Kernel with thread/file locking bug
+
+	* src/Makefile.am: Set USE_PIDFILE from configure script
+
+1998-03-07  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 1.0
+
+	* src/serv_list.c: Replace ping_all, new version sends a ping
+	to all server and uses this one which answers first.
+
+1998-02-28  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 0.91 as second beta release
+
+	* man/ypbind.8.man: Update -ypset option.
+
+	* src/ypbind_server.c: Add support for ypset.
+	* src/serv_list.c: Fix locking bugs, add setdom support.
+	* src/ypbind-mt.c: Fix some bugs.
+
+1998-02-27  Thorsten Kukuk  <kukuk@vt.uni-paderborn.de>
+
+	* release version 0.90 as first beta release
