@@ -1,5 +1,5 @@
 
-This directory contains the version 3.x of ypbind-mt.
+This directory contains the version 2.x of ypbind-mt.
 
 ypbind-mt is free software. You can redistribute it and/or modify it
 under the terms of the GNU General Public License version 2 as published
@@ -10,7 +10,7 @@ Linux. It has the following features:
 
 	* Supports ypbind protocol V1, V2, V3.
 
-	* IPv6 support (needs ti-rpc! Else use old 2.x version).
+	* IPv6 support (needs TI-RPC and libnsl! Else use old 1.x version).
 
 	* Uses threads for better response.
 
@@ -19,11 +19,11 @@ Linux. It has the following features:
 	* Supports a list of known secure NIS server (/etc/yp.conf)
 
 
-The following features against version 2.x were dropped:
+The following features against version 1.x were dropped:
 
 	* Listen to DBUS/NetworkManager.
 	* Use SLP to find a running ypserv
 
 
-Thorsten Kukuk <kukuk@suse.de>, October, 2014
+Thorsten Kukuk <kukuk@suse.de>, February, 2016
 
