@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([ypbind-mt], [2.2])
+AC_INIT([ypbind-mt], [2.3])
 AC_CONFIG_SRCDIR([src/ypbind-mt.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(config.h)
@@ -26,8 +26,12 @@ AC_CHECK_LIB(pthread, pthread_create)
 
 PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 209], [USE_SD_NOTIFY=1], [USE_SD_NOTIFY=0])
 AC_SUBST(USE_SD_NOTIFY)
-PKG_CHECK_MODULES([NIS], [libnis])
-PKG_CHECK_MODULES([TIRPC], [libtirpc])
+#PKG_CHECK_MODULES([NSL], [libnsl], [], [AC_CHECK_LIB([nsl],[yp_match],[LIBNSL_LIBS="-lnsl"],[LIBNSL_LIBS=""])])
+PKG_CHECK_MODULES([NSL], [libnsl])
+PKG_CHECK_MODULES([TIRPC], [libtirpc], [], [TIRPC_LIBS=""])
+if test -n "$TIRPC_LIBS"; then
+  AC_DEFINE(HAVE_TIRPC, 1, [Define to 1 if TIRPC is available])
+fi
 
 dnl The difficult part: could we reconfigure NSS or must we use DNS ?
 AC_CHECK_FUNCS(__nss_configure_lookup)

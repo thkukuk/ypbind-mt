@@ -1,8 +1,11 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2014 Thorsten Kukuk
+Copyright (C) 1998-2016 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 2.3
+* Use libnsl and not libnis
 
 Version 2.2
 * Fix handling if servers are not reacheable or ports have changed

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2014-12-04 15:26+0100\n"
+"POT-Creation-Date: 2016-02-15 14:30+0100\n"
 "PO-Revision-Date: 2004-02-13 16:22+01:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
@@ -15,71 +15,71 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/serv_list.c:472
+#: src/serv_list.c:473
 msgid "Not enough memory !"
 msgstr "Nicht genug Arbeitsspeicher !"
 
-#: src/serv_list.c:497
+#: src/serv_list.c:498
 msgid "internal error: add_server called with NULL domain."
 msgstr ""
 "Interner Fehler: add_server wurde mit NULL pointer für domain aufgerufen."
 
-#: src/serv_list.c:512
+#: src/serv_list.c:513
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr "add_server() Domain: %s, Broadcast"
 
-#: src/serv_list.c:527
+#: src/serv_list.c:528
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr "add_server() Domain: %s, Rechner: %s, Kein Slot mehr frei!"
 
-#: src/serv_list.c:534
+#: src/serv_list.c:535
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr "add_server() Domain: %s, Rechner: %s, Slot: %d"
 
-#: src/serv_list.c:559 src/serv_list.c:760
+#: src/serv_list.c:560 src/serv_list.c:761
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\""
 
-#: src/serv_list.c:569
+#: src/serv_list.c:570
 #, c-format
 msgid "Answer for domain '%s' from '%s' on illegal port %d."
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\" vom illegalen Port %d."
 
-#: src/serv_list.c:607
+#: src/serv_list.c:608
 #, c-format
 msgid "do_broadcast() for domain '%s' is called"
 msgstr ""
 
-#: src/serv_list.c:646
+#: src/serv_list.c:647
 #, c-format
 msgid "leave do_broadcast() for domain '%s'"
 msgstr ""
 
-#: src/serv_list.c:697
+#: src/serv_list.c:698
 #, c-format
 msgid "ping host '%s', domain '%s'"
 msgstr "Ping Host \"%s\", Domain \"%s\""
 
-#: src/serv_list.c:708
+#: src/serv_list.c:709
 #, c-format
 msgid "clnt_create for server '%s' (domain '%s') failed"
 msgstr "clnt_create für server \"%s\" (domain \"%s\") schlug fehl"
 
-#: src/serv_list.c:731
+#: src/serv_list.c:732
 #, c-format
 msgid "domain '%s' not served by '%s'"
 msgstr "Domain \"%s\" wird nicht von \"%s\" unterstützt"
 
-#: src/serv_list.c:840
+#: src/serv_list.c:841
 #, fuzzy, c-format
 msgid "Ping active server for '%s'"
 msgstr "Sende ein Ping zu allen aktiven Servern."
 
-#: src/serv_list.c:842
+#: src/serv_list.c:843
 #, fuzzy
 msgid "Ping active servers for all domains."
 msgstr "Sende ein Ping zu allen aktiven Servern."
@@ -306,30 +306,30 @@ msgstr ""
 msgid "svc_run returned."
 msgstr "svc_run hat sich beendet."
 
-#: src/ypbind_server.c:123 src/ypbind_server.c:226 src/ypbind_server.c:281
+#: src/ypbind_server.c:124 src/ypbind_server.c:227 src/ypbind_server.c:282
 #, c-format
 msgid "Domain name '%s' has embedded slash -- rejecting."
 msgstr "Domainname \"%s\" enthält einen Schrägstrich -- zurückgewiesen."
 
-#: src/ypbind_server.c:136 src/ypbind_server.c:245
+#: src/ypbind_server.c:137 src/ypbind_server.c:246
 #, fuzzy, c-format
 msgid "Status: YPBIND_FAIL_VAL, %s"
 msgstr "Status: YPBIND_FAIL_VAL"
 
-#: src/ypbind_server.c:139 src/ypbind_server.c:249
+#: src/ypbind_server.c:140 src/ypbind_server.c:250
 msgid "Status: YPBIND_SUCC_VAL"
 msgstr "Status: YPBIND_SUCC_VAL"
 
-#: src/ypbind_server.c:314 src/ypbind_server.c:359
+#: src/ypbind_server.c:315 src/ypbind_server.c:360
 #, c-format
 msgid "User from '%s' try's to change the binding."
 msgstr "User vom host \"%s\" versucht das Binding to ändern."
 
-#: src/ypbind_server.c:326 src/ypbind_server.c:371
+#: src/ypbind_server.c:327 src/ypbind_server.c:372
 msgid "Changing the binding is not allowed."
 msgstr "Das ändern des Bindings ist nicht erlaubt."
 
-#: src/ypbind_server.c:333 src/ypbind_server.c:378
+#: src/ypbind_server.c:334 src/ypbind_server.c:379
 msgid "SETDOM request doesn't come from reserved port."
 msgstr "Der SETDOM Request kam nicht von einem reservierten Port."
 

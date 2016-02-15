@@ -36,6 +36,7 @@
 #include <sys/socket.h>
 
 #include "ypbind.h"
+#include "ypbind3_binding.h"
 #include "log_msg.h"
 #include "local.h"
 #include "pthread_np.h"

@@ -8,9 +8,10 @@ localedir = $(datadir)/locale
 
 WARNFLAGS = @WARNFLAGS@
 AM_CFLAGS = -D_REENTRANT=1 $(WARNFLAGS) -DLOCALEDIR=\"$(localedir)\" \
-	@NIS_CFLAGS@ @TIRPC_CFLAGS@ -DUSE_SD_NOTIFY=@USE_SD_NOTIFY@
+	@NSL_CFLAGS@ @TIRPC_CFLAGS@ -DUSE_SD_NOTIFY=@USE_SD_NOTIFY@ \
+	-I$(srcdir)/../lib
 # Disabled for now: @DBUS_CFLAGS@ @GLIB_CFLAGS@
-ypbind_LDADD = ../lib/libcompat.a @SYSTEMD_LIBS@ @NIS_LIBS@ @TIRPC_LIBS@
+ypbind_LDADD = ../lib/libcompat.a @SYSTEMD_LIBS@ @NSL_LIBS@ @TIRPC_LIBS@
 # Disabled for now: @DBUS_LIBS@ @GLIB_LIBS@ 
 
 CLEANFILES = *~

@@ -26,6 +26,7 @@
 #include <arpa/inet.h>
 
 #include "ypbind.h"
+#include "ypbind3_binding.h"
 #include "log_msg.h"
 #include "local.h"
 

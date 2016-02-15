@@ -1,3 +1,15 @@
+2016-02-15  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 2.3
+
+	* lib/Makefile.am: Include ypbind3* sources and header file.
+	* src/serv_list.c: Include ypbind3_binding.h.
+	* src/ypbind_server.c: Likewise.
+	* lib/host2ypbind3_binding.c: New.
+	* lib/ypbind3_binding.h: New.
+	* lib/ypbind3_binding_dup.c: New.
+	* lib/ypbind3_binding_free.c: New.
+
 2014-12-04  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* release version 2.2
