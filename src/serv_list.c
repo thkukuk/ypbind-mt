@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2009, 2011, 2012, 2013, 2014 Thorsten Kukuk
+/* Copyright (c) 1998-2009, 2011, 2012, 2013, 2014, 2016 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -549,34 +549,29 @@ static struct binding *in_use = NULL;
 static bool_t
 eachresult (bool_t *out, struct netbuf *nbuf, struct netconfig *nconf)
 {
+  char namebuf6[INET6_ADDRSTRLEN];
+
   if (*out)
     {
       struct ypbind3_binding ypb3;
       if(debug_flag)
-        {
-	  char namebuf6[INET6_ADDRSTRLEN];
-
-	  log_msg (LOG_DEBUG,
-		   _("Answer for domain '%s' from server '%s'"),
-		   in_use->domain, taddr2ipstr (nconf, nbuf,
-						namebuf6, sizeof (namebuf6)));
-        }
+	log_msg (LOG_DEBUG, _("Answer for domain '%s' from server '%s'"),
+		 in_use->domain, taddr2ipstr (nconf, nbuf,
+					      namebuf6, sizeof (namebuf6)));
 
       if (!broken_server && (taddr2port (nconf, nbuf) >= IPPORT_RESERVED))
 	{
-	  char namebuf6[INET6_ADDRSTRLEN];
-
-          log_msg (LOG_ERR,
+	  log_msg (LOG_ERR,
 		   _("Answer for domain '%s' from '%s' on illegal port %d."),
-		   in_use->domain, taddr2ipstr (nconf, nbuf,
-						namebuf6, sizeof (namebuf6)),
+		   in_use->domain, taddr2ipstr (nconf, nbuf, namebuf6,
+						sizeof (namebuf6)),
 		   taddr2port (nconf, nbuf));
-          return 0;
-        }
-
+	  return 0;
+	}
       ypb3.ypbind_nconf = nconf;
       ypb3.ypbind_svcaddr = nbuf;
-      ypb3.ypbind_servername = '\0';
+      ypb3.ypbind_servername = (char *)taddr2ipstr (nconf, nbuf,
+						    namebuf6, sizeof (namebuf6));
       ypb3.ypbind_hi_vers = YPVERS;
       ypb3.ypbind_lo_vers = YPVERS;
       in_use->other = __ypbind3_binding_dup (&ypb3);
@@ -631,7 +626,7 @@ do_broadcast (struct binding *list)
   status = rpc_broadcast (YPPROG, YPVERS, YPPROC_DOMAIN_NONACK,
 			  (xdrproc_t) xdr_domainname, (caddr_t) &domain,
 			  (xdrproc_t) xdr_bool, (caddr_t) &out,
-			  (resultproc_t) eachresult, "udp");
+			  (resultproc_t) eachresult, "datagram_n");
 
   if (status != RPC_SUCCESS)
     {

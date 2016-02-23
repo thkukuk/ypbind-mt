@@ -1,3 +1,7 @@
+2016-02-23  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* src/serv_list.c (eachresult): Make sure server_name is never NULL.
+
 2016-02-15  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* release version 2.3
