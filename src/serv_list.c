@@ -125,6 +125,11 @@ convert_v3_to_respv2 (struct ypbind3_binding *ypb3)
     }
   else
     {
+      if (ypb3->ypbind_servername)
+	log_msg (LOG_INFO, "Cannot convert '%s' to IPv4 address", ypb3->ypbind_servername);
+      else
+	log_msg (LOG_INFO, "Don't have IPv4 address for bound host");
+
       resp.ypbind_status = YPBIND_FAIL_VAL;
       resp.ypbind2_error = YPBIND_ERR_NOSERV;
     }
