@@ -4,6 +4,9 @@ Copyright (C) 1998-2016 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 2.4
+* Fix broadcast for new NIS server
+
 Version 2.3
 * Use libnsl and not libnis
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2016-02-15 14:30+0100\n"
+"POT-Creation-Date: 2016-03-02 15:12+0100\n"
 "PO-Revision-Date: 2004-02-13 16:22+01:00\n"
 "Last-Translator: Thorsten Kukuk <kukuk@suse.de>\n"
 "Language-Team: No Language-Team\n"
@@ -15,31 +15,31 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8-bit\n"
 
-#: src/serv_list.c:473
+#: src/serv_list.c:478
 msgid "Not enough memory !"
 msgstr "Nicht genug Arbeitsspeicher !"
 
-#: src/serv_list.c:498
+#: src/serv_list.c:503
 msgid "internal error: add_server called with NULL domain."
 msgstr ""
 "Interner Fehler: add_server wurde mit NULL pointer für domain aufgerufen."
 
-#: src/serv_list.c:513
+#: src/serv_list.c:518
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr "add_server() Domain: %s, Broadcast"
 
-#: src/serv_list.c:528
+#: src/serv_list.c:533
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr "add_server() Domain: %s, Rechner: %s, Kein Slot mehr frei!"
 
-#: src/serv_list.c:535
+#: src/serv_list.c:540
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr "add_server() Domain: %s, Rechner: %s, Slot: %d"
 
-#: src/serv_list.c:560 src/serv_list.c:761
+#: src/serv_list.c:563 src/serv_list.c:761
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Antwort für Domain \"%s\" vom Server \"%s\""

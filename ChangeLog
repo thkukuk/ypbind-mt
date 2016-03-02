@@ -1,3 +1,7 @@
+2016-03-02  Thorsten Kukuk  <kukuk@thkukuk.de>
+
+	* release version 2.4
+
 2016-02-26  Thorsten Kukuk  <kukuk@thkukuk.de>
 
 	* src/serv_list.c (convert_v3_to_respv2): Log informal message,

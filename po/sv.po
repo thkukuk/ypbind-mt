@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ypbind-mt 1.20-2\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2016-02-15 14:30+0100\n"
+"POT-Creation-Date: 2016-03-02 15:12+0100\n"
 "PO-Revision-Date: 2006-11-12 16:48+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -16,30 +16,30 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/serv_list.c:473
+#: src/serv_list.c:478
 msgid "Not enough memory !"
 msgstr "Inte tillräckligt med minne!"
 
-#: src/serv_list.c:498
+#: src/serv_list.c:503
 msgid "internal error: add_server called with NULL domain."
 msgstr "internt fel: add_server anropades med NULL domän."
 
-#: src/serv_list.c:513
+#: src/serv_list.c:518
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr "add_server() domän: %s, broadcast"
 
-#: src/serv_list.c:528
+#: src/serv_list.c:533
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr "add_server() domän: %s, värd: %s, INGEN LEDIG PLATS!"
 
-#: src/serv_list.c:535
+#: src/serv_list.c:540
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr "add_server() domän: %s, värd: %s, plats: %d"
 
-#: src/serv_list.c:560 src/serv_list.c:761
+#: src/serv_list.c:563 src/serv_list.c:761
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr "Svar för domänen \"%s\" från servern \"%s\""

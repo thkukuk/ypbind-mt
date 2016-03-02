@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ypbind-mt 2.3\n"
+"Project-Id-Version: ypbind-mt 2.4\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2016-02-15 14:30+0100\n"
+"POT-Creation-Date: 2016-03-02 15:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,30 +17,30 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/serv_list.c:473
+#: src/serv_list.c:478
 msgid "Not enough memory !"
 msgstr ""
 
-#: src/serv_list.c:498
+#: src/serv_list.c:503
 msgid "internal error: add_server called with NULL domain."
 msgstr ""
 
-#: src/serv_list.c:513
+#: src/serv_list.c:518
 #, c-format
 msgid "add_server() domain: %s, broadcast"
 msgstr ""
 
-#: src/serv_list.c:528
+#: src/serv_list.c:533
 #, c-format
 msgid "add_server() domain: %s, host: %s, NO SLOT FREE!"
 msgstr ""
 
-#: src/serv_list.c:535
+#: src/serv_list.c:540
 #, c-format
 msgid "add_server() domain: %s, host: %s, slot: %d"
 msgstr ""
 
-#: src/serv_list.c:560 src/serv_list.c:761
+#: src/serv_list.c:563 src/serv_list.c:761
 #, c-format
 msgid "Answer for domain '%s' from server '%s'"
 msgstr ""
