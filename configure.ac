@@ -26,7 +26,7 @@ AC_CHECK_LIB(pthread, pthread_create)
 
 PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 209], [USE_SD_NOTIFY=1], [USE_SD_NOTIFY=0])
 AC_SUBST(USE_SD_NOTIFY)
-#PKG_CHECK_MODULES([NSL], [libnsl], [], [AC_CHECK_LIB([nsl],[yp_match],[LIBNSL_LIBS="-lnsl"],[LIBNSL_LIBS=""])])
+#PKG_CHECK_MODULES([NSL], [libnsl], [], [AC_CHECK_LIB([nsl],[yp_match],[NSL_LIBS="-lnsl"],[NSL_LIBS=""])])
 PKG_CHECK_MODULES([NSL], [libnsl])
 PKG_CHECK_MODULES([TIRPC], [libtirpc], [], [TIRPC_LIBS=""])
 if test -n "$TIRPC_LIBS"; then
