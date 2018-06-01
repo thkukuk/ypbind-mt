@@ -3,7 +3,7 @@
                    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
 
 <!--  \-*\- nroff \-*\- -->
-<!--  Copyright 1998, 1999, 2002, 2006 Thorsten Kukuk &lt;kukuk@suse.de&gt; -->
+<!--  Copyright 1998, 1999, 2002, 2006, 2018 Thorsten Kukuk &lt;kukuk@suse.de&gt; -->
 
 <!--  This file is part of ypbind\-mt. -->
 
@@ -86,6 +86,11 @@
       </varlistentry>
     </variablelist>
 
+    <para>
+      <emphasis remap='I'>hostname</emphasis> can either be an IP address or
+      the system's DNS name. If it is the system's DNS name, this name needs
+      to be resolveable without the help of NIS.
+    </para>
     <para>
       If for a specific domain the broadcast option and fixed server
       are given, <emphasis remap='B'>ypbind-mt</emphasis> tries at
