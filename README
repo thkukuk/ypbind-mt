@@ -24,6 +24,17 @@ The following features against version 1.x were dropped:
 	* Listen to DBUS/NetworkManager.
 	* Use SLP to find a running ypserv
 
+WARNING: 
+--------
+If the system's DNS names are used in the NIS configuration, this
+hostnames needs to be resolveable without NIS. If NIS is used, the
+NIS clients need to query the NIS server to resolve the hostname of
+the NIS server, this is a classical endless recursion and will only
+lead to a crash of the system.
+This worked with the old protocoll, since the protocol did only allow
+one IPv4 address, so ypbind did use DNS (independent of what is
+configured in /etc/nsswitch.conf) to resolve the name and store the
+first IPv4 address.
 
-Thorsten Kukuk <kukuk@suse.de>, February, 2016
+Thorsten Kukuk <kukuk@suse.de>, June 2018
 
