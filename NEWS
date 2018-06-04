@@ -1,8 +1,11 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2016 Thorsten Kukuk
+Copyright (C) 1998-2018 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
+
+Version 2.5
+* Enhance yp.conf documentation about resolving hostnames
 
 Version 2.4
 * Fix broadcast for new NIS server

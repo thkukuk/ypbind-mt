@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Thorsten Kukuk
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the ypbind-mt package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ypbind-mt 2.4\n"
+"Project-Id-Version: ypbind-mt 2.5\n"
 "Report-Msgid-Bugs-To: kukuk@linux-nis.org\n"
-"POT-Creation-Date: 2016-03-02 15:12+0100\n"
+"POT-Creation-Date: 2018-06-04 13:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
