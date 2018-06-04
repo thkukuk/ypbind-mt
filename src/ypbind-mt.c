@@ -278,7 +278,7 @@ create_pidfile (void)
   struct flock lock;
   int left, written;
   pid_t pid;
-  char pbuf[10], *ptr;
+  char pbuf[15], *ptr;
   int flags;
 
   lock_fd = open (_YPBIND_PIDFILE, O_CREAT | O_RDWR,
