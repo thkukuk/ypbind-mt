@@ -89,7 +89,7 @@
     <para>
       <emphasis remap='I'>hostname</emphasis> can either be an IP address or
       the system's DNS name. If it is the system's DNS name, this name needs
-      to be resolveable without the help of NIS.
+      to be resolveable without the help of NIS, before NIS is used.
     </para>
     <para>
       If for a specific domain the broadcast option and fixed server
