@@ -1,4 +1,4 @@
-/* Copyright (c) 1998-2009, 2011, 2012, 2013, 2014, 2016 Thorsten Kukuk
+/* Copyright (c) 1998-2009, 2011, 2012, 2013, 2014, 2016, 2019 Thorsten Kukuk
    This file is part of ypbind-mt.
    Author: Thorsten Kukuk <kukuk@suse.de>
 
@@ -483,7 +483,7 @@ get_entry (const char *domain, struct binding **entry)
       domainlist[max_domains - 1].active = (-1);
       domainlist[max_domains - 1].use_broadcast = FALSE;
       memset (domainlist[max_domains - 1].server, 0,
-	      (_MAXSERVER * sizeof (struct ypbind3_binding *)));
+	      sizeof(domainlist[max_domains - 1].server));
       *entry = &domainlist[max_domains - 1];
     }
 
