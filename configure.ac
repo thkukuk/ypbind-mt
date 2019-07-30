@@ -39,6 +39,9 @@ if eval "test \"`echo '$ac_cv_func___nss_configure_lookup'`\" != yes"; then
    AC_CHECK_LIB(resolv, res_gethostbyname)
 fi
 
+dnl Check for gettid wrapper
+AC_CHECK_FUNC(gettid, [AC_DEFINE(HAVE_GETTID, 1, [Define to 1 if gettid() is available])])
+
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 
