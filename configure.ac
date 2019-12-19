@@ -62,7 +62,7 @@ JH_CHECK_XML_CATALOG([http://docbook.sourceforge.net/release/xsl/current/manpage
 AM_CONDITIONAL(ENABLE_REGENERATE_MAN, test x$enable_man != xno)
 
 dnl internationalization macros
-AM_GNU_GETTEXT_VERSION
+AM_GNU_GETTEXT_VERSION([0.19])
 AM_GNU_GETTEXT([external])
 
 AC_OUTPUT(Makefile lib/Makefile src/Makefile man/Makefile po/Makefile.in)
