@@ -1,11 +1,14 @@
 ypbind-mt NEWS -- history of user-visible changes.
 
-Copyright (C) 1998-2019 Thorsten Kukuk
+Copyright (C) 1998-2020 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 2.7.0
+* Try /run/yp.conf if /etc/yp.conf does not exist
+
 Version 2.6.1
-* Check if libc already provides gettid().
+* Check if libc already provides gettid()
 
 Version 2.6
 * Fix crash of ypbind on reload
