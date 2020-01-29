@@ -60,7 +60,10 @@
 #define _YPBIND_PIDFILE _PATH_VARRUN"ypbind.pid"
 #endif
 
-const char *configfile = "/etc/yp.conf";
+#define DEFAULT_CONFIG_FILE "/etc/yp.conf"
+#define DEFAULT_RUNTIME_CONFIG "/run/yp.conf"
+
+const char *configfile;
 int ypset = SET_NO;
 int use_broadcast = 0;
 int broken_server = 0;
@@ -105,9 +108,27 @@ load_config (int check_syntax)
   int have_entries = 0; /* # of entries we found in config file */
   int bad_entries = 0;
 
-  fp = fopen (configfile, "r");
-  if (NULL == fp)
-    return 1;
+  if (configfile)
+    {
+      fp = fopen (configfile, "r");
+      if (NULL == fp)
+	return 1;
+    }
+  else
+  {
+    configfile = DEFAULT_CONFIG_FILE;
+    fp = fopen (configfile, "r");
+    if (NULL == fp)
+      {
+	configfile = DEFAULT_RUNTIME_CONFIG;
+	fp = fopen (DEFAULT_RUNTIME_CONFIG, "r");
+	if (NULL == fp)
+	  {
+	    configfile = DEFAULT_CONFIG_FILE;
+	    return 1;
+	  }
+      }
+  }
 
   if (debug_flag)
     log_msg (LOG_DEBUG, "parsing config file");
@@ -263,7 +284,7 @@ load_config_or_exit(void)
 	     stderr);
       fprintf (stderr,
 	       _("Add a NIS server to the %s configuration file,\n"),
-	       configfile);
+	       DEFAULT_CONFIG_FILE);
       fputs (_("or start ypbind with the -broadcast option.\n"),
 	     stderr);
       exit (1);
