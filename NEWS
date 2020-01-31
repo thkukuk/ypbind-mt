@@ -4,6 +4,9 @@ Copyright (C) 1998-2020 Thorsten Kukuk
 
 Please send bug reports, questions and suggestions to <kukuk@thkukuk.de>.
 
+Version 2.7.2
+* Use /run/netconfig/yp.conf
+
 Version 2.7.1
 * Strip down /etc/sysconfig/ypbind
 
