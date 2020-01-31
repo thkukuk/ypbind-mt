@@ -61,7 +61,7 @@
 #endif
 
 #define DEFAULT_CONFIG_FILE "/etc/yp.conf"
-#define DEFAULT_RUNTIME_CONFIG "/run/yp.conf"
+#define DEFAULT_RUNTIME_CONFIG "/run/netconfig/yp.conf"
 
 const char *configfile;
 int ypset = SET_NO;
